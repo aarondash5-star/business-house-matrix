@@ -1,8 +1,8 @@
 # Business House AI Matrix — Open WebUI-first cloud pilot
 
-**Approval:** Open WebUI first; OpenClaw deferred. **Deployment target:** Render Free. **Status:** deploy-ready specification, NOT confirmed live. **Isolation:** new Git repository, dedicated Render web service and disposable Render database. No Moksha/Andaz/other project assets.
+**Approval:** Open WebUI first; OpenClaw deferred. **Primary planned host:** Oracle Always Free; **fallback:** Google Cloud Run. **Status:** Git-transfer candidate, NOT deployed. **Isolation:** new private repository and dedicated resources; no Moksha/Andaz/other project assets. See [ADR-0003](docs/ADR-0003-github-cloud-control.md) for the current approved architecture.
 
-## Why this deployment
+## Legacy Render prototype (superseded — do not deploy)
 
 - Reuse official pinned `ghcr.io/open-webui/open-webui:v0.11.3-slim` container. No from-scratch web frontend.
 - `render.yaml` creates an HTTPS web-service on Render Free plus isolated free PostgreSQL database. It requires an independently connected Render account.
@@ -20,7 +20,7 @@
 - Render workspaces can bill for quota excess when a payment method exists. Confirm monthly spend limit and usage policy in Render before provisioning.
 - Open WebUI is free/source-available under licensing restrictions, not OSI open source; preserve its attribution.
 
-## Deployment checklist (not yet executed)
+## Historical Render deployment checklist (superseded; not to execute)
 
 1. Install/connect Render in ChatGPT with account approval. Choose free plan and review app + DB cost before deploy.
 2. Create **new private independent GitHub repository** under the explicitly selected connected account; push all tracked files. Do not push into Moksha Master.
@@ -35,3 +35,7 @@
 The repository stores upstream image reference, infrastructure-as-code, application architecture and tests. It **does not store** passwords, user history, operational database content, uploads or model weights. Use a separate secure backup for data migration.
 
 See `docs/CLOUD-DEPLOYMENT-DECISION.md` for gate-by-gate rationale and constraints.
+
+## Current approved rollout
+
+Follow [`docs/ROLLOUT-github-cloud.md`](docs/ROLLOUT-github-cloud.md) and [`docs/ADR-0003-github-cloud-control.md`](docs/ADR-0003-github-cloud-control.md). This repository contains an **obsolete `render.yaml`** retained only for historical comparison; it must not be used for deployment. GitHub/OCI/GCP automation and credentials are not yet configured.
