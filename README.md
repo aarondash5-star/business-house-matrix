@@ -1,41 +1,31 @@
-# Business House AI Matrix — Open WebUI-first cloud pilot
+# Business House AI Matrix
 
-**Approval:** Open WebUI first; OpenClaw deferred. **Primary planned host:** Oracle Always Free; **fallback:** Google Cloud Run. **Status:** Git-transfer candidate, NOT deployed. **Isolation:** new private repository and dedicated resources; no Moksha/Andaz/other project assets. See [ADR-0003](docs/ADR-0003-github-cloud-control.md) for the current approved architecture.
+Independent, recursive nine-department AI operating-system project. **Not connected to Moksha Master.**
 
-## Legacy Render prototype (superseded — do not deploy)
+**GitHub home:** [aarondash5-star/business-house-matrix](https://github.com/aarondash5-star/business-house-matrix) (**public**, as approved on 2026-10-18).
 
-- Reuse official pinned `ghcr.io/open-webui/open-webui:v0.11.3-slim` container. No from-scratch web frontend.
-- `render.yaml` creates an HTTPS web-service on Render Free plus isolated free PostgreSQL database. It requires an independently connected Render account.
-- `WEBUI_ADMIN_EMAIL` and `WEBUI_ADMIN_PASSWORD` are prompted privately by the platform on initial Blueprint creation. Do not place them in the repository or chat.
-- DB credentials are wired via Render Blueprint `fromDatabase`, and `WEBUI_SECRET_KEY` is generated server-side.
-- `WEBUI_AUTH=true` and `ENABLE_SIGNUP=false` eliminate unauthenticated use or first-user signup race; admin is precreated from secret env values.
-- There is no model backend yet; this is UI-first only. LangGraph, Temporal, MCP and Ollama remain architecture components for later phases, not cloud components now.
+## Approved architecture
 
-## Blockers / feasibility risks
+- **Open WebUI** — first pilot interface (not deployed).
+- **LangGraph** — central Brain and nine recursive departmental Brains (starter is simulation-only).
+- **Temporal** — durable task execution and recovery (not deployed).
+- **FastMCP + ContextForge** — tool interface and centralized access control (not deployed).
+- **Ollama, PostgreSQL, MLflow + Promptfoo** — planned inference, persistence and EVOLUTION evaluation.
+- **OpenClaw** — deferred until the pilot is accepted; **LibreChat is not selected**.
 
-- Render Free is **512 MB RAM**. Even the slim Open WebUI release may exceed that. Real startup, memory and login tests are mandatory. Do not automatically upgrade to a paid instance.
-- Render Free sleeps after 15 min idle and has no persistent disk; use external PostgreSQL. **Its free PostgreSQL instance expires 30 days after creation, and has no managed backup**. This is a *temporary pilot only*. Export database securely (out-of-band, not Git) before expiry.
-- Knowledge-file uploads and local vector cache will be lost on restart/redeploy. **Do not upload important files or use knowledge/RAG during this pilot.** Cloud object storage or a persistent VM comes after pilot.
-- No model access is preconfigured; users can authenticate, but cannot get AI responses until a separately reviewed inference endpoint is connected. Exposing a local Ollama port publicly is forbidden.
-- Render workspaces can bill for quota excess when a payment method exists. Confirm monthly spend limit and usage policy in Render before provisioning.
-- Open WebUI is free/source-available under licensing restrictions, not OSI open source; preserve its attribution.
+Nine departments: Concept, Design, Development, QA/QC, Marketing, Sales, Accounts, Support, **EVOLUTION** (train, correct, evolve).
 
-## Historical Render deployment checklist (superseded; not to execute)
+## Cloud deployment decision
 
-1. Install/connect Render in ChatGPT with account approval. Choose free plan and review app + DB cost before deploy.
-2. Create **new private independent GitHub repository** under the explicitly selected connected account; push all tracked files. Do not push into Moksha Master.
-3. Import `render.yaml` as Blueprint from the Git repository. Supply admin email and strong unique password through Render's secret-configuration screen only. No public signup window.
-4. Check build and instance logs for memory exhaustion and PostgreSQL driver errors; test `/health`, login, signup-denied, and a cold-start after idle.
-5. Record image digest, instance size, service URL, database expiry, health-test evidence and cost. Do not claim deployed until verified.
-6. After pilot, migrate database with `pg_dump` + `pg_restore` to durable dedicated PostgreSQL; switch `DATABASE_URL` without losing `WEBUI_SECRET_KEY`. Do not put exports in Git.
-7. If memory or startup fails, stop: choose another verified free-quota compute service. Never silently switch to a paid tier.
+GitHub Actions runs validation and, after separate cloud identity/configuration approval, controlled provider CLIs. **Oracle Always Free is preferred; Google Cloud Run is fallback.** No paid tier or cloud provisioning is authorized merely by these documents. The Render `render.yaml` is an **obsolete historical prototype**; do not deploy it.
 
-## What is versioned
+## Start here
 
-The repository stores upstream image reference, infrastructure-as-code, application architecture and tests. It **does not store** passwords, user history, operational database content, uploads or model weights. Use a separate secure backup for data migration.
+- [Current status](docs/STATUS.md)
+- [Architecture decision ADR-0003](docs/ADR-0003-github-cloud-control.md)
+- [Public-repository exception and CI policy ADR-0004](docs/ADR-0004-public-github-and-safety-ci.md)
+- [Cloud bootstrap prerequisites](docs/CLOUD-BOOTSTRAP.md)
+- [Free/cloud rollout plan](docs/ROLLOUT-github-cloud.md)
+- [Local UI-only Compose pilot](pilot/README.md)
 
-See `docs/CLOUD-DEPLOYMENT-DECISION.md` for gate-by-gate rationale and constraints.
-
-## Current approved rollout
-
-Follow [`docs/ROLLOUT-github-cloud.md`](docs/ROLLOUT-github-cloud.md) and [`docs/ADR-0003-github-cloud-control.md`](docs/ADR-0003-github-cloud-control.md). This repository contains an **obsolete `render.yaml`** retained only for historical comparison; it must not be used for deployment. GitHub/OCI/GCP automation and credentials are not yet configured.
+**Safety:** Do not commit credentials, private data, user conversations, database snapshots, backups, uploads or encryption keys. The CI scan is not a substitute for thorough security review. Existing business projects and cloud accounts are not shared with this Matrix.
