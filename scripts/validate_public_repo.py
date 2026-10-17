@@ -26,7 +26,7 @@ SIGNATURES = [
 ]
 errors: list[str] = []
 listed = subprocess.run(["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, check=True).stdout
-paths = [p.decode() for p in listed.split(b"\\x00") if p]
+paths = [p.decode() for p in listed.split(bytes([0])) if p]
 for path in paths:
     file = ROOT / path
     name = file.name.lower()
