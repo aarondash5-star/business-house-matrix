@@ -1,0 +1,25 @@
+# Business House AI Matrix — Open WebUI local-only UI pilot.
+# Replace OPEN_WEBUI_IMAGE with a reviewed, pinned upstream version or digest.
+# No LibreChat, OpenClaw, tools, Temporal or Brain services run in this UI-only gate.
+services:
+  open-webui:
+    image: ${OPEN_WEBUI_IMAGE:?Set a reviewed/pinned official image version or digest in .env}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:8080"
+    volumes:
+      - open-webui-data:/app/backend/data
+    environment:
+      WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY:?Generate a unique strong secret in .env}
+      WEBUI_AUTH: "True"
+      ENABLE_SIGNUP: ${ENABLE_SIGNUP:-False}
+      DEFAULT_USER_ROLE: pending
+      ENABLE_PASSWORD_VALIDATION: "True"
+      ENABLE_PLUGINS: "False"
+      ENABLE_TOOLS: "False"
+      ENABLE_FUNCTIONS: "False"
+      ENABLE_TOOL_SERVERS: "False"
+      ENABLE_OLLAMA_API: "False"
+      ENABLE_OPENAI_API: "False"
+volumes:
+  open-webui-data:

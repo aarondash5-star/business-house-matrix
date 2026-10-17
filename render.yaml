@@ -1,0 +1,44 @@
+# Business House AI Matrix — Open WebUI only (pilot)
+# Render Free blueprint. Its database expires after 30 days; NOT production-safe.
+# Secrets are injected interactively in the Render UI, never stored in Git.
+services:
+  - type: web
+    name: bhm-open-webui-pilot
+    runtime: image
+    plan: free
+    image:
+      url: ghcr.io/open-webui/open-webui:v0.11.3-slim
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: WEBUI_AUTH
+        value: "true"
+      - key: ENABLE_SIGNUP
+        value: "false"
+      - key: DEFAULT_USER_ROLE
+        value: pending
+      - key: ENABLE_PASSWORD_VALIDATION
+        value: "true"
+      - key: ENABLE_OLLAMA_API
+        value: "false"
+      - key: UVICORN_WORKERS
+        value: "1"
+      - key: WEBUI_SECRET_KEY
+        generateValue: true
+      - key: WEBUI_ADMIN_EMAIL
+        sync: false
+      - key: WEBUI_ADMIN_PASSWORD
+        sync: false
+      - key: WEBUI_ADMIN_NAME
+        value: Business House Admin
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bhm-open-webui-db
+          property: connectionString
+databases:
+  - name: bhm-open-webui-db
+    plan: free
+    databaseName: bhm_openwebui
+    user: bhm_webui
+    ipAllowList: []
