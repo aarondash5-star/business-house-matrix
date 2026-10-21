@@ -43,8 +43,11 @@ class PilotPipelineTests(unittest.TestCase):
                           "mode":"hosted_free","text":"Video draft preview only"})
         self.render=patch.object(pilot_pipeline.reel_bridge,"render")
         self.review=patch.object(pilot_pipeline.reel_bridge,"review")
-        for p in (self.manifest,self.research,self.draft,self.render,self.review):
-            p.start()
+        self.mock_manifest=self.manifest.start()
+        self.mock_research=self.research.start()
+        self.mock_draft=self.draft.start()
+        self.mock_render=self.render.start()
+        self.mock_review=self.review.start()
 
     def tearDown(self):
         for p in (self.review,self.render,self.draft,self.research,self.manifest):
@@ -58,16 +61,16 @@ class PilotPipelineTests(unittest.TestCase):
         self.assertEqual(result["stages"]["research"]["state"],"PASS")
         self.assertFalse(result["published"])
         self.assertFalse(result["paid"])
-        self.render.target.assert_not_called()
-        self.assertNotIn("PRIVATE GSC KEYWORD",str(self.draft.target.call_args))
-        self.assertNotIn("IGNORE PREVIOUS INSTRUCTIONS",str(self.draft.target.call_args))
+        self.mock_render.assert_not_called()
+        self.assertNotIn("PRIVATE GSC KEYWORD",str(self.mock_draft.call_args))
+        self.assertNotIn("IGNORE PREVIOUS INSTRUCTIONS",str(self.mock_draft.call_args))
         self.assertFalse(result["rights_approved"])
 
     def test_writes_and_spend_fail(self):
         for change in ({"publish_enabled":True},{"spend_enabled":True}):
             with self.assertRaises(RuntimeError):
                 pilot_pipeline.run(PAYLOAD,{**CFG,**change})
-        self.research.target.assert_not_called()
+        self.mock_research.assert_not_called()
 
     def test_unsigned_or_missing_sources_block_without_model(self):
         bad=signed_research()
@@ -75,24 +78,24 @@ class PilotPipelineTests(unittest.TestCase):
         with patch.object(pilot_pipeline.unified_research,"collect",return_value=bad):
             out=pilot_pipeline.run(PAYLOAD,CFG)
         self.assertEqual(out["state"],"BLOCKED_RESEARCH")
-        self.draft.target.assert_not_called()
+        self.mock_draft.assert_not_called()
 
     def test_over_temperature_series_block_render(self):
         with patch.object(pilot_pipeline,"thermal_series",return_value=[60,60,66,78,75]):
             out=pilot_pipeline.run(PAYLOAD,{**CFG,"render_enabled":True})
         self.assertEqual(out["state"],"BLOCKED_THERMAL")
         self.assertEqual(out["stages"]["thermal_render"]["observed_c"],[60,60,66,78,75])
-        self.render.target.assert_not_called()
+        self.mock_render.assert_not_called()
 
     def test_missing_sensor_blocks(self):
         with patch.object(pilot_pipeline,"thermal_series",return_value=[None,62,61,61,61]):
             out=pilot_pipeline.run(PAYLOAD,{**CFG,"render_enabled":True})
         self.assertEqual(out["state"],"BLOCKED_THERMAL")
-        self.render.target.assert_not_called()
+        self.mock_render.assert_not_called()
 
     def test_render_success_remains_draft_pending_review(self):
-        self.render.target.return_value={"video":"/private/reel.mp4","length":12}
-        self.review.target.return_value={"technical_checks_passed":True}
+        self.mock_render.return_value={"video":"/private/reel.mp4","length":12}
+        self.mock_review.return_value={"technical_checks_passed":True}
         with patch.object(pilot_pipeline,"thermal_series",return_value=[60]*5):
             out=pilot_pipeline.run(PAYLOAD,{**CFG,"render_enabled":True})
         self.assertEqual(out["state"],"DRAFT_NEEDS_HUMAN_QA")
