@@ -96,3 +96,52 @@ PY
 | 20:00 | Follow-up audit reuse | Existing one-time task rescheduled for 24h+ review | `Matrix Gate 4 Audit` |
 
 **Never label a queued/scheduled job as a passed final test.** The original Gate 1 is **certified**; Gates 2/3/4 have the explicit state shown above.
+
+
+## Updated 2026-10-22 01:36–01:48 IST — owner-authorized Mac workload cleanup + actual video rendering
+
+**User authorization:** "kill all heavy mac tasks and try rendering"; owner reconfirmed existing root access and directed use of documented Generic Linux SSH permissions. Read authenticated production docs in \`karanzing1992/engagement-core/docs/GENERIC_SSH_THREE_LANES_ROLLOUT_20261021.md\` and \`GENERIC_SSH_MCP_SCHEMA_PLUGIN_RELEASE_20261022.md\`: both Mac and Dell retain passwordless root via \`generic-auto-exec\` sudo, and six-lane authenticated SSH schema. Verified live \`sudo -n /usr/bin/id -u\` returned **0** on Mac. **No sudoers, authentication or bridge permission changes.**
+
+### 1. Before cleanup
+
+At 01:36 IST Mac had ~**82.8°C** SMC TC0F, ~**77°C** core package, **6496 RPM** fan, two large Firefox isolated web content processes (verified PIDs **4923** ~2.4GB and **134336** ~1.0GB RSS) and main desktop Firefox process **4669**. The two children cumulatively accounted for high CPU; numbers from \`ps\` represent cumulative process activity rather than point-in-time utilization. All four protected Mac services (\`generic-linux-automator\`, \`cron\`, \`mbpfan\`, \`thermald\`) ACTIVE, passive Gate4 observer active.
+
+Initial overly strict \`sudo -n -u karan true\` permission probe failed, despite working root sudo. After root access confirmed, first Python PID validator correctly did not kill anyone because Firefox exposed a *single combined cmdline* and the code incorrectly checked \`b'-contentproc' in args\`. An inspection verified both were genuine \`karan\`-owned Firefox content children. A subsequent root Python script correctly validated uid=1000, exact \`/usr/lib/firefox/firefox-bin\`, and both \`-contentproc\` and \`-parentPid 4669\` in the cmdline before issuing **SIGTERM to exactly those two PIDs**. **Termination successful**, terminal SSH receipt \`fa0dbbc8-fec8-44d8-8e17-8a1c137492e3\` exit 0; no \`kill -9\`, privilege grant, unrelated PID termination or signal to SSH workers. Remaining Firefox processes also exited following child terminations; the user's browser session may need reopening and tab restoration.
+
+After cleanup: **5.3 GiB available RAM**, 591 MiB swap used; 8 SMC max series **69,55,55,54,53,53,53,53°C**, fan ~3993 RPM and package ~53°C. No cooling or sensor threshold changes.
+
+### 2. Preview render trials
+
+The owner approved a render attempt. Scope: preview only, **never publish or spend**, original 3 already-staged files \`guest.jpg\`, \`sauna.jpg\`, \`official-logo.jpg\`, 228,757 bytes. Existing \`reel_bridge.render\` protects output with real-time \`mac_temperature_c\` read, **68°C cutoff**, forced preview-only \`--no-ai\` original Reel Studio, 100s bounded subprocess, periodic in-run abort. Render permission \`render_enabled\` was supplied **in memory to exactly this call**; persistent \`brain/config.json\` unchanged, publish/spend still false.
+
+1. **Initial monitored Mac render**: 6 preflight readings 52,52,55,52,52,51°C. ffmpeg began encoding, but in-run sensor tripped the unchanged 68°C cutoff. The wrapper killed its child process group, returned \`Reel preview stopped by in-run thermal monitor\`, terminal Mac SSH task \`b48d7695-41eb-4f32-82fc-88f5a4cfb6bc\` **failed**, exit 6. Partial segments existed, no report or complete MP4. **Not certified as successful video.**
+2. First CPU-affinity retry was **blocked before encoding** due one 62°C headroom spike while using stricter self-imposed 60°C stable target; task \`915da001-4572-44f0-b20c-8a54cfafd88a\` exit 7, no files moved or overwritten.
+3. **Success, CPU-constrained retry**: used Linux \`nice -n 19 taskset -c 0\` to restrict one invocation and inherited child FFmpeg processes to **one CPU core** with lower scheduling priority. Six preflight max SMC readings **48°C consistently**, and original 68°C in-run emergency guard retained. Preserved first aborted attempt's partial files in a separate owner-private archive \`renders/moksha-originals-20261021.failed-thermal-attempt1-20261022\` via atomic rename; original 3 private source images untouched. Render completed: **9.6 seconds, 360 × 640 vertical MP4**, 3 staged source images, \`reel_bridge.review\` returned \`technical_checks_passed=true\`, \`preview_only=true\`, \`vertical=true\`, \`has_video=true\`, \`duration_sensible=true\`. New MP4 path: \`/opt/business-house-matrix/marketing/brain/renders/moksha-originals-20261021/reel_preview.mp4\`. **No publication**; \`not_generic_outro=false\` (ends in "WATCH MORE"), \`rights_verified=false\`, \`brand_reviewed=false\`. State \`DRAFT_NEEDS_HUMAN_QA\`, so **NOT publication-ready**. Post-render Mac max sensor **69°C**; in-run guardian did not trip at its sampled intervals. Success **terminal development-lane SSH receipt \`a088c739-4468-4fa2-94de-87696fbb1443\` exit 0**, message \`GATE2_PREVIEW_RENDER_TECHNICAL_PASS\`. This proves a low-load actual Mac-owned MP4 was produced; **not** unattended end-to-end Gate3 nor 24h thermal load stability.
+
+### 3. Independent ffprobe and bridge outage — unresolved
+
+A subsequent **read-only** \`ffprobe\`, SHA-256, file stat, renderer report readback and idempotent Mac \`reel_review\` enqueue was queued on original operations SSH lane as **\`f18b10b2-b295-4950-aef4-bf04fa12ce77\`**. It was still \`running\` without stdout/exit status when all three Mac lane heartbeats fell offline; Mac \`linux_host_status\` at **2026-10-21 20:17:32 UTC** returned \`online=false, age_seconds=77\`. Dell SSH still ONLINE. Independent control lane request rejected \`Requested SSH lane offline; no job queued\`. **Do not replay that in-flight idempotent operation until its terminal receipt is known.** There is no evidence that ffprobe finished, despite the earlier renderer's embedded ffprobe and review succeeding. The fault cause (Wi-Fi, sleep, bridge, host shutdown, etc.) has NOT been established. This new bridge interruption is **Gate4 resilience evidence requiring separate recovery diagnosis**, not a certification success.
+
+### 4. Current release verdict / next actions
+
+| Gate | Status after cleanup | Evidence |
+| --- | --- | --- |
+| Gate 1 | **PASS**, existing certification | Research relay independently certified. New Mac worker outage prevents claiming *current* uptime, does not erase historical receipts. |
+| Gate 2 | **MONITORED PREVIEW RENDER PASS; FINAL RELEASE QA PENDING** | New 9.6s vertical MP4, monitored/single-core, no publish. Formal manual brand, asset rights and generic outro correction needed; ffprobe independent follow-up delayed by Mac outage. |
+| Gate 3 | **PARTIAL** | Autonomous signed research + hosted concept had earlier completed with \`BLOCKED_RENDER_DISABLED\`; a **separate supervised** render succeeded, not one continuously linked autonomous video/QA job. |
+| Gate 4 | **NOT CERTIFIED** | Old active 24h soak failed at 93°C after 55s. Passive service had been running, but is currently not observable through SSH due Mac offline. Reboot/network recoveries not independently verified. |
+
+**Takeover commands after Mac restored (READ ONLY first):**
+
+\`\`\`bash
+B=/opt/business-house-matrix/marketing/brain
+python3 "$B/brain.py" status --verbose
+python3 "$B/passive_soak.py" status passive-20261022-soak
+stat "$B/renders/moksha-originals-20261021/reel_preview.mp4"
+ffprobe -v error -show_entries format=duration,size,bit_rate -show_entries stream=codec_name,codec_type,width,height -of json "$B/renders/moksha-originals-20261021/reel_preview.mp4"
+python3 "$B/brain.py" receipt 02904304-941d-4d66-9477-c1c96542a88f
+sensors | grep -E 'Exhaust|TC0F:|Package id 0:'
+systemctl is-active generic-linux-automator.service cron.service mbpfan.service thermald.service
+\`\`\`
+
+Check Mac host heartbeat first and recover only according to [existing certified SSH runbook](https://github.com/karanzing1992/engagement-core/blob/main/docs/GENERIC_SSH_THREE_LANES_ROLLOUT_20261021.md). Do **not** duplicate unknown in-flight task \`f18b10b2-b295-4950-aef4-bf04fa12ce77\`, delete the new video, repeat renderer, change cooler/fan/thermal guard, claim human rights approval or publish. Browser reopening/tab restore may be needed by the desktop owner. Additional user-approved production creative review and 24h safety/load evidence remain necessary.
