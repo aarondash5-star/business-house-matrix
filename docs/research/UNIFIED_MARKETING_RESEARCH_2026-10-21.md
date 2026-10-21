@@ -82,3 +82,10 @@ The code performs OAuth refresh against Google's fixed domain and POSTs **only S
 The Mac Brain previous version was backed up at `brain.py.pre-unified-research-20261021`. To disable the new task only, restore that one file from local backup; do not uninstall the working certified Gate 1 relay/Trends or delete property data without owner instruction. No scheduled job was added or changed for GSC.
 
 **Gate 1 permanent research remains certified; new unified adapter has independent tests and a separate live acceptance receipt. Gates 2–4 (thermal-safe creative video, full pilot, extended soak) remain unapproved/pending.**
+
+
+## Verified unattended live acceptance — added after first run
+
+At `2026-10-21T18:38:09Z`, the **existing 2-minute Mac Marketing worker** completed production read-only `research_brief` job **`8a7fd707-8c77-49d9-8335-b6487aeff4b2`**, attempt 1 in **7.522 seconds**, after two enqueue calls returned that same idempotent job UUID. Signed sealed Mac-Dell request **`aeba7227-b170-4acf-beb6-aee851fa92f1`** returned **five attributed HTTPS source URLs**, with `authenticated_relay=true`. The Google Trends store had **no relevant** national spike for this brief (`no_relevant_observation`) and neither an Explore CSV comparison nor a verified property GSC sample; result correctly returned `property_not_selected` and `oauth_configured=false`, with no made-up metrics. Mac Brain queue advanced **13→14 completed**. Live readback SSH task **`23ba1bd0-a62a-4b6c-991f-fb5c2c63f13f`**, terminal `status=completed,exit_code=0`.
+
+**Acceptance conclusion:** unified research Brain task is wired, deployed, regression-tested, and autonomously executed via existing trusted Gate-1 transport. Genuine GSC property authorization and settled query ingestion are a **separate remaining connector task**, not currently live. Do not claim Google Search Console data is available before a site is authorized and ingested.
