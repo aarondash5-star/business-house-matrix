@@ -190,3 +190,17 @@ Verified against the live `mac-linux` (KARAN) and `dell-linux` (karan-Inspiron-5
 **Unresolved release gates:** (1) authenticated persistent Mac↔Dell research transport / router-level isolation fix; (2) thermally safe Mac Reel Studio rendering under the existing guard; (3) a verified single autonomous Marketing Brain run spanning research → planning → finished video → QA; (4) sustained longer-duration host/network recovery evidence. Avoid claiming fully autonomous MVP until these pass.
 
 Independent Matrix project only. Do not synchronize private Moksha Master data into this repository.
+
+
+## Latest takeover verification — 2026-10-21 22:45–22:54 IST
+
+**Status: NOT CERTIFIED; three production-path gates BLOCKED, recovery certification PARTIAL.** The entire preexisting Marketing runtime was reused without code, secret, network, root, thermal or publication changes. See [exact verified SSH and job receipts](receipts/MARKETING_AI_RELEASE_GATES_2026-10-21.md).
+
+- Both `mac-linux` and `dell-linux` initially passed authenticated identity probes; existing nonroot service identity and scheduler services survived. Mac's **30/30** latest tests, Dell controller/sandbox selftests PASS.
+- **Gate 1 BLOCKED:** `Andaz` Mac and `andaz` Dell on separate overlapping `192.168.0.0/24` networks; Mac HTTP `/health` to `192.168.0.103:18888` timed out, no authenticated overlay present. Dell localhost SearXNG works, LAN gateway OFF; Mac research policy OFF. No speculative tunnel, IP allowlist or Wi-Fi change.
+- **Gate 2 BLOCKED:** Mac SMC reached **77°C**, later **75°C**, above the enforced **68°C** render cutoff. Original three-photo batch passes preflight, but actual Mac Reel Studio render was not attempted at unsafe heat; no Mac-owned MP4 exists yet.
+- **Gate 3 BLOCKED:** Do not submit a fake full pilot until trusted Mac→Dell search and safe Mac rendering are actually functioning. No new full-video production job was created.
+- **Gate 4 PARTIAL:** Duplicate-key Mac ping returned one job `881a4f47-646c-4565-a2eb-7bc822a3729c`, unattended cron completed it first attempt 17:22:01Z; Mac completed count **11**. Dell controller duplicate-key public-search test returned one job `8f39e7eb-4fa7-45fa-a800-19ad7b423716`; daemon completed first attempt 17:20:58Z with five public attributed SearXNG results. Dell SSH bridge heartbeat briefly went stale and automatically returned online, and the original queued readback was recovered without resubmission. Deliberate disconnect/reboot and long unattended soak not tested.
+- **Safety confirmed:** `publish_enabled=false`, `spend_enabled=false`, `local_inference_enabled=false`, `searxng-search.enabled=false`; no paid fallback and no Moksha Master synchronization.
+
+**Next order:** owner-approved trusted common LAN or authenticated private relay → thermally safe in-run Mac render → one real linked research-to-video QA pilot → extended controlled recovery/soak. This update supersedes prior queue counts and earlier wording that could imply Mac research or finished editor autonomy.
