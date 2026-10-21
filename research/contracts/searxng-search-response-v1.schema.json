@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/aarondash5-star/business-house-matrix/blob/main/research/contracts/searxng-search-response-v1.schema.json",
+  "title": "Matrix SearXNG public search response v1",
+  "type": "object",
+  "required": [
+    "provider",
+    "node",
+    "results",
+    "result_count",
+    "source_attribution_required",
+    "untrusted_external_content",
+    "automatic_publication"
+  ],
+  "properties": {
+    "provider": {
+      "const": "self-hosted-searxng"
+    },
+    "node": {
+      "const": "dell-linux"
+    },
+    "results": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "title",
+          "url",
+          "snippet",
+          "engine"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^https://",
+            "maxLength": 700
+          },
+          "snippet": {
+            "type": "string",
+            "maxLength": 550
+          },
+          "engine": {
+            "type": "string",
+            "maxLength": 40
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "result_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "source_attribution_required": {
+      "const": true
+    },
+    "untrusted_external_content": {
+      "const": true
+    },
+    "automatic_publication": {
+      "const": false
+    }
+  },
+  "additionalProperties": false
+}
