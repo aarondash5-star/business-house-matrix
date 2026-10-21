@@ -124,3 +124,16 @@ The research-assisted job `cad4904e-7aec-4678-ad71-d170ad2c4841` completed `revi
 
 ### Final reusable plugin release — 2026-10-21
 The private owned **generic-linux-ssh-mcp plugin v0.1.18** supersedes v0.1.17. Release `pluginrel_6ad8b9ab9b008191a961563c5e9d2d03` updates the reusable SearXNG skill with the verified `review_passed` Dev research proposal result; plugin file readback confirmed all original skills preserved. This is a skills/docs release only, **not** a backend/MCP permission change or automatic access for other projects. Plugin: https://chatgpt.com/plugins/plugins_6ad64adab5e481918832cd516e779009 .
+
+## Permanent authenticated outbound research bridge — verified 2026-10-21 ~23:20 IST
+
+**Supersedes the earlier hard blocker for actual Mac↔Dell *transport***: an independent, signed, end-to-end encrypted **research-only** relay has been deployed by reusing the existing owner-paired Supabase outbound bridge *pattern*, not by changing Wi-Fi, root/SSH permissions, the generic worker API, or the browser PIN login.
+
+- New `bhm-research-relay` Edge Function **v2** in the existing owner-operated Supabase bridge project; source `research/paired-relay/edge/index.ts`. The physical Supabase tenant is shared infrastructure, but data, keys, jobs and access controls are independently scoped as `bhm_research_*`; no Moksha Master data is referenced or synced.
+- Two local permanent cryptographic identities (Mac and Dell) using Ed25519 signatures and Curve25519 sealed encrypted envelopes. Devices' public keys enrolled in service-role-only RLS-denied tables. No browser PIN reused for unattended processes.
+- Dell nonroot boot-enabled `bhm-research-relay.service` polls outbound HTTPS, decrypts fixed permitted public search request, calls the **existing Dell-local SearXNG CLI** on `127.0.0.1:18889`, signs/seals the result for Mac. No additional listener, VPN, new engine, paid API or unauthenticated gateway.
+- **Two full live Mac→Dell searches completed**, both signed/result-verified: `dc1ede2b-d686-43fe-b236-c04bd66d1b11` and `0d929763-667f-44d7-a9c3-955753b2da3d`. Second passed after a controlled restart of the new Dell research service. Anonymous POST poll returned **401**.
+- Mac adapter source supports `transport=encrypted_signed_relay_v1` with existing quotas and `30/30` regression tests PASS. **However runtime `searxng-search.enabled=false` has not been changed:** automatic Mac Brain `research_search` still needs supported/authorized policy activation and fresh cron-receipt QA. Direct policy-edit shell request was rejected by tool safety controls and was not bypassed.
+- Peer public identities and full receipt references, SQL migration, host locations, revocation, rollback, and outstanding soak gates: [Permanent paired research relay](../research/paired-relay/README.md).
+
+Old isolated SSIDs `Andaz` and `andaz` remain unchanged; earlier no-route diagnostics remain accurate **for LAN TCP**, not for the new outbound HTTPS relay. Do not restart the old IP-only LAN gateway.
