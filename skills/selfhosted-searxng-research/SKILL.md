@@ -53,3 +53,7 @@ New project adopters should wrap this in an explicit read-only adapter with proj
 - Connection failures on Mac require verifying the SSIDs, network routes and trusted peer reachability. Do **not** fix by exposing port 18889/18888 to WAN, changing Wi-Fi remotely, copying credentials, or tunneling blindly. Restore an approved peer path and separately test a live Mac query before enabling Mac policy.
 - For Dev Brain rollback: preserve the old source \`~/.local/share/matrix-dev-brain/brain.py.pre-searxng-20261021\` and existing SQLite state. Restart only with awareness of in-flight tasks. No automatic job replay.
 - Root/sudo privilege mutations on either machine **always require fresh, separate, exact-host owner approval**, regardless of the user's generic request to update or reuse the skill.
+
+
+## Verified final research-assisted job (later 2026-10-21 update)
+Dell Dev Brain job `cad4904e-7aec-4678-ad71-d170ad2c4841` subsequently completed with `review_passed`; five mode-0600 artifacts, including `research.json`, were verified. The output declares `tests_executed=false`, `repository_changed=false`. It demonstrates successful research-to-proposal and text-review integration, **not** automated code execution, merge or deployment. Supersedes the earlier in-progress note.
