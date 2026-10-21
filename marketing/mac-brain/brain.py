@@ -32,7 +32,8 @@ def configure():
         "spend_enabled": False, "max_concurrent_jobs": 1,
         "local_models": {"planning": "qwen3:1.7b", "vision": "moondream:v2",
                          "code": "qwen2.5-coder:3b"},
-        "providers": [], "ollama_url": "http://127.0.0.1:11434"
+        "providers": [], "ollama_url": "http://127.0.0.1:11434",
+        "max_core_temp_c": 86.0, "min_available_mem_mb": 1900
     }
     ROOT.mkdir(parents=True, exist_ok=True)
     (ROOT / "data").mkdir(mode=0o700, exist_ok=True)
@@ -110,6 +111,32 @@ def http_json(url, body=None, timeout=8):
     with urllib.request.urlopen(req, timeout=timeout) as res:
         return json.loads(res.read(1048576))
 
+def local_resource_guard(cfg):
+    """Refuse new CPU-heavy work when available memory or CPU thermal headroom is low."""
+    mem_kib = None
+    try:
+        for line in Path("/proc/meminfo").read_text().splitlines():
+            if line.startswith("MemAvailable:"):
+                mem_kib = int(line.split()[1])
+                break
+    except OSError:
+        pass
+    min_mb = int(cfg.get("min_available_mem_mb", 1900))
+    if mem_kib is not None and mem_kib / 1024 < min_mb:
+        raise RuntimeError("Local inference deferred: low available memory")
+    max_temp = float(cfg.get("max_core_temp_c", 86.0))
+    temps = []
+    for hw in Path("/sys/class/hwmon").glob("hwmon*"):
+        try:
+            if (hw / "name").read_text().strip() != "coretemp":
+                continue
+            for path in hw.glob("temp*_input"):
+                temps.append(int(path.read_text().strip()) / 1000)
+        except (OSError, ValueError):
+            continue
+    if temps and max(temps) >= max_temp:
+        raise RuntimeError("Local inference deferred: CPU temperature at or above policy limit")
+
 def execute(task, payload):
     cfg = configure()
     # Deliberately do not consult/dispatch external API provider configuration.
@@ -120,6 +147,7 @@ def execute(task, payload):
         return {"ok": True, "models": sorted(m["name"] for m in response.get("models", [])),
                 "mode": "local"}
     if task == "draft_plan":
+        local_resource_guard(cfg)
         model = cfg["local_models"]["planning"]
         prompt = ("You are a Marketing department planning assistant. Provide only a "
                   "DRAFT content plan, not social posts or external actions. "
