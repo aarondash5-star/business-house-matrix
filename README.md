@@ -37,6 +37,10 @@ GitHub Actions runs validation and, after separate cloud identity/configuration 
 **Safety:** Do not commit credentials, private data, user conversations, database snapshots, backups, uploads or encryption keys. The CI scan is not a substitute for thorough security review. Existing business projects and cloud accounts are not shared with this Matrix.
 
 
+## Marketing AI — active next-chat handover
+
+**Start here for the pending Marketing MVP work:** [Marketing AI next-chat execution handover (21 Oct 2026)](docs/handoffs/MARKETING_AI_HANDOVER_2026-10-21.md). It contains the four release gates, safe operator commands, last verified evidence, and the copy/paste takeover prompt. **Do not declare Marketing autonomy complete** until cross-host research, safe Mac rendering, the unattended Moksha pilot, and resilience certification pass.
+
 ## Autonomous MVP pilot checkpoint — 2026-10-21
 - [Live autonomous MVP implementation, QA, and blockers](docs/AUTONOMOUS-MVP-IMPLEMENTATION-2026-10-21.md)
 - [Central durable dispatcher](brain/mvp-controller/controller.py) · [isolated QA](brain/mvp-controller/sandbox.py) · [bounded correction](brain/mvp-controller/repair.py)
