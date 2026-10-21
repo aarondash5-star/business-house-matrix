@@ -137,3 +137,8 @@ The private owned **generic-linux-ssh-mcp plugin v0.1.18** supersedes v0.1.17. R
 - Peer public identities and full receipt references, SQL migration, host locations, revocation, rollback, and outstanding soak gates: [Permanent paired research relay](../research/paired-relay/README.md).
 
 Old isolated SSIDs `Andaz` and `andaz` remain unchanged; earlier no-route diagnostics remain accurate **for LAN TCP**, not for the new outbound HTTPS relay. Do not restart the old IP-only LAN gateway.
+
+
+### Gate 1 final automation acceptance — 2026-10-21 23:38 IST
+
+The previously staged Mac SearXNG client is now **activated** via its own audited `router.py activate-research-relay` CLI after MAC/Dell fingerprint verification. The correct transport is a separate, authenticated and encrypted outbound HTTPS relay, **not** the old unreachable `192.168.0.103:18888` LAN gateway. The legacy gateway remains OFF; Dell SearXNG remains bound to localhost. Mac `research_search` jobs are automatically processed by existing 2-minute cron and return attributed research receipts. Two real jobs, all first-attempt completed, including one after Dell service restart; a separate Mac request survived brief research-worker downtime. 33/33 regression suite passes. Certificate: [Gate 1](receipts/MARKETING_GATE1_CERTIFICATION_2026-10-21.md). Gate 4's 24h and reboot tests still pending. No scope beyond read-only public research, no credentials copied to the public repo.
