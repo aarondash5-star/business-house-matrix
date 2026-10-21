@@ -26,11 +26,13 @@ ENDPOINTS = {
     "groq": "https://api.groq.com/openai/v1/chat/completions",
     "cloudflare-workers-ai": "https://api.cloudflare.com/client/v4/accounts/{account}/ai/run/@cf/qwen/qwen3.8-27b",
     "openrouter": "https://openrouter.ai/api/v1/chat/completions",
+    "gemini": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
 }
 ALLOWED = {
     "groq": {"openai/gpt-oss-120b", "qwen/qwen3.8-27b"},
     "cloudflare-workers-ai": {"@cf/qwen/qwen3.8-27b"},
     "openrouter": {"qwen/qwen3.8-27b:free"},
+    "gemini": {"gemini-2.5-flash"},
 }
 PROFILES = {"creative", "copy", "research", "vision", "review", "fast"}
 MAX_PROMPT = 4500
@@ -72,6 +74,11 @@ def read_policy():
             raise RuntimeError("invalid quota")
         if s.get("enabled") and not s.get("model_license_approved", False):
             raise RuntimeError("model license not approved")
+    for tool in p.get("tool_connections", []):
+        if tool.get("id") != "tavily-search" or tool.get("provider") != "tavily" or tool.get("type") != "search":
+            raise RuntimeError("unrecognized external research tool")
+        if tool.get("enabled") is not False:
+            raise RuntimeError("external research tool requires separate integration and permission review")
     return p
 
 def db():
@@ -159,6 +166,8 @@ def reserve(conn, slot):
         raise
 
 def call_api(s, prompt, *, max_output_tokens=MAX_OUTPUT_TOKENS):
+    if s["provider"] == "gemini":
+        raise RuntimeError("Gemini proprietary-model exception and data-handling review required")
     key_path = secure_key(s)
     if not key_path:
         raise RuntimeError("credential permission validation failed")
@@ -258,7 +267,10 @@ def status():
                     "credentials_present": bool(secure_key(s))})
     cfg = json.loads(BRAIN_CONFIG.read_text())
     return {"version": "0.2.0", "online_enabled": cfg.get("online_enabled", False),
-            "paid_inference_allowed": False, "connections": out}
+            "paid_inference_allowed": False, "connections": out,
+            "research_tools": [{"id": t["id"], "provider": t["provider"], "enabled": False,
+                                "review_required": True, "category": t["type"]}
+                               for t in policy.get("tool_connections", [])]}
 
 def save_policy(p):
     assert p["paid_inference_allowed"] is False
