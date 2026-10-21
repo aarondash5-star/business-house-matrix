@@ -59,7 +59,7 @@ class MarketingRouterTest(unittest.TestCase):
         self.assertFalse(p["tool_connections"][0]["enabled"])
         p["tool_connections"][0]["enabled"] = True
         self.r.POLICY.write_text(json.dumps(p))
-        with self.assertRaisesRegex(RuntimeError, "requires separate integration"):
+        with self.assertRaisesRegex(RuntimeError, "requires Free-plan"):
             self.r.read_policy()
 
     def test_all_providers_disabled(self):
