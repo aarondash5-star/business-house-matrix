@@ -47,3 +47,8 @@ python3 /var/lib/generic-linux-automator-exec/matrix-research-transport/transpor
 ```
 
 No ports 18888/18889 are exposed. **Do not use the browser's PIN as a machine authentication credential.**
+
+
+## FINAL RELEASE GATE 1 — PASS, 2026-10-21 23:38 IST
+
+The earlier text stating Mac Marketing runtime research is still OFF is **superseded**: a purpose-built `router.py activate-research-relay` command was reviewed, shipped and successfully activated with cryptographic identity, relay health, safe settings and private policy backup prerequisites. Mac `searxng-search.enabled=true` with `encrypted_signed_relay_v1`, 33/33 tests PASS. **Two** unattended Mac Brain→Dell SearXNG jobs completed on attempt 1 (with 5 attributed HTTPS sources each), including after Dell service restart. A separate encrypted request persisted across a 24-second research-worker interruption and completed automatically after service recovery. Cloud admin checks found 0 pending/stale and 0 anon/authenticated grants. [Final independently recorded certificate](../../docs/receipts/MARKETING_GATE1_CERTIFICATION_2026-10-21.md). This does NOT certify unrelated video/render/24h-soak gates.
