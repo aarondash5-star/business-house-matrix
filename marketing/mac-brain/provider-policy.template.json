@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "scope": "business-house-matrix/marketing/mac",
+  "paid_inference_allowed": false,
+  "time_basis": "UTC",
+  "notes": "Dell-style slots / preference ranks / conservative reservation ledger; credential-free template. Provider Free plan and billing-off confirmation required before manual activation. Cloudflare neuron usage is NOT measured by this local request counter.",
+  "connections": [
+    {
+      "id": "groq-creative-oss120",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "enabled": false,
+      "free_plan_confirmed": false,
+      "model_license_approved": true,
+      "quota_group": "groq-one-account",
+      "max_daily_requests": 40,
+      "max_minute_requests": 4,
+      "preference": {
+        "creative": 10,
+        "research": 10,
+        "review": 10,
+        "copy": 25,
+        "fast": 30
+      }
+    },
+    {
+      "id": "groq-copy-qwen",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "enabled": false,
+      "free_plan_confirmed": false,
+      "model_license_approved": true,
+      "quota_group": "groq-one-account",
+      "max_daily_requests": 40,
+      "max_minute_requests": 4,
+      "preference": {
+        "copy": 10,
+        "vision": 20,
+        "creative": 20,
+        "research": 25,
+        "review": 35,
+        "fast": 10
+      }
+    },
+    {
+      "id": "cloudflare-vision-qwen",
+      "provider": "cloudflare-workers-ai",
+      "model": "@cf/qwen/qwen3.8-27b",
+      "enabled": false,
+      "free_plan_confirmed": false,
+      "model_license_approved": true,
+      "quota_group": "cloudflare-one-account",
+      "max_daily_requests": 8,
+      "max_minute_requests": 2,
+      "account_id": "",
+      "preference": {
+        "vision": 10,
+        "creative": 30,
+        "research": 40,
+        "copy": 45,
+        "review": 30,
+        "fast": 35
+      }
+    },
+    {
+      "id": "openrouter-free-qwen",
+      "provider": "openrouter",
+      "model": "qwen/qwen3.8-27b:free",
+      "enabled": false,
+      "free_plan_confirmed": false,
+      "model_license_approved": true,
+      "quota_group": "openrouter-one-account",
+      "max_daily_requests": 8,
+      "max_minute_requests": 2,
+      "preference": {
+        "creative": 80,
+        "copy": 80,
+        "vision": 80,
+        "research": 80,
+        "review": 80,
+        "fast": 80
+      }
+    }
+  ]
+}
