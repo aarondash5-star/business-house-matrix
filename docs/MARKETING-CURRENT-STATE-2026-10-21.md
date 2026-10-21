@@ -151,7 +151,7 @@ systemctl is-active cron generic-linux-automator.service ollama.service
 ## Update — Tavily keyless, 2026-10-21
 
 - Source: https://docs.tavily.com/documentation/keyless . Tavily Search and Extract keyless endpoints supported, no account/key required, free but rate-limited. External Tavily is a proprietary SaaS (not an open-source model).
-- Mac research adapter installed, connected to Brain tasks \`research_search\` and \`research_extract\`; only public non-sensitive queries or public HTTPS URLs permitted. **No Tavily key stored**.
+- Mac research adapter installed, connected to Brain tasks `research_search` and `research_extract`; only public non-sensitive queries or public HTTPS URLs permitted. **No Tavily key stored**.
 - Activated Tavily's public-only keyless registry entry with self-imposed 2/minute, 15/day, 100/month caps and no paid fallback, leaving Groq live.
 - First **real** Tavily keyless search returned **HTTP 429**; it did **not** return successful research results. Stored the rejection and started a 1-hour local cooldown against repeated calls.
 - Verified 25 tests passed (8 router, 7 Tavily research, 4 Brain, 6 Reel Studio bridge). The HTTP request mock verified no Authorization header.
@@ -168,4 +168,4 @@ systemctl is-active cron generic-linux-automator.service ollama.service
 
 
 ### Network clarification — 2026-10-21
-Mac \`Andaz\` and Dell \`andaz\` are DIFFERENT Wi-Fi networks (distinct BSSIDs/gateway responses), even though both were assigned \`192.168.0.x\`. Their overlapping subnets cannot reach each other. Mac Marketing's SearXNG adapter therefore remains disabled. The unused Dell LAN gateway was stopped to prevent LAN exposure; Dell Dev can search SearXNG locally with no cross-network dependency. No unapproved SSID changes or paid relay were made. See [updated SearXNG deployment](RESEARCH-SEARXNG-DEPLOYMENT-2026-10-21.md).
+Mac `Andaz` and Dell `andaz` are DIFFERENT Wi-Fi networks (distinct BSSIDs/gateway responses), even though both were assigned `192.168.0.x`. Their overlapping subnets cannot reach each other. Mac Marketing's SearXNG adapter therefore remains disabled. The unused Dell LAN gateway was stopped to prevent LAN exposure; Dell Dev can search SearXNG locally with no cross-network dependency. No unapproved SSID changes or paid relay were made. See [updated SearXNG deployment](RESEARCH-SEARXNG-DEPLOYMENT-2026-10-21.md).
