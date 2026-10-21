@@ -106,20 +106,17 @@
   ],
   "tool_connections": [
     {
-      "id": "tavily-search",
-      "provider": "tavily",
+      "id": "searxng-search",
+      "provider": "searxng",
       "type": "search",
       "enabled": false,
-      "free_plan_confirmed": false,
-      "license_review_required": true,
-      "quota_group": "tavily-free-month",
-      "max_monthly_credits": 1000,
-      "conservative_monthly_credits": 100,
-      "note": "Public-only Tavily keyless Search/Extract, shared rate limits, 100/month conservative local cap; no key, no paid fallback, proprietary hosted research service. Disabled in template, selectively enabled on owned Mac.",
-      "keyless_mode": true,
-      "public_only": true,
-      "external_search_service_disclosed": true,
-      "credential_required": false
+      "self_hosted": true,
+      "open_source_license_reviewed": true,
+      "license": "AGPL-3.0-or-later",
+      "paid_fallback_allowed": false,
+      "endpoint": "Dell LAN-only allowlisted gateway",
+      "conservative_daily_requests": 100,
+      "notes": "Replaces Tavily. Requires installed Dell SearXNG engine and fixed Mac-to-Dell LAN gateway; no arbitrary URLs or public internet exposure."
     }
   ]
 }
