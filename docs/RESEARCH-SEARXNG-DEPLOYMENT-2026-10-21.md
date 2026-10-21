@@ -109,3 +109,10 @@ sudo matrix-brain selftest
 **Security:** Never submit business secrets, account IDs, unpublished repositories or credentials as a research query. Search results are only information candidates, not verified facts. Research costs no SearXNG API fees but upstream providers can rate-limit requests. The Dell Dev Brain's repository-write permissions remain unchanged (disabled).
 
 **Recovery:** Restore the saved `brain.py.pre-searxng-20261021` after stopping the Dev Brain service if necessary; retain the additive `research_query` DB column (safe for previous code to ignore). Restart `matrix-dev-brain.service` and validate. Preserve the rootless `bhm-searxng.service` and generic SSH automator.
+
+## Portable skill & plugin handoff — 2026-10-21
+- **SOURCE:** Cross-project reusable read-only research skill `skills/selfhosted-searxng-research/SKILL.md`; generic protocol `docs/REUSABLE-RESEARCH-CONTRACT.md`; bounded result JSON Schema `research/contracts/searxng-search-response-v1.schema.json`.
+- **PLUGIN_PUBLISHED / VERIFIED:** owned private plugin `generic-linux-ssh-mcp` updated from v0.1.16 to v0.1.17, release `pluginrel_6ad8b8350ef88191b4fec49bb4f876f9`; `get_plugin_files` readback found `skills/selfhosted-searxng-research/SKILL.md` and all original plugin files retained. Plugin URL: https://chatgpt.com/plugins/plugins_6ad64adab5e481918832cd516e779009 .
+- **DELL_LIVE:** owner-scoped local SearXNG works via authenticated Generic Linux SSH's read-only CLI; Dev Brain integrated as opt-in research step. **MAC_LIVE:** research router disabled until secure private network path is verified.
+- **CONSUMER_ADOPTION:** no other project was silently connected. Reuse requires an explicit opt-in from each project; do not synchronize private prompts, credentials, data stores, or unrestricted shell access. Existing plugin only supplies reusable instructions, not a new search API or tool permission.
+- **IMPORTANT:** Dell and Mac root/sudo privilege policies remain governed by separate fresh owner approval; the skill update did not change Linux permissions, Supabase MCP/backend, credential vaults, Wi-Fi or firewall.
