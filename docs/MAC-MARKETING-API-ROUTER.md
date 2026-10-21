@@ -107,3 +107,15 @@ sudo -u generic-auto-exec python3 /opt/business-house-matrix/marketing/brain/rou
 The enrollment step prompts invisibly and saves a 0600 secret file. \`verify-provider\` checks authentication and model availability via the authenticated model-list endpoint, **without performing inference**. Activating the slots is a separate decision; leave \`online_enabled\` false until Groq Free plan/no-billing is confirmed and a bounded live test has passed.
 
 Current status: Mac online and queue active, **no Groq key enrolled**, Groq slots disabled. A no-credential verification was tested to fail safely and ten isolated router/brain regression tests passed after adding the authenticated model check.
+
+## Groq live activation — 2026-10-21, 16:50–16:52 IST
+- The owner completed secure interactive Groq key enrollment and Free-plan confirmation.
+- **Live checks:** `verify-provider` authenticated both `groq-creative-oss120` and `groq-copy-qwen` using the single private key (file mode 0600) and returned available model IDs, without inference for these checks.
+- Activated both slots; preserved the shared `groq-one-account` quota group. `online_enabled:true` set in Mac private Brain configuration with rollback copy `config.json.pre-groq-live`.
+- Real GPT-OSS 120B creative smoke request succeeded using `https://api.groq.com/openai/v1/chat/completions`.
+- Real Qwen3.8 27B copy request via autonomous Brain queue and worker succeeded, job `b14cb180-1253-4eac-8567-7793ce5c956f`, state `completed`, receipt persisted, attempt 1.
+- Local ledger recorded **2 requests total** shared across Groq slots. This is local request accounting, not a provider-confirmed billing statement.
+- `publish_enabled:false`, `spend_enabled:false`, `local_inference_enabled:false`. Cloudflare and OpenRouter still disabled and credentialless. Generic SSH, Ollama, cron remained active.
+- **Creative QA needed:** a sample generated hook asserted unverified "zero waste". Draft outputs require factual/brand review before any customer-facing publication.
+- **Operational QA outstanding:** compare two recorded calls against Groq dashboard meters and perform real 429/free-limit checks during normal free-tier use; do not synthesize a real rate limit by deliberately spamming an account.
+- No changes to Dell, Moksha Master, or existing Reel Studio.
