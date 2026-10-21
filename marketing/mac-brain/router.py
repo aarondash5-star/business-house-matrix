@@ -77,12 +77,19 @@ def read_policy():
     for tool in p.get("tool_connections", []):
         if tool.get("id") != "tavily-search" or tool.get("provider") != "tavily" or tool.get("type") != "search":
             raise RuntimeError("unrecognized external research tool")
-        if tool.get("enabled") and not (
-                tool.get("free_plan_confirmed",False)
-                and tool.get("service_terms_reviewed",False)
-                and tool.get("open_source_policy_exception_approved",False)
-                and tool.get("paid_fallback_allowed",False) is False):
-            raise RuntimeError("external research tool requires Free-plan, licensing exception and terms review")
+        if tool.get("enabled"):
+            is_public_keyless=(tool.get("keyless_mode") is True
+                and tool.get("public_only") is True
+                and tool.get("external_search_service_disclosed") is True
+                and tool.get("paid_fallback_allowed") is False
+                and 1<=int(tool.get("conservative_monthly_credits",0))<=100)
+            is_verified_keyed=(tool.get("keyless_mode") is False
+                and tool.get("free_plan_confirmed") is True
+                and tool.get("service_terms_reviewed") is True
+                and tool.get("open_source_policy_exception_approved") is True
+                and tool.get("paid_fallback_allowed") is False)
+            if not (is_public_keyless or is_verified_keyed):
+                raise RuntimeError("Tavily research requires disclosed public-only keyless mode or explicit approved keyed service")
     return p
 
 def db():
