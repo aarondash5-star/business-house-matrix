@@ -22,6 +22,9 @@ async function verify(host:string, message:string, sig:unknown):Promise<boolean>
 async function antiReplay(host:string,ts:unknown,nonce:unknown){
  if(!Number.isInteger(ts)||Math.abs(Math.floor(Date.now()/1000)-Number(ts))>60||!validID(nonce))return false;
  const x=await db.from("bhm_research_nonces").insert({host_id:host,nonce});
+ if(!x.error&&crypto.getRandomValues(new Uint8Array(1))[0]<4){
+  await db.from("bhm_research_nonces").delete().lt("created_at",new Date(Date.now()-600000).toISOString());
+ }
  return !x.error;
 }
 async function main(req:Request):Promise<Response>{
