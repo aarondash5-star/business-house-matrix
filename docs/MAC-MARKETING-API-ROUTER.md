@@ -119,3 +119,31 @@ Current status: Mac online and queue active, **no Groq key enrolled**, Groq slot
 - **Creative QA needed:** a sample generated hook asserted unverified "zero waste". Draft outputs require factual/brand review before any customer-facing publication.
 - **Operational QA outstanding:** compare two recorded calls against Groq dashboard meters and perform real 429/free-limit checks during normal free-tier use; do not synthesize a real rate limit by deliberately spamming an account.
 - No changes to Dell, Moksha Master, or existing Reel Studio.
+
+
+## Newly shortlisted: Tavily research + Gemini Flash — 2026-10-21
+
+Both candidates have been registered **disabled**, preserving the existing live Groq credentials and operational routes.
+
+### Tavily — research tool, NOT an LLM
+- Role: trend research, competitive-intelligence discovery, external source lookup, factual checks for reel drafts.
+- Vendor Researcher Free plan: **1,000 API credits per month**, no credit card required; credits reset on the first day of each month. API usage stops at the free cap unless the plan is upgraded.
+- Registered in `provider-policy.json` under **`tool_connections`**, ID `tavily-search` (not as an inference slot).
+- Current state: `enabled=false`; no credential and no Tavily API adapter/network call. The router actively rejects activating this tool until a separate dedicated research adapter, secure credential path, external-service licensing review, and quota controls pass testing.
+- Suggested initial operational budget after approval: **100/1,000 monthly credits**, basic-depth search only, evidence links retained.
+- Official sources: https://www.tavily.com/pricing , https://docs.tavily.com/documentation/api-reference/endpoint/search
+
+### Gemini 2.5 Flash — multimodal model candidate
+- Official Gemini API Free Tier includes input/output at no monetary charge on supported models and project-specific rate limits. Free-tier prompts/responses may be used to improve Google products.
+- **Proprietary model**: conflicts with Business House Matrix's default open-source-only model-selection policy. No exception has been approved.
+- Registered as `gemini-flash-candidate`, `provider=gemini`, `model=gemini-2.5-flash`, with `enabled=false`, `model_license_approved=false`, `license_review_required=true`, `free_plan_confirmed=false`.
+- Adapter explicitly blocks Gemini API invocation pending a conscious model-licensing and data-processing decision. No Google API key stored or requested. Do not send unpublished customer footage, guest data or business-sensitive assets through the free tier.
+- The associated API project must remain Free Tier without paid billing; free quotas, data processing and access are specific to the actual account.
+- Official sources: https://ai.google.dev/gemini-api/docs/pricing , https://ai.google.dev/gemini-api/docs/billing
+
+### Verification and rollback
+- Existing production Groq creative and copy slots were left enabled and credential reference unchanged, with ledger intact.
+- Added fifth **model candidate slot** and first **research-tool candidate** using additive configuration migration only.
+- Regression: seven router tests and four Brain tests PASS. Active Groq route selection and cron, Ollama, Linux SSH bridge health PASS; no external inference or Tavily search executed.
+- On Mac, rollback files `router.py.pre-tavily-gemini-20261021` and `provider-policy.json.pre-tavily-gemini-20261021`.
+- Activation not part of this shortlist update. Next gated milestone: Tavily research-adapter licensing evaluation, then Gemini open-source-policy exception decision and private-data processing assessment.
