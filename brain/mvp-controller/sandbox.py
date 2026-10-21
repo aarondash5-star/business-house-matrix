@@ -5,6 +5,7 @@ A job MUST have test_*.py unit tests. Syntax-only or model-written review is
 never treated as QA success. No host code exec, no network, no writes, no sudo.
 """
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -45,6 +46,17 @@ def check(batch):
 def run(batch):
     src,meta=check(batch)
     RECEIPTS.mkdir(mode=0o700,parents=True,exist_ok=True)
+    # The full source batch fingerprint makes replay safe without duplicate execution.
+    h=hashlib.sha256()
+    for f in sorted(src.iterdir()):
+        h.update(f.name.encode("utf-8"));h.update(f.read_bytes())
+    digest=h.hexdigest()
+    dest=RECEIPTS/(batch+".json")
+    if dest.exists():
+        cached=json.loads(dest.read_text())
+        if cached.get("source_sha256")==digest:
+            return {**cached,"idempotent_receipt_reused":True}
+        raise ValueError("QA receipt exists for changed source; use new batch ID")
     name="bhm-qa-"+uuid.uuid4().hex[:12]
     cmd=[
       "/usr/bin/podman","run","--rm","--name",name,
@@ -74,14 +86,14 @@ def run(batch):
     result={"batch_id":batch,"status":status,"qa_passed":qa_ok,
             "mode":"rootless_podman_no_network_read_only",
             "files":meta["files"],"test_files":meta["test_files"],
+            "source_sha256":digest,
             "elapsed_seconds":round(time.monotonic()-started,2),
             "output_tail":output[:10000],
             "tests_executed":True,"source_modified":False,
             "repository_changed":False,"publish_allowed":False,
             "paid_access":False}
     temp=RECEIPTS/(batch+".next")
-    dest=RECEIPTS/(batch+".json")
-    if dest.exists():raise ValueError("QA batch already executed; preserve immutable receipt")
+    if dest.exists():raise ValueError("Concurrent QA result exists; preserve immutable receipt")
     with temp.open("x") as f:
         json.dump(result,f,indent=2);f.flush();os.fsync(f.fileno())
     temp.chmod(0o600);temp.replace(dest)
