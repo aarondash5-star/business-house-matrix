@@ -34,3 +34,65 @@ The original 2-minute Mac worker autonomously completed `reel_preflight` Brain j
 5. Log immutable Git SHA, new test counts, remote SSH terminal status and actual assets/QA, fail closed on unknown. Do not claim a future scheduled task already completed. Upon passing all gates, report status to user in this Matrix project alone; do not silently synchronize Moksha Master.
 
 **Follow-on status updates will append to this file.**
+
+## Major step 2 — Linked Gate 3 pilot software delivered and tested
+
+- Reused existing Brain queue, authenticated encrypted SearXNG, Google Trends RSS, authenticated read-only Engagement Core GSC import, confirmed hosted free model and original media inbox; **no new daemon/model/API/vendor/paid plan**.
+- New `marketing/mac-brain/pilot_pipeline.py` source commit `9a0dc15682b9d92747bd7814e38f343e0f3f6e7f`. New `reel_pilot` Brain task and validation commit `c8fba3da932cb9c11fc08983286c0eff1ef21d33`. New tests `test_pilot_pipeline.py` in commits `33ebc38b49d35354a91fa1ae695c4cbf2875a176`, `1971ffdf3d1a4f8384d8bee037284205f6c4ae05`.
+- Pipeline is a **single idempotent job**: safe media scan → source-attributed verified paired `unified_research.collect` → sends ONLY public source titles and sanitized HTTPS links (never GSC queries/metrics) to already-enrolled zero-paid hosted creative API → records concept DRAFT → checks explicit `render_enabled` and, if enabled, five temperature samples and original `reel_bridge.render` in-run guard → calls technical review → ALWAYS leaves human rights and brand approval false, no publishing.
+- Mac deployed `brain.py`, `pilot_pipeline.py`, test file with original Brain backed up as `brain.py.pre-gate3-pilot-20261022`; preflight/production checks **57/57 regression tests PASS** (SSH `82899da7-236a-4aab-9a62-0dc4470bd600`, completed exit 0).
+- Production scheduled-job ID `02904304-941d-4d66-9477-c1c96542a88f`, idempotency key `marketing-gate3-linked-pilot-20261022-001`. **Autonomously completed** by existing Mac 2-minute cron at **2026-10-21 19:56:10 UTC** on attempt 1 (8.631s). Research PASS: four verified public signed SearXNG sources; GSC observed; Trends no relevant topic in its cache. Creative DRAFT READY using already confirmed Free Groq `openai/gpt-oss-120b`. Final explicit pipeline state **BLOCKED_RENDER_DISABLED** because `render_enabled` is not opted-in in existing Mac Brain config. `video_produced=false`, `published=false`, `paid=false`. No fake MP4, no brand or rights signoff. Post-readback SSH `7e2ba775-9798-4f39-ac23-36afecb5c737`, completed exit 0. Brain completed queue advanced to **17**.
+- Gate 3 verdict **SOFTWARE RESEARCH+DRAFT CHAIN PASS; FULL FINISHED VIDEO NOT CERTIFIED**. Gate 2 remains blocked because six earlier thermometer readings varied 60→78°C under a 68°C cutoff, and original active thermal soak already failed at 93°C.
+
+## Major step 3 — Non-invasive 24h Gate 4 passive observer started
+
+- New stdlib-only `marketing/mac-brain/passive_soak.py` at source commit `b16180fa7abe7b48011092fa3b9cccef413049eb`, `test_passive_soak.py` at `f1d987ebaac3b293c5600ba94f1b867744b6fd3d`. Runs **passive read-only** 5-minute sensor/fan/load/service samples; no synthetic CPU stress and no Wi-Fi, fan, SSH or app changes. Writes owner-only `data/gate4/passive-20261022-soak/status.json` and `samples.csv` (0600) and never reports an active-load PASS.
+- Deployed on `mac-linux` using pinned GitHub commit; full **62/62 Mac regression tests PASS**, SSH `41f5bd98-197b-4f49-ac30-a516a0950f56` terminal completed exit 0.
+- Started low-priority isolated existing-user transient systemd unit `bhm-marketing-gate4-passive.service` at **2026-10-21 19:58:07 UTC / 22 Oct 01:28:07 IST**, configured `RuntimeMaxSec=87300`, `NoNewPrivileges=true`, `PrivateTmp=true`, `MemoryMax=80M`, 300-second sample spacing. `generic-auto-exec` already had user `Linger=yes` from prior OAuth user-service handling, so no new root/permission change.
+- First *independently read* status: `state=running`, `kind=passive_no_load`, `samples=1`, `max_observed_c=80.0`, `service_failures=0`, `thermal_emergency=false`, `result=NOT_CERTIFIED`. All four protected services initially active. SSH start receipt `54f05e4b-883a-42f6-b43f-e2396a75e1d6`, terminal exit 0, and separate readback `7e2ba775-9798-4f39-ac23-36afecb5c737` terminal exit 0.
+- **The old active-load Mac soak is permanently recorded FAILED**, peak 93°C with emergency abort after ~55 s. Do NOT restart active load or claim the *new passive* telemetry means Gate 4 pass. After 24h (no earlier than **2026-10-22 19:58:07 UTC / 2026-10-23 01:28 IST**), verify elapsed wall clock, sample continuity, service gaps and temp ranges; label **passive observation only**, not full Gate 4.
+- Existing ChatGPT task limit prevents a sixth active automation. The already-active one-time **Mac 24h Thermal Test Review** was safely re-targeted to **Matrix Gate 4 Audit**, scheduled **2026-10-22T20:10:44 UTC / 2026-10-23 01:40:44 IST**, to audit both the old failure and this passive log, update this handoff and notify accurately. No additional active slot consumed. Existing daily GSC sync remains enabled.
+
+## Current final gates and operator takeover decision
+
+| Gate | Strict outcome | Next required real evidence |
+|---|---|---|
+| 1 — authenticated research, Trends and GSC evidence | **PASS** | Check first GSC daily scheduled automation receipt separately; not part of original certified paired research |
+| 2 — newly Mac-rendered 12-sec technical preview | **BLOCKED / NOT RENDERED** | Stabilize **below 68°C with headroom**, safely authorize preview via existing config or explicitly ephemeral audited override without removing temperature checks, run `reel_bridge.render` at 12s/360px with in-run abort and verify real MP4, `ffprobe`, `report.json` |
+| 3 — one unattended full creative workflow | **PARTIAL SOFTWARE PASS / VIDEO BLOCKED** | Existing `reel_pilot` produced 4 valid research citations and Groq draft; needs thermal-safe genuinely new preview, technical QA, and separate asset-rights / brand / factual signoff; never recycle smoke media |
+| 4 — full 24h/resilience/reboot/fault proof | **FAIL for old active-load soak / ongoing passive observation only** | First passive telemetry observation completes 24h, then only undertake controlled active/reboot/load faults if Mac has actual thermal stability, maintenance window, retained sessions and explicit safe approval |
+
+### Quick takeover commands
+
+```bash
+B=/opt/business-house-matrix/marketing/brain
+python3 "$B/brain.py" receipt 02904304-941d-4d66-9477-c1c96542a88f
+python3 "$B/brain.py" status --verbose
+python3 "$B/passive_soak.py" status passive-20261022-soak
+systemctl --user status bhm-marketing-gate4-passive.service --no-pager
+cat /var/lib/mac-thermal-soak/status.json
+python3 -m unittest discover -s "$B" -p 'test_*.py' -q
+python3 - <<'PY'
+import sys
+sys.path.insert(0,'/opt/business-house-matrix/marketing/brain')
+import reel_bridge
+print(reel_bridge.mac_temperature_c())
+PY
+```
+
+**Takeover rules:** Do not rerun the pilot under a new key just to rack up jobs. If unknown result or suspended SSH task, inspect original immutable receipt before any retry. Review media source consent/rights and approved official logo separately. Never set `render_enabled=true` while the thermal readings spike to 78–84°C and never alter 68°C guard/fan/PID settings as a shortcut. Existing Firefox multi-tab user browsing is a source of substantial CPU load; don't close tabs or kill parent process without owner permission. Dell cooler ~47°C is NOT proof Mac Gate 2 passed. No source or password sync to Moksha Master; keep this independent.
+
+## Status-log index
+
+| UTC time | Milestone | Result | Main receipt |
+|---|---|---|---|
+| 19:46 | Mac hardware/soak baseline | 83.8°C SMC, prior soak 93°C abort | `495edc19-6410-4ecd-916e-e8ddc33380ad` |
+| 19:47 | Mac source inventory, Dell research state | Three local images; Dell relay/SEARXNG/controller active | `bc817a11-68f5-43b6-b4f0-cc54781aeff4`, `e352939a-ada1-40f7-9a55-1e052303d14a` |
+| 19:49 | Mac thermal stability series | 60,60,62,60,78,76°C — **FAIL 68°C stable cutoff** | `40a3dfc9-b9a9-46ff-b93f-c5298aee2d5e` |
+| 19:55 | Linked pilot deployed | **57/57 tests** | `82899da7-236a-4aab-9a62-0dc4470bd600` |
+| 19:56 | Unattended pilot run | 4 signed sources + GSC + hosted Groq draft, blocked before render | Brain job `02904304-941d-4d66-9477-c1c96542a88f` |
+| 19:57 | Passive observer deployed | **62/62 tests** | `41f5bd98-197b-4f49-ac30-a516a0950f56` |
+| 19:58 | Passive 24hr monitor started | Running, first sample 80°C, no service gaps, no CPU load | `54f05e4b-883a-42f6-b43f-e2396a75e1d6` |
+| 20:00 | Follow-up audit reuse | Existing one-time task rescheduled for 24h+ review | `Matrix Gate 4 Audit` |
+
+**Never label a queued/scheduled job as a passed final test.** The original Gate 1 is **certified**; Gates 2/3/4 have the explicit state shown above.
