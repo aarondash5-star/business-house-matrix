@@ -287,6 +287,35 @@ def enroll(slot, free_confirmed=False):
     save_policy(p)
     return {"credential_saved": True, "slot": slot, "enabled": False}
 
+
+def verify_provider(slot):
+    """Authenticate Groq token and confirm model ID without an inference request."""
+    p = read_policy()
+    item = next((x for x in p["connections"] if x["id"] == slot), None)
+    if item is None or item["provider"] != "groq":
+        raise RuntimeError("verification currently supports configured Groq slots only")
+    key_file = secure_key(item)
+    if key_file is None:
+        raise RuntimeError("no securely enrolled Groq credential")
+    req = urllib.request.Request(
+        "https://api.groq.com/openai/v1/models",
+        headers={"Authorization": "Bearer " + key_file.read_text().strip(),
+                 "User-Agent": "BusinessHouseMatrix-Marketing/0.2"},
+        method="GET")
+    try:
+        with urllib.request.urlopen(req, timeout=15) as response:
+            result = json.load(response)
+    except urllib.error.HTTPError as err:
+        raise RuntimeError("Groq credential check returned HTTP " + str(err.code)) from None
+    except (OSError, ValueError) as err:
+        raise RuntimeError("Groq credential check failed: " + type(err).__name__) from None
+    ids = {row.get("id") for row in result.get("data", [])
+           if isinstance(row, dict)}
+    if item["model"] not in ids:
+        raise RuntimeError("Groq key authenticated but chosen model unavailable to this account")
+    return {"authenticated": True, "model_available": True, "slot": slot,
+            "model": item["model"], "note": "Free plan and billing must be confirmed separately in Groq console"}
+
 def activate(slot):
     p = read_policy()
     s = next((item for item in p["connections"] if item["id"] == slot), None)
@@ -313,6 +342,7 @@ def main():
     c = sub.add_parser("choose"); c.add_argument("--profile", choices=sorted(PROFILES), default="creative")
     e = sub.add_parser("enroll"); e.add_argument("slot"); e.add_argument("--free-plan-confirmed", action="store_true")
     a = sub.add_parser("activate"); a.add_argument("slot")
+    v = sub.add_parser("verify-provider"); v.add_argument("slot")
     aid = sub.add_parser("set-account"); aid.add_argument("slot"); aid.add_argument("--account-id", required=True)
     d = sub.add_parser("disable"); d.add_argument("slot")
     test = sub.add_parser("run"); test.add_argument("--profile", choices=sorted(PROFILES), default="creative")
@@ -329,6 +359,8 @@ def main():
         print(json.dumps(enroll(args.slot,args.free_plan_confirmed)))
     elif args.command == "activate":
         print(json.dumps(activate(args.slot)))
+    elif args.command == "verify-provider":
+        print(json.dumps(verify_provider(args.slot)))
     elif args.command == "set-account":
         policy = read_policy()
         s = next((x for x in policy["connections"] if x["id"] == args.slot), None)
