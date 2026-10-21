@@ -48,3 +48,9 @@ crontab -l
 
 ## 2026-10-21 thermal incident
 An autonomous 64-token Qwen3 draft passed but drove the CPU sensor to 90°C and maximum fan. Mac runtime now enforces a fail-closed local inference lock. Keep the worker running for low-impact queue tasks; do not re-enable model generation merely by raising the thermal threshold. Use an optimized smaller model or remote worker after validating performance and recovery.
+
+## Research router update — 2026-10-21
+- Tavily deprecated; SearXNG replaces it as the only allowlisted research tool, source `searxng_research.py`.
+- Mac `research_search` is wired to the client but the operational policy entry remains disabled until private Dell reachability is restored (the two Wi-Fi peers currently cannot ARP one another).
+- Dell self-hosted rootless SearXNG is live and can be researched manually through Generic Linux SSH with `python3 /var/lib/generic-linux-automator-exec/matrix-searxng/local_search.py 'query'`.
+- Do not publish or make paid provider calls. See [SearXNG deployment](../../docs/RESEARCH-SEARXNG-DEPLOYMENT-2026-10-21.md).
