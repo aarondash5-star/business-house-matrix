@@ -120,3 +120,7 @@ sudo matrix-brain selftest
 
 ## Final end-to-end Dev Brain verification — 2026-10-21
 The research-assisted job `cad4904e-7aec-4678-ad71-d170ad2c4841` completed `review_passed` with all five private mode-0600 artifacts: `research.json` (2104 bytes), `plan.md` (1778), `implementation.md` (2850), `review.md` (1149), and `result.json` (302). Its report says `source_lookup_available=true`, `tests_executed=false`, and `repository_changed=false`. This confirms the four-stage proposal workflow—not tested or deployed code. Dell SearXNG, Dev Brain and SSH bridge remained active.
+
+
+### Final reusable plugin release — 2026-10-21
+The private owned **generic-linux-ssh-mcp plugin v0.1.18** supersedes v0.1.17. Release `pluginrel_6ad8b9ab9b008191a961563c5e9d2d03` updates the reusable SearXNG skill with the verified `review_passed` Dev research proposal result; plugin file readback confirmed all original skills preserved. This is a skills/docs release only, **not** a backend/MCP permission change or automatic access for other projects. Plugin: https://chatgpt.com/plugins/plugins_6ad64adab5e481918832cd516e779009 .
