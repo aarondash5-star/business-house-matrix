@@ -23,6 +23,8 @@ GitHub Actions runs validation and, after separate cloud identity/configuration 
 
 - [Current status](docs/STATUS.md)
 - [SearXNG research deployment and network handoff](docs/RESEARCH-SEARXNG-DEPLOYMENT-2026-10-21.md)
+- [**Reusable research integration contract**](docs/REUSABLE-RESEARCH-CONTRACT.md)
+- [**Cross-project SearXNG skill**](skills/selfhosted-searxng-research/SKILL.md)
 - [**Marketing Brain — verified live checkpoint (2026-10-21)**](docs/MARKETING-CURRENT-STATE-2026-10-21.md)
 - [Marketing Phase 1 history](docs/MAC-MARKETING-PHASE1.md)
 - [Marketing modular provider router](docs/MAC-MARKETING-API-ROUTER.md)
