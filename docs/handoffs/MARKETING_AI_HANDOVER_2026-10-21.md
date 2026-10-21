@@ -156,3 +156,12 @@ No root, Wi-Fi, router, generic SSH shell gate, publishing, spending, browser PI
 - Formal [Gate 1 completion evidence](../receipts/MARKETING_GATE1_CERTIFICATION_2026-10-21.md) is canonical, not the previous snapshot. Do not reopen the network/PIN/transport work without a new verified defect.
 
 **NEXT:** Gate 2 thermally safe real Mac Reel Studio preview. Preserve 68°C cutoff and user applications. Gate 3 autonomous research-to-Groq-to-real-media editing and QA, then Gate 4 long-running scheduled recovery/reboot certification. Neither Gate 2, 3 nor 4 has passed. Preserve no publishing, no spend, no unapproved root/network changes and strict separation from Moksha Master.
+
+
+## Unified research layer completed — 2026-10-21 18:38 UTC (new latest)
+
+**Source:** `marketing/mac-brain/unified_research.py`, `gsc_metrics.py`, `test_unified_research.py`; `brain.py` allowlisted `research_brief` queue job, no extra service. SearXNG private signed outbound relay reused, original Trends 6-hour RSS maintained, GSC metrics local only with optional explicit read-only OAuth or real GSC CSV import. Web SERP results, news-driven national RSS spikes and real site-specific GSC impressions must remain separate evidence classes. No arbitrary Google search/CSE key, paid API, generated volumes, colors/fonts or cross-brand property default.
+
+**Live Mac PASS:** 42/42 tests, existing cron job `8a7fd707-8c77-49d9-8335-b6487aeff4b2`, sealed request `aeba7227-b170-4acf-beb6-aee851fa92f1`, 5 public attributed sources, completed first attempt in 7.522s. Gate 1 status unaffected. Initial unit tests caught a newly introduced Brain input-validator conflict and triggered reliable rollback; fixed source pinned to commit `6e9c774a0f46c3c8185733f7cb3046a1ff2336e0`. Re-run success terminal SSH `c3a942af-9193-455a-812a-24a2512ae5df`. Full latest runbook: [unified research](../research/UNIFIED_MARKETING_RESEARCH_2026-10-21.md).
+
+**Pending specifically for this layer:** obtain property-authorized Google Search Console `webmasters.readonly` OAuth without sharing credentials in chat/GitHub, or approve bounded CSV import to Mac user-only inbox; only then verify real GSC observations end-to-end for one explicitly selected property. Avoid GSC Wizard paid plan. Do not transfer Moksha Master secrets/data to independent Matrix without approval. Otherwise proceed Gate 2 Mac thermal-safe Reel Studio, Gate 3 video pipeline, Gate 4 extended soak.
