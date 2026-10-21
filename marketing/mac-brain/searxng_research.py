@@ -60,7 +60,7 @@ def status():
     day=d.execute("SELECT count(*) FROM attempts WHERE ts>=?",(now//86400*86400,)).fetchone()[0]
     latest=d.execute("SELECT outcome,ts FROM attempts ORDER BY ts DESC LIMIT 1").fetchone()
     d.close()
-    return {"provider":"searxng","endpoint":"Dell LAN private gateway",
+    return {"provider":"searxng","endpoint":"Signed encrypted device-paired relay" if p.get("transport")=="encrypted_signed_relay_v1" else "Dell LAN private gateway",
             "enabled":p.get("enabled",False),"self_hosted":True,
             "paid_fallback":False,"used_today":day,"local_daily_cap":MAX_DAY,
             "last_outcome":latest[0] if latest else None,
@@ -71,7 +71,8 @@ def search(query,language="en",time_range=None):
     if not (p.get("enabled") is True and p.get("self_hosted") is True
             and p.get("open_source_license_reviewed") is True and p.get("paid_fallback_allowed") is False):
         raise RuntimeError("Self-hosted research disabled or license gate missing")
-    _local_response()
+    if p.get("transport")!="encrypted_signed_relay_v1":
+        _local_response()
     q=_public_query(query)
     if language not in ("en","all"):raise ValueError("Unsupported language")
     if time_range not in (None,"day","month","year"):raise ValueError("Unsupported period")
@@ -90,6 +91,18 @@ def search(query,language="en",time_range=None):
     if time_range:params["time_range"]=time_range
     url=GATEWAY+"/search?"+urlencode(params)
     try:
+        if p.get("transport")=="encrypted_signed_relay_v1":
+            # Permanent per-device trust and signed, end-to-end encrypted relay.
+            # Existing public-only limits, quotas and publication denials remain intact.
+            import importlib.util
+            module_path=Path("/var/lib/generic-linux-automator-exec/matrix-research-transport/transport.py")
+            spec=importlib.util.spec_from_file_location("bhm_paired_research",module_path)
+            if spec is None or spec.loader is None: raise RuntimeError("Approved paired research runtime missing")
+            paired=importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(paired)
+            result=paired.search(q,55)
+            d.execute("UPDATE attempts SET outcome=? WHERE id=?",("ok",ident))
+            return result
         req=Request(url,headers={"Accept":"application/json","User-Agent":"BusinessHouseMatrix-Marketing/1.0"})
         with urlopen(req,timeout=24) as response:
             data=json.loads(response.read(192000))
@@ -111,7 +124,7 @@ def search(query,language="en",time_range=None):
                 "citations_required":True,"untrusted_external_content":True,
                 "retrieval_is_not_independent_fact_verification":True,
                 "paid_fallback":False,"publish_approval":False}
-    except (HTTPError,URLError,TimeoutError,ValueError) as exc:
+    except (HTTPError,URLError,TimeoutError,ValueError,RuntimeError) as exc:
         d.execute("UPDATE attempts SET outcome=? WHERE id=?",("failed",ident))
         raise RuntimeError("SearXNG search unavailable: "+type(exc).__name__) from None
     finally:
