@@ -150,7 +150,8 @@ def poll_dev(d,t):
         qa="proposal_review_only"
         verified=(result.get("tests_executed") is False and
                   result.get("repository_changed") is False and
-                  result.get("source_lookup_available") is not None)
+                  result.get("source_lookup_available") is not None and
+                  result.get("mcp_docs_attached") is True)
         state="completed" if j["status"]=="review_passed" and verified else "needs_review"
         payload={"source":"dell_dev_brain","remote_job":remote,"remote_status":j["status"],
                  "proposal_only":True,"tests_executed":False,
