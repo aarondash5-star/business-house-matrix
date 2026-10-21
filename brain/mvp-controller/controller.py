@@ -173,7 +173,10 @@ def poll_dev(d,t):
 def tick():
     d=connect()
     pending=d.execute("SELECT * FROM tasks WHERE status='delegated' ORDER BY created LIMIT 1").fetchone()
-    if pending:
+    ready=d.execute("SELECT id FROM tasks WHERE status='queued' ORDER BY created LIMIT 1").fetchone()
+    # Do not let an unrelated slow remote Dev proposal block a short local safe task.
+    # Finish the bounded queued work, then resume polling delegated tasks.
+    if pending and not ready:
         try:result=poll_dev(d,pending)
         except Exception as err:
             result={"id":pending["id"],"status":"uncertain","message":type(err).__name__}
