@@ -37,9 +37,22 @@ class MarketingRouterTest(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "allowlisted"):
             self.r.read_policy()
 
+    def test_candidate_vendor_slots_blocked(self):
+        p = self.r.read_policy()
+        self.assertEqual(len(p["connections"]), 5)
+        gemini = next(x for x in p["connections"] if x["id"]=="gemini-flash-candidate")
+        self.assertFalse(gemini["enabled"])
+        self.assertFalse(gemini["model_license_approved"])
+        self.assertEqual(p["tool_connections"][0]["id"], "tavily-search")
+        self.assertFalse(p["tool_connections"][0]["enabled"])
+        p["tool_connections"][0]["enabled"] = True
+        self.r.POLICY.write_text(json.dumps(p))
+        with self.assertRaisesRegex(RuntimeError, "requires separate integration"):
+            self.r.read_policy()
+
     def test_all_providers_disabled(self):
         out = self.r.status()
-        self.assertEqual(len(out["connections"]), 4)
+        self.assertEqual(len(out["connections"]), 5)
         self.assertTrue(all(not s["eligible"] for s in out["connections"]))
         self.assertTrue(all(not s["credentials_present"] for s in out["connections"]))
         self.assertEqual(out["paid_inference_allowed"], False)
