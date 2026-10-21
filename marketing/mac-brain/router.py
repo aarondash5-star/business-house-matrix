@@ -301,32 +301,51 @@ def enroll(slot, free_confirmed=False):
 
 
 def verify_provider(slot):
-    """Authenticate Groq token and confirm model ID without an inference request."""
-    p = read_policy()
-    item = next((x for x in p["connections"] if x["id"] == slot), None)
-    if item is None or item["provider"] != "groq":
-        raise RuntimeError("verification currently supports configured Groq slots only")
-    key_file = secure_key(item)
+    """Check model/account access without inference. Not a guarantee of Free plan billing."""
+    p=read_policy()
+    item=next((x for x in p["connections"] if x["id"]==slot),None)
+    if not item or item["provider"] not in ("groq","cloudflare-workers-ai","openrouter"):
+        raise RuntimeError("unknown or unsupported provider slot")
+    key_file=secure_key(item)
     if key_file is None:
-        raise RuntimeError("no securely enrolled Groq credential")
-    req = urllib.request.Request(
-        "https://api.groq.com/openai/v1/models",
-        headers={"Authorization": "Bearer " + key_file.read_text().strip(),
-                 "User-Agent": "BusinessHouseMatrix-Marketing/0.2"},
-        method="GET")
+        raise RuntimeError("no securely enrolled provider credential")
+    provider=item["provider"]
+    if provider=="groq":
+        url="https://api.groq.com/openai/v1/models"
+    elif provider=="cloudflare-workers-ai":
+        account=item.get("account_id","")
+        if not re.fullmatch(r"[0-9a-fA-F]{32}",account):
+            raise RuntimeError("Cloudflare Account ID missing or invalid")
+        url=f"https://api.cloudflare.com/client/v4/accounts/{account}/ai/models/search?search=qwen3.8-27b"
+    else:
+        if not item["model"].endswith(":free"):
+            raise RuntimeError("OpenRouter verification only permits free-model routes")
+        url="https://openrouter.ai/api/v1/key"
+    req=urllib.request.Request(url,headers={
+        "Authorization":"Bearer "+key_file.read_text().strip(),
+        "User-Agent":"BusinessHouseMatrix-Marketing/0.2"},method="GET")
     try:
-        with urllib.request.urlopen(req, timeout=15) as response:
-            result = json.load(response)
+        with urllib.request.urlopen(req,timeout=15) as response: result=json.load(response)
     except urllib.error.HTTPError as err:
-        raise RuntimeError("Groq credential check returned HTTP " + str(err.code)) from None
+        raise RuntimeError("Provider check returned HTTP "+str(err.code)) from None
     except (OSError, ValueError) as err:
-        raise RuntimeError("Groq credential check failed: " + type(err).__name__) from None
-    ids = {row.get("id") for row in result.get("data", [])
-           if isinstance(row, dict)}
-    if item["model"] not in ids:
-        raise RuntimeError("Groq key authenticated but chosen model unavailable to this account")
-    return {"authenticated": True, "model_available": True, "slot": slot,
-            "model": item["model"], "note": "Free plan and billing must be confirmed separately in Groq console"}
+        raise RuntimeError("Provider check failed: "+type(err).__name__) from None
+    if provider=="groq":
+        ids={row.get("id") for row in result.get("data",[]) if isinstance(row,dict)}
+        if item["model"] not in ids:
+            raise RuntimeError("Provider authenticated but exact allowlisted model unavailable")
+    elif provider=="cloudflare-workers-ai":
+        if not result.get("success") or not result.get("result"):
+            raise RuntimeError("Cloudflare token/model check failed")
+        names=[str(x.get("name",""))+" "+str(x.get("id","")) for x in result["result"] if isinstance(x,dict)]
+        if not any("qwen3.8-27b" in n for n in names):
+            raise RuntimeError("Cloudflare model not listed for this account")
+    elif provider=="openrouter":
+        details=result.get("data",{})
+        if not isinstance(details,dict) or details.get("is_free_tier") is not True:
+            raise RuntimeError("OpenRouter key is not confirmed as Free tier")
+    return {"authenticated":True,"model_route_verified":True,"slot":slot,
+            "provider":provider,"note":"Confirm Free billing and quotas in vendor dashboard separately"}
 
 def activate(slot):
     p = read_policy()
