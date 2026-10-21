@@ -40,7 +40,8 @@
         "research": 25,
         "review": 35,
         "fast": 10
-      }
+      },
+      "credential_ref": "groq-creative-oss120"
     },
     {
       "id": "cloudflare-vision-qwen",
