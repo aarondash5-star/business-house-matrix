@@ -40,7 +40,7 @@ The earlier Matrix-wide pilot status above remains independently tracked. No Ope
 
 
 ## SearXNG correction and Dell Dev expansion — 2026-10-21
-- Dell SearXNG remains available at **localhost only** and starts at boot. LAN gateway was disabled as the network is two DIFFERENT SSIDs/routers (\`andaz\` vs \`Andaz\`) using overlapping \`192.168.0.0/24\` private ranges; do not claim Mac-to-Dell access works.
-- **Dev Brain research integrated and tested:** \`matrix-brain research-search\`, optional public \`--research-query\` and evidence-containing LangGraph research node, with source receipts. Existing queue retained. No model-directed search, repository edit or paid API.
+- Dell SearXNG remains available at **localhost only** and starts at boot. LAN gateway was disabled as the network is two DIFFERENT SSIDs/routers (`andaz` vs `Andaz`) using overlapping `192.168.0.0/24` private ranges; do not claim Mac-to-Dell access works.
+- **Dev Brain research integrated and tested:** `matrix-brain research-search`, optional public `--research-query` and evidence-containing LangGraph research node, with source receipts. Existing queue retained. No model-directed search, repository edit or paid API.
 - Mac Marketing Brain SearXNG still disabled until trusted inter-network connectivity is established; Tavily remains retired.
 - Full details: [Deployment and Dev integration](RESEARCH-SEARXNG-DEPLOYMENT-2026-10-21.md).
