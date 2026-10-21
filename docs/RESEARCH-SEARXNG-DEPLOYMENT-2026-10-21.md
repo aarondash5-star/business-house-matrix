@@ -64,3 +64,48 @@ python3 "$B/brain.py" status
 - Mac: take private policy backups before changing anything; existing snapshots \`router.py.pre-searxng-20261021\`, \`brain.py.pre-searxng-20261021\`, \`provider-policy.json.pre-searxng-20261021\`. Old Tavily source and SQLite ledger retained as \`*.deprecated-tavily-*.\`
 - Don't re-enable Tavily without a new explicit decision.
 - Never alter the generic Linux SSH bridge, Dell Matrix Dev Brain, Moksha Master or root security settings as part of rollback.
+
+
+## Verified correction — TWO distinct private Wi-Fi networks
+
+Read-only physical network diagnostics on 2026-10-21 established that the host networks differ, not just isolated clients:
+- Dell \`wlp1s0\` uses SSID **\`andaz\`** (lowercase), BSSID \`9C:A2:F4:1A:FC:85\`, gateway \`192.168.0.1\`, address \`192.168.0.103\`.
+- Mac \`wlp3s0\` uses SSID **\`Andaz\`** (capitalized), BSSID \`B4:B0:24:A2:EF:89\`, gateway \`192.168.0.1\`, address \`192.168.0.106\`.
+- The gateways respond to HTTP differently, and reciprocal ARP fails; both addresses happen to use overlapping \`192.168.0.0/24\` private space. **Neither device is on a mutually reachable L2 segment**. The earlier "same LAN"/single-router AP isolation interpretation was not sufficiently established and is superseded.
+- **Safety decision:** Do not switch SSIDs or edit router Wi-Fi settings remotely, since doing so could sever both authenticated SSH bridges. To make Marketing's SearXNG connection operational, deliberately put both machines on one trusted non-isolated LAN, or provision an approved authenticated private relay/overlay. Never use a public SearXNG listener.
+- Because a source-IP allowlist alone could authorize an unrelated device assigned \`.106\` on Dell's separate network, **\`bhm-searxng-gateway.service\` was disabled and stopped**. No listener remains on \`192.168.0.103:18888\`. The official SearXNG engine remains available ONLY at \`127.0.0.1:18889\`, via Dell's authenticated bridge.
+- Mac's SearXNG client is configured and tested but the route remains \`enabled=false\` pending secure connectivity. The old Tavily route is absent and cannot silently reactivate.
+
+## Dell Dev Brain integrated — optional research node
+
+- SearXNG is now also an explicit, **local** research tool for Dell Matrix Dev, not exclusively Marketing. No cross-machine link needed for Dev.
+- Versioned integration script: \`research/dell-searxng/integrate_dev_brain.py\`.
+- Runtime code: \`/var/lib/generic-linux-automator-exec/.local/share/matrix-dev-brain/brain.py\`. Backup: \`brain.py.pre-searxng-20261021\` (0600).
+- Added \`research_query\` as a backwards-compatible optional SQLite column. Existing jobs, queue and previous artifacts were preserved.
+- Graph order: \`public_research\` (only when caller explicitly supplies a short PUBLIC query) → \`plan\` → \`develop\` → \`qa_review\`. The graph still produces proposal artifacts only, never shell execution, repository writes or commits.
+- Searches use an absolute-path subprocess to Dell's existing \`local_search.py\`, with a 40-second timeout, bounded evidence snippets and public URLs, and no model-chosen search tool calls. Private task text is **never automatically sent** to public search engines.
+- Public source links are inserted as clearly **untrusted** evidence for the plan. Plans must cite the returned URLs; untrusted page snippets cannot issue instructions.
+- Optional evidence written to a private \`research.json\` next to plan/review files; failures degrade the plan without fabricating results.
+- The headless \`matrix-dev-brain.service\` was restarted, came back \`active\`, and passed the expanded synthetic graph self-test (including citation evidence and saved research receipt).
+- A **real live Dev CLI search** using \`sudo matrix-brain research-search 'langgraph StateGraph START END Python docs'\` returned LangGraph reference/documentation URLs.
+- A full live 4-node development job was submitted on 2026-10-21 with ID \`cad4904e-7aec-4678-ad71-d170ad2c4841\`; final outcome should be checked with \`sudo matrix-brain show cad4904e-7aec-4678-ad71-d170ad2c4841\`. Do **not** assume it passed until result artifacts verified.
+- All Dev hosted providers remain disabled; local Qwen/Granite models are available. No new paid credentials or APIs enrolled.
+
+**Operator commands:**
+\`\`\`bash
+# Entirely local, read-only public documentation search:
+sudo matrix-brain research-search 'Python 3.12 asyncio TaskGroup documentation'
+
+# Optional research-augmented Dev proposal (the model cannot search autonomously):
+sudo matrix-brain submit 'Draft a cancellation-safe TaskGroup proposal' \
+  --profile fast --research-query 'Python 3.12 TaskGroup cancellation official docs'
+
+sudo matrix-brain list
+sudo matrix-brain show JOB_UUID
+sudo matrix-brain doctor
+sudo matrix-brain selftest
+\`\`\`
+
+**Security:** Never submit business secrets, account IDs, unpublished repositories or credentials as a research query. Search results are only information candidates, not verified facts. Research costs no SearXNG API fees but upstream providers can rate-limit requests. The Dell Dev Brain's repository-write permissions remain unchanged (disabled).
+
+**Recovery:** Restore the saved \`brain.py.pre-searxng-20261021\` after stopping the Dev Brain service if necessary; retain the additive \`research_query\` DB column (safe for previous code to ignore). Restart \`matrix-dev-brain.service\` and validate. Preserve the rootless \`bhm-searxng.service\` and generic SSH automator.
