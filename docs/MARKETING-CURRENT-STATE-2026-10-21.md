@@ -172,3 +172,21 @@ Mac `Andaz` and Dell `andaz` are DIFFERENT Wi-Fi networks (distinct BSSIDs/gatew
 
 ### Capability reuse reference — 2026-10-21
 Private Generic Linux SSH plugin v0.1.17 now includes the [SearXNG cross-project skill](../skills/selfhosted-searxng-research/SKILL.md) with [read-only API contract](REUSABLE-RESEARCH-CONTRACT.md). This adds instructions for approved Dell-local read-only research to other projects but **does not activate** Mac `searxng-search`; the two Wi-Fi networks are still isolated. Other projects require their own explicit adoption and data policy.
+
+## Live Marketing AI validation — 2026-10-21 22:33 IST
+
+Verified against the live `mac-linux` (KARAN) and `dell-linux` (karan-Inspiron-5379) via the existing authenticated Generic Linux SSH connector:
+
+- Both hosts were paired, online and passed identity/kernel SSH probes. No root/sudo policy, router or Wi-Fi profile was changed.
+- Dell SearXNG rootless Podman service `bhm-searxng.service` remains boot-enabled; Dell-local public SearXNG search returned three source-attributed results. A controlled service restart recovered to HTTP 200 on readiness attempt 5 (~16s). Search is localhost-only on Dell.
+- Mac and Dell are on different case-sensitive SSIDs (`Andaz` versus `andaz`), assigned overlapping 192.168.0.0/24 subnets, with failed ARP/ping and `No route to host` cross-access. The Mac radio scan did NOT show the lowercase Dell SSID. Mac SearXNG network policy therefore remains disabled; it is **not** a functioning cross-host research connection. Do not open the search service to the Internet.
+- Mac Marketing Brain `python3 -m unittest discover -p 'test_*.py'` passed **30/30** current tests. Idempotency duplicate enqueue produced identical job ID; a live queued `ping` completed with a receipt. The two-minute cron and `cron.service` remain active.
+- A real `reel_preflight` job was queued at 17:00 UTC and was automatically processed by the existing scheduler at **17:02:02 UTC** (receipt `295bd56f-d635-4e53-85e7-cbd36244374e`); preflight passed, and publication remained denied. Mac Brain queue currently reports 10 completed jobs.
+- Three original Moksha images (a guest in sauna, sauna cleaning, and official logo source) were retrieved with the connected owner Drive app and staged in the existing private Mac media inbox `moksha-originals-20261021`; all JPEG MIME/size checks passed. No business footage was added to this public repository.
+- Mac's own Reel Studio `reel_bridge.render()` refused the first live preview at **75°C** due to its existing **68°C** thermal cutoff. Later sensors reached 76–78°C, with long-running Firefox consuming resources. No thermal limit was raised and no hot render was forced.
+- Separately, a **12.83-second 720×1280 H.264 draft** was rendered from the verified originals in the ChatGPT temporary processing environment, visually sampled, and returned as a conversation download. This is *not* evidence of Mac autonomous video rendering and was not uploaded to GitHub or published.
+- Publishing, advertising spend and local inference on Mac remain disabled. Dell research and Mac queue continuity have been smoke-tested. No root permission changes or new cloud project have been made.
+
+**Unresolved release gates:** (1) authenticated persistent Mac↔Dell research transport / router-level isolation fix; (2) thermally safe Mac Reel Studio rendering under the existing guard; (3) a verified single autonomous Marketing Brain run spanning research → planning → finished video → QA; (4) sustained longer-duration host/network recovery evidence. Avoid claiming fully autonomous MVP until these pass.
+
+Independent Matrix project only. Do not synchronize private Moksha Master data into this repository.
