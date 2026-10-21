@@ -20,7 +20,7 @@ ROOT = Path(os.environ.get("BHM_MARKETING_HOME", str(Path(__file__).resolve().pa
 DB = ROOT / "data" / "queue.sqlite3"
 CONFIG = ROOT / "config.json"
 RECEIPTS = ROOT / "receipts"
-ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan"}
+ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan", "hosted_draft"}
 VERSION = "0.1.0"
 
 def stamp():
@@ -80,7 +80,7 @@ def safe_payload(task, payload):
         raise ValueError("Payload must be a JSON object")
     if len(json.dumps(payload)) > 6000:
         raise ValueError("Payload too large")
-    if task == "draft_plan":
+    if task in ("draft_plan", "hosted_draft"):
         if not isinstance(payload.get("brief"), str) or not payload["brief"].strip():
             raise ValueError("draft_plan requires nonempty 'brief' string")
         if len(payload["brief"]) > 2500:
@@ -146,6 +146,12 @@ def execute(task, payload):
         response = http_json(cfg["ollama_url"].rstrip("/") + "/api/tags", timeout=7)
         return {"ok": True, "models": sorted(m["name"] for m in response.get("models", [])),
                 "mode": "local"}
+    if task == "hosted_draft":
+        if not cfg.get("online_enabled", False):
+            raise RuntimeError("Hosted routing not enabled")
+        import router
+        profile = payload.get("profile", "creative")
+        return router.run(profile, payload["brief"])
     if task == "draft_plan":
         if not cfg.get("local_inference_enabled", False):
             raise RuntimeError("Local creative inference paused pending thermal validation")
