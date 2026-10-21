@@ -21,7 +21,7 @@ ROOT = Path(os.environ.get("BHM_MARKETING_HOME", str(Path(__file__).resolve().pa
 DB = ROOT / "data" / "queue.sqlite3"
 CONFIG = ROOT / "config.json"
 RECEIPTS = ROOT / "receipts"
-ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan", "hosted_draft", "research_search", "research_extract", "reel_preflight", "reel_render", "reel_review", "trends_refresh", "trends_insight", "research_brief"}
+ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan", "hosted_draft", "research_search", "research_extract", "reel_preflight", "reel_render", "reel_review", "trends_refresh", "trends_insight", "research_brief", "reel_pilot"}
 VERSION = "0.1.0"
 
 def stamp():
@@ -108,6 +108,18 @@ def safe_payload(task, payload):
     if task == "research_extract":
         if not isinstance(payload.get("url"), str) or len(payload["url"])>800:
             raise ValueError("Research extract requires a public URL")
+    if task == "reel_pilot":
+        import reel_bridge
+        import gsc_metrics
+        import searxng_research
+        if not isinstance(payload.get("topic"), str) or not 3 <= len(payload["topic"].strip()) <= 180:
+            raise ValueError("Pilot needs bounded public topic")
+        searxng_research._public_query(payload["topic"])
+        reel_bridge.batch_paths(payload.get("batch_id"))
+        if payload.get("geo","IN") not in ("IN","US","GB","RU"):
+            raise ValueError("Unsupported pilot geo")
+        if payload.get("site") is not None:
+            gsc_metrics.property_id(payload["site"])
     if task in ("reel_preflight", "reel_render", "reel_review"):
         batch = payload.get("batch_id")
         if not isinstance(batch, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}", batch):
@@ -202,6 +214,9 @@ def execute(task, payload):
     if task == "research_extract":
         import searxng_research
         return searxng_research.extract(payload["url"])
+    if task == "reel_pilot":
+        import pilot_pipeline
+        return pilot_pipeline.run(payload, cfg)
     if task == "reel_preflight":
         import reel_bridge
         return reel_bridge.preflight(payload["batch_id"])
