@@ -73,3 +73,8 @@ The private owned **generic-linux-ssh-mcp plugin v0.1.18** supersedes v0.1.17. R
 - Private connected `generic-linux-ssh-mcp` plugin updated to **v0.1.19**, release `pluginrel_6ad8d710c0c88191968891ff74a5e2ff`, with new portable `skills/matrix-autonomous-mvp/SKILL.md` and existing `skills/selfhosted-searxng-research/SKILL.md` preserved. Post-update plugin readback verified both skills and the original onboarding skill.
 - Reuse: [private SSH plugin](https://chatgpt.com/plugins/plugins_6ad64adab5e481918832cd516e779009) and [repository Matrix autonomy skill](../skills/matrix-autonomous-mvp/SKILL.md). Publishing a skill does NOT create a new MCP tool or grant other projects access to private data or privileged machine actions.
 - **Network checkpoint:** Dell sees only lower-case `andaz` Wi-Fi in its radio scan; the stored `Andaz` profile has not been switched remotely. Neither router nor root permissions have been changed. Mac-to-Dell routing remains blocked, and the private LAN gateway remains OFF.
+
+## Marketing validation update — 2026-10-21
+
+30/30 live Marketing Brain tests PASS; Mac cron autonomously processed staged Moksha reel preflight; Dell SearXNG recovered from a controlled service restart and returned HTTP 200. Both authenticated Linux SSH hosts online. Cross-SSID Mac↔Dell LAN still unreachable; original Mac render refused at 75°C against a 68°C guard. A separate 12.83-second Moksha real-asset draft was created in a temporary workspace, not by Mac's autonomous renderer. Publishing/spend remain blocked. See [full live validation evidence](MARKETING-CURRENT-STATE-2026-10-21.md#live-marketing-ai-validation--2026-10-21-2233-ist). **Do not declare complete marketing autonomy.**
+
