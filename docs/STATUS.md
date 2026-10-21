@@ -67,3 +67,9 @@ The private owned **generic-linux-ssh-mcp plugin v0.1.18** supersedes v0.1.17. R
 - Dell rootless sandbox QA ran actual tests. An old Dev model's review PASS was disproven by an independent Python error; a narrow EVOLUTION repair task subsequently completed automatically and retested passing. This verifies **one bounded rule only**.
 - Mac Google Trends public RSS (10 entries), six tests, six-hour cron, Groq-assisted creative draft receipt all verified. SearXNG cross-host reachability, safe sustained reel rendering, and approved Open WebUI license/frontend remain blocked.
 - Detailed [autonomous MVP checkpoint](AUTONOMOUS-MVP-IMPLEMENTATION-2026-10-21.md). Do not mark the whole Matrix completed.
+
+
+## Plugin skill publication — 2026-10-21
+- Private connected `generic-linux-ssh-mcp` plugin updated to **v0.1.19**, release `pluginrel_6ad8d710c0c88191968891ff74a5e2ff`, with new portable `skills/matrix-autonomous-mvp/SKILL.md` and existing `skills/selfhosted-searxng-research/SKILL.md` preserved. Post-update plugin readback verified both skills and the original onboarding skill.
+- Reuse: [private SSH plugin](https://chatgpt.com/plugins/plugins_6ad64adab5e481918832cd516e779009) and [repository Matrix autonomy skill](../skills/matrix-autonomous-mvp/SKILL.md). Publishing a skill does NOT create a new MCP tool or grant other projects access to private data or privileged machine actions.
+- **Network checkpoint:** Dell sees only lower-case `andaz` Wi-Fi in its radio scan; the stored `Andaz` profile has not been switched remotely. Neither router nor root permissions have been changed. Mac-to-Dell routing remains blocked, and the private LAN gateway remains OFF.
