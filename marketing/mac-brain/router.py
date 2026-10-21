@@ -75,21 +75,14 @@ def read_policy():
         if s.get("enabled") and not s.get("model_license_approved", False):
             raise RuntimeError("model license not approved")
     for tool in p.get("tool_connections", []):
-        if tool.get("id") != "tavily-search" or tool.get("provider") != "tavily" or tool.get("type") != "search":
-            raise RuntimeError("unrecognized external research tool")
-        if tool.get("enabled"):
-            is_public_keyless=(tool.get("keyless_mode") is True
-                and tool.get("public_only") is True
-                and tool.get("external_search_service_disclosed") is True
-                and tool.get("paid_fallback_allowed") is False
-                and 1<=int(tool.get("conservative_monthly_credits",0))<=100)
-            is_verified_keyed=(tool.get("keyless_mode") is False
-                and tool.get("free_plan_confirmed") is True
-                and tool.get("service_terms_reviewed") is True
-                and tool.get("open_source_policy_exception_approved") is True
-                and tool.get("paid_fallback_allowed") is False)
-            if not (is_public_keyless or is_verified_keyed):
-                raise RuntimeError("Tavily research requires disclosed public-only keyless mode or explicit approved keyed service")
+        if (tool.get("id")!="searxng-search" or tool.get("provider")!="searxng"
+                or tool.get("type")!="search"):
+            raise RuntimeError("Tavily is deprecated; only self-hosted SearXNG research is allowlisted")
+        if tool.get("enabled") and not (
+            tool.get("self_hosted") is True
+            and tool.get("open_source_license_reviewed") is True
+            and tool.get("paid_fallback_allowed") is False):
+            raise RuntimeError("SearXNG requires reviewed open-source self-hosted, no-paid policy")
     return p
 
 def db():
@@ -292,8 +285,8 @@ def status():
     cfg = json.loads(BRAIN_CONFIG.read_text())
     return {"version": "0.2.0", "online_enabled": cfg.get("online_enabled", False),
             "paid_inference_allowed": False, "connections": out,
-            "research_tools": [{"id": t["id"], "provider": t["provider"], "enabled": False,
-                                "review_required": True, "category": t["type"]}
+            "research_tools": [{"id": t["id"], "provider": t["provider"], "enabled": bool(t["enabled"]),
+                                "review_required": not bool(t.get("open_source_license_reviewed",False)), "category": t["type"]}
                                for t in policy.get("tool_connections", [])]}
 
 def save_policy(p):
