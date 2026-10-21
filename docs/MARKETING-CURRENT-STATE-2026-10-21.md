@@ -165,3 +165,7 @@ systemctl is-active cron generic-linux-automator.service ollama.service
 - **Mac SearXNG code deployed** and 24 automated tests passed. The live SearXNG policy slot remains disabled pending network reachability; Groq models stay active.
 - Blocker: Mac and Dell are isolated at Wi-Fi layer (ARP failure / no route to host in both directions), not merely the SearXNG gateway. Do not expose port to the public internet to bypass the issue.
 - See [deployment and detailed handoff](RESEARCH-SEARXNG-DEPLOYMENT-2026-10-21.md) for verified commands, service names, private addresses and rollback. Earlier mentions of Tavily in this historical document are superseded by this entry.
+
+
+### Network clarification — 2026-10-21
+Mac \`Andaz\` and Dell \`andaz\` are DIFFERENT Wi-Fi networks (distinct BSSIDs/gateway responses), even though both were assigned \`192.168.0.x\`. Their overlapping subnets cannot reach each other. Mac Marketing's SearXNG adapter therefore remains disabled. The unused Dell LAN gateway was stopped to prevent LAN exposure; Dell Dev can search SearXNG locally with no cross-network dependency. No unapproved SSID changes or paid relay were made. See [updated SearXNG deployment](RESEARCH-SEARXNG-DEPLOYMENT-2026-10-21.md).
