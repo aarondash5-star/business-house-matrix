@@ -86,3 +86,7 @@ The \`--research-query\` parameter is optional, explicitly public, and used as e
 2. Activate Mac read-only SearXNG policy after a real JSON search from Mac. Check address reservation and host identity rather than relying on mutable private DHCP IP alone.
 3. Add a separate reviewed open-source content extractor (Trafilatura) only if needed, with SSRF defense, public-domain allowlists, controlled retries and source licensing checks.
 4. Add project-specific relevance/ranking and feedback/evaluation; never confuse national Google Trends search spikes with actual Goa-specific demand.
+
+
+## Updated evidence — 2026-10-21
+A completed Dell Dev Brain SearXNG-assisted job `cad4904e-7aec-4678-ad71-d170ad2c4841` reached `review_passed` and persisted five private artifacts, including `research.json`. This supersedes the historical pending-status statement above. Its metadata explicitly states `tests_executed=false` and `repository_changed=false`; the successful pipeline remains **proposal-only**.
