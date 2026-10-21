@@ -92,3 +92,11 @@ The private owned **generic-linux-ssh-mcp plugin v0.1.18** supersedes v0.1.17. R
 - **Gate 3 BLOCKED** — no combined unattended research→Groq→actual Mac render→QA preview until gates 1–2 close.
 - **Gate 4 PARTIAL** — Mac 30/30 tests; Dell controller and sandbox selftests PASS. Fresh Mac idempotent ping `881a4f47-646c-4565-a2eb-7bc822a3729c` completed by cron, queue count 11. Dell idempotent research `8f39e7eb-4fa7-45fa-a800-19ad7b423716` completed unattended with 5 attributed results. Dell SSH heartbeat temporarily went stale then recovered without reissuing the queued task; no 24h/reboot/forced-offline certification.
 - No router/Wi-Fi/root/SSH-privilege change, no user app killed, no auto-posting, no advertising spend, no local Mac inference and no data sync to Moksha Master.
+
+## Marketing research transport — permanent device-paired relay LIVE (2026-10-21 ~23:20 IST)
+
+- **Device pairing / private transport: LIVE VERIFIED.** E2E-sealed Ed25519-authenticated Mac↔Dell messages use a new research-only Edge function and worker on the existing owner Supabase outbound infrastructure. Dell SearXNG stays on `127.0.0.1:18889`; Wi-Fi/SSH/root unchanged.
+- **Receipts:** `dc1ede2b-d686-43fe-b236-c04bd66d1b11` (first encrypted signed public search), `0d929763-667f-44d7-a9c3-955753b2da3d` (passed after controlled Dell user-service restart). Auth-negative test HTTP 401. Both SearXNG source-result receipts 5 each, zero pending research jobs at checkpoint. 2 permanently pinned device identities.
+- **Brain research connection not yet released:** `searxng_research.py` code supports opt-in encrypted relay with preexisting rate limits, 30/30 regression tests pass. Live Mac research policy still disabled; direct policy modification was blocked by execution controls. Need supported policy activation then real existing cron task.
+- **Other Marketing gates unchanged:** Mac thermally safe actual Reel Studio render, fully linked research-to-video/QA pilot and extended unattended recovery **not certified**. No autopublishing, no spend and no Moksha Master data sync.
+- Source/receipts: [Permanent paired research runbook](../research/paired-relay/README.md).
