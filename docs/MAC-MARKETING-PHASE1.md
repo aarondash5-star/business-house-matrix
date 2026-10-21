@@ -49,9 +49,9 @@ P3 channel integration behind approval; P4 measured outcomes driving EVOLUTION.
 - [x] Architecture and deployment constraints specified.
 - [x] Mac/Dell online/read-only inspection.
 - [x] Existing editing stack discovered for reuse.
-- [ ] Isolated Marketing Brain runtime installed and smoke tested.
-- [ ] Dell router contract located, audited and integrated.
-- [ ] Boot service enabled following validation.
+- [x] Isolated Marketing Brain v0.1.0 installed and smoke tested; all four unit tests passed.
+- [ ] Dell router contract located, audited and integrated (read-only inspection ongoing).
+- [x] Nonroot cron worker enabled at 2-minute cadence; autonomous handoff tested (host cron service enabled).
 - [ ] External providers integrated with verified quotas/licensing.
 - [ ] Editing pipeline connected to Marketing Brain.
 
@@ -59,3 +59,18 @@ P3 channel integration behind approval; P4 measured outcomes driving EVOLUTION.
 Production Reel Studio is left untouched; separate Phase 1 directory is removable after saving audit logs. If any foundation task fails, stop the new runner, preserve work receipts, restore previous file snapshots, and leave existing SSH bridge/Ollama/reel autodraft service unchanged.
 
 Documentation owner: Business House AI Matrix / Marketing department.
+
+## Execution record — 2026-10-21 15:24 IST
+- GitHub source: `marketing/mac-brain/brain.py`, `worker.sh`, `test_brain.py`, `README.md`.
+- Live isolated runtime: `/opt/business-house-matrix/marketing/brain`.
+- SQLite queue initialized, persistent receipt writer active, allow-listed local tasks only.
+- Ollama health returned three existing local models: `qwen3:1.7b`, `moondream:v2`, `qwen2.5-coder:3b`.
+- Baseline queue and model-discovery tasks PASS; idempotency PASS; attempted unauthorized publish task rejected.
+- Four isolated tests PASS: durable queue, rejection of unsafe actions, stale-worker recovery, resource limits.
+- Cron `*/2 * * * *` enabled for `generic-auto-exec` with `flock` and `timeout`; autonomous ping receipt ID `4e024353-6fa8-4237-9484-5d9c2e2771fd` completed at 09:54:01 UTC.
+- CPU `coretemp` check and available-RAM guard deployed: new `draft_plan` jobs defer above 86°C or below 1900 MB available RAM; guard tests passed.
+- Cron, Ollama and SSH automator remain active; prior Reel Studio and existing services unchanged.
+- Last independently observed sensors included ~81–83°C on Apple SMC and a ~4800 RPM fan, later `coretemp` around 65°C. Further creative inference requires live thermal check.
+- No outside API credentials, providers or social publishing actions connected. No video edits executed yet.
+- Rollback copy: `brain/brain.py.rollback-v0.1.0`; original crontab saved to `brain/data/crontab-before-marketing-phase1.txt`.
+- Next: first creative model draft under resource policy, isolate LangGraph dependencies, Dell router contract audit, Reel Studio read-only adapter, restart/offline tests.
