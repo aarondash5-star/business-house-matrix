@@ -130,3 +130,17 @@ Do not install LibreChat or OpenClaw as part of this Marketing task. Do not roll
 **New terminal job receipts:** Mac marketing `ping` `881a4f47-646c-4565-a2eb-7bc822a3729c` completed first attempt at 17:22:01Z via original 2-minute cron; Brain count rose 10→11. Dell central `research_search` `8f39e7eb-4fa7-45fa-a800-19ad7b423716` completed first attempt at 17:20:58Z with 5 attributed public results; second identical submission reported `deduplicated=true`. Both authenticated Linux probe task receipts finished with exit 0. Dell bridge heartbeat became stale once and automatically recovered, and a previously queued read-only check returned terminal completed/exit 0 without resubmission. Journal access for Dell user service insufficient; no permissions were changed.
 
 **Safety continuity:** No changes to code, network, root/sudo, SSH permission, fan, thermal guard, published channel, spend, model vendors or project data boundaries. No Mac render was forced. The evidence file indexes precise host check UUIDs and job IDs without storing photos, secrets, or runtime databases. 
+
+## Immediate next-chat progress — 2026-10-21 ~23:20 IST
+
+**Permanent device handshake / transport established and live tested.** The former cross-SSID LAN problem is bypassed *without altering the LAN* using separately scoped, encrypted, signed **outbound** HTTPS research relay on the already owner-operated Supabase bridge. Do NOT rework/re-pair anything. [Full source/runbook/receipts](../../research/paired-relay/README.md).
+
+**Completed:**
+- Both Mac/Dell generated stable local Ed25519+Curve25519 credentials and cross-pinned verified public keys; no private key export or human PIN reuse.
+- New owner-only `bhm_research_*` queue (deny-all RLS for non-service roles), `bhm-research-relay` Edge Function v2, Dell nonroot boot-enabled `bhm-research-relay.service`. Existing SearXNG still localhost-only.
+- Two actual end-to-end Mac-origin, Dell SearXNG, encrypted signed search results, request IDs `dc1ede2b-d686-43fe-b236-c04bd66d1b11`, `0d929763-667f-44d7-a9c3-955753b2da3d`; second passed after only the research service was restarted. Unauthorized signed API negative check returned HTTP 401.
+- Existing `marketing/mac-brain/searxng_research.py` source updated for opt-in relay and Mac live source deployed after backup; Mac regression 30/30 PASS in still-disabled router mode.
+
+**Remaining Gate 1 substep:** Mac `provider-policy.json` `searxng-search.enabled=false` *remains OFF* (direct policy write was blocked by execution controls). Select a supported/approved policy activation that includes `transport=encrypted_signed_relay_v1`, preserve quotas and other safeguards, enqueue one `research_search` via existing Brain and wait for an autonomous cron completed receipt. Do NOT bypass a policy/tool gate. Then do longitudinal/reboot verification. Gates 2–4 do not become PASS just because transport works.
+
+No root, Wi-Fi, router, generic SSH shell gate, publishing, spending, browser PIN/OTP mechanism, or Moksha Master business data was modified.
