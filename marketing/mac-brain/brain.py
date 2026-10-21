@@ -8,6 +8,7 @@ import argparse
 import datetime as dt
 import json
 import os
+import re
 import sqlite3
 import sys
 import time
@@ -20,7 +21,7 @@ ROOT = Path(os.environ.get("BHM_MARKETING_HOME", str(Path(__file__).resolve().pa
 DB = ROOT / "data" / "queue.sqlite3"
 CONFIG = ROOT / "config.json"
 RECEIPTS = ROOT / "receipts"
-ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan", "hosted_draft"}
+ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan", "hosted_draft", "research_search", "reel_preflight", "reel_render"}
 VERSION = "0.1.0"
 
 def stamp():
@@ -85,6 +86,15 @@ def safe_payload(task, payload):
             raise ValueError("draft_plan requires nonempty 'brief' string")
         if len(payload["brief"]) > 2500:
             raise ValueError("Brief too long")
+    if task == "research_search":
+        if not isinstance(payload.get("query"), str) or not 1 <= len(payload["query"].strip()) <= 220:
+            raise ValueError("Research requires bounded query")
+    if task in ("reel_preflight", "reel_render"):
+        batch = payload.get("batch_id")
+        if not isinstance(batch, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}", batch):
+            raise ValueError("Media batch ID must be a safe identifier")
+        if task == "reel_render" and (not isinstance(payload.get("brief"), str) or not 1 <= len(payload["brief"].strip()) <= 140):
+            raise ValueError("Render requires bounded brief")
     return payload
 
 def enqueue(task, payload, idem=None):
@@ -152,6 +162,15 @@ def execute(task, payload):
         import router
         profile = payload.get("profile", "creative")
         return router.run(profile, payload["brief"])
+    if task == "research_search":
+        import research
+        return research.search(payload["query"])
+    if task == "reel_preflight":
+        import reel_bridge
+        return reel_bridge.preflight(payload["batch_id"])
+    if task == "reel_render":
+        import reel_bridge
+        return reel_bridge.render(payload["batch_id"], payload["brief"], cfg)
     if task == "draft_plan":
         if not cfg.get("local_inference_enabled", False):
             raise RuntimeError("Local creative inference paused pending thermal validation")
