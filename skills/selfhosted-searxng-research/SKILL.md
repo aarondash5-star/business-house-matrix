@@ -57,3 +57,9 @@ New project adopters should wrap this in an explicit read-only adapter with proj
 
 ## Verified final research-assisted job (later 2026-10-21 update)
 Dell Dev Brain job `cad4904e-7aec-4678-ad71-d170ad2c4841` subsequently completed with `review_passed`; five mode-0600 artifacts, including `research.json`, were verified. The output declares `tests_executed=false`, `repository_changed=false`. It demonstrates successful research-to-proposal and text-review integration, **not** automated code execution, merge or deployment. Supersedes the earlier in-progress note.
+
+## 2026-10-21 permanent paired research transport update
+
+A **new, independent encrypted Mac-to-Dell outbound relay is live**: see [paired relay runbook](../../research/paired-relay/README.md), owner-paired Ed25519/Curve25519 devices, Edge function `bhm-research-relay` v2 and nonroot Dell `bhm-research-relay.service`. Two real signed/verified Mac-origin searches completed, including after controlled service restart. No Mac/Dell LAN connection or new public SearXNG listener exists. Do not continue to describe *transport* as impossible; the old LAN path remains impossible, but the signed HTTPS channel works.
+
+**Operational distinction:** Direct invocation of `transport.py search` is live, yet `Mac Marketing Brain research_search` is not certified until a properly enabled `searxng-search` slot plus terminal cron receipt. This portable repo skill update does **not** imply an installed private SSH plugin re-release or a new tool permission. All root, publishing, spend, thermal and data isolation gates remain.
