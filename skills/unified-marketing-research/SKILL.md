@@ -32,3 +32,8 @@ python3 "$B/gsc_metrics.py" status
 ```
 
 **OAuth not enrolled as of first certification:** obtaining an authorized, verified site property and read-only consent is an explicit remaining integration step; never treat it as complete based solely on module availability.
+
+
+## Direct GSC OAuth provisioning (2026-10-22)
+
+The independent Matrix's Mac now includes `gsc_oauth_setup.py` as a **temporary localhost-only, owner-mediated Google Desktop OAuth enrollment**. It does not use Windsor or GSC Wizard; read-only `webmasters.readonly`, PKCE, CSRF state, private 0600 token storage, verified property `https://mokshagoa.com/` or domain equivalent and post-consent direct Search Analytics sampling. User must consent from browser **on Mac** and upload a legitimate Desktop OAuth client JSON created in their own Cloud project. Do not paste Google tokens/client secrets to ChatGPT, public GitHub or relay. OAuth external Testing refresh tokens may expire in 7d. 47/47 Mac tests passed; verified loopback form and host guard, **NOT yet authorized or GSC source-connected** until Google consent and first real receipt. Reference [provisioning guide](../../docs/research/DIRECT_GSC_OAUTH_ENROLLMENT_2026-10-22.md).
