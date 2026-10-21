@@ -93,3 +93,14 @@ Documentation owner: Business House AI Matrix / Marketing department.
 - Scheduled local queue, offline receipt capture, health monitoring, and external permission restrictions continue. No further autonomous creative generation until improved thermal controls or a remote/Dell worker is proven safe.
 - Better next architecture: keep Mac coordinating offline, direct compute-heavy creative inference to validated external free hosted providers or an authorized Dell worker; use a smaller resource-tested local model only when thermal performance is acceptable.
 - Operational source safety patch commit: `ff1f7d9384f58c2e5f526bcaf15ae7ae73461d86`.
+
+## Marketing modular hosted API integration — 2026-10-21
+- Implemented and installed Dell-style router `marketing/mac-brain/router.py` with policy template `provider-policy.template.json` and synthetic tests `test_router.py`.
+- Live Mac runtime: `/opt/business-house-matrix/marketing/brain/router.py`, `provider-policy.json`, `provider-quota.sqlite3`, owner-only `secrets/` vault.
+- Profiles: creative, copy, research, vision, review, fast. Four staged slots: Groq GPT-OSS120, Groq Qwen3.8-27B (shared Groq key/group), Cloudflare Qwen3.8-27B, OpenRouter Qwen3.8-27B free.
+- Router connected to Brain as allowlisted `hosted_draft` task, but `online_enabled=false`; local creative inference remains disabled due thermal test. API calls: **none**. Provider keys: **none**.
+- 5 router unit tests PASS; 4 brain regression tests PASS; guarded online request denied as expected; file permissions checked (0600/0700). Existing worker, Ollama and SSH bridge active.
+- Intentional deviation from Dell harness: no deprecated Pi CLI on Mac; existing Dell modular selection, quota, cooldown, policy and secure vault design retained in restricted Python HTTPS adapter. Marketing models are not granted shell tools.
+- Additional Cloudflare account ID command and grouped Groq credential reference implemented; no login/key enrollment performed remotely.
+- **Next external dependency:** owner must verify and enroll Free-plan keys through an interactive terminal, confirm no paid billing, validate vendor model and rate-limit meters, then explicitly enable Brain online routing. This cannot be marked live yet.
+- Canonical provider runbook: [Mac modular API router](MAC-MARKETING-API-ROUTER.md).
