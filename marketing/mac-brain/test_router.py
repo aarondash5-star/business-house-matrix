@@ -58,6 +58,7 @@ class MarketingRouterTest(unittest.TestCase):
         self.assertEqual(p["tool_connections"][0]["id"], "tavily-search")
         self.assertFalse(p["tool_connections"][0]["enabled"])
         p["tool_connections"][0]["enabled"] = True
+        p["tool_connections"][0]["public_only"] = False
         self.r.POLICY.write_text(json.dumps(p))
         with self.assertRaisesRegex(RuntimeError, "requires Free-plan"):
             self.r.read_policy()
