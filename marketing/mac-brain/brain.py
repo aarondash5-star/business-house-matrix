@@ -156,7 +156,7 @@ def execute(task, payload):
                   + payload["brief"])
         response = http_json(cfg["ollama_url"].rstrip("/") + "/api/generate",
              {"model": model, "prompt": prompt, "stream": False,
-              "options": {"num_predict": 160, "temperature": 0.6},
+              "options": {"num_predict": 64, "num_ctx": 2048, "num_thread": 2, "temperature": 0.6},
               "keep_alive": "0"}, timeout=85)
         return {"mode": "local", "model": model,
                 "draft": str(response.get("response", ""))[:10000]}
