@@ -100,3 +100,12 @@ The private owned **generic-linux-ssh-mcp plugin v0.1.18** supersedes v0.1.17. R
 - **Brain research connection not yet released:** `searxng_research.py` code supports opt-in encrypted relay with preexisting rate limits, 30/30 regression tests pass. Live Mac research policy still disabled; direct policy modification was blocked by execution controls. Need supported policy activation then real existing cron task.
 - **Other Marketing gates unchanged:** Mac thermally safe actual Reel Studio render, fully linked research-to-video/QA pilot and extended unattended recovery **not certified**. No autopublishing, no spend and no Moksha Master data sync.
 - Source/receipts: [Permanent paired research runbook](../research/paired-relay/README.md).
+
+
+## FINAL — Marketing AI Gate 1 CERTIFIED PASS (2026-10-21 23:38 IST)
+
+**Supersedes previous Gate 1 transport/Brain-disabled or blocked entries.** Supported `router.py activate-research-relay` deployed to Mac and run with pinned-device identity, authenticated relay health, self-hosted license/no-paid and disabled publish/spend/local-inference preconditions; runtime `searxng-search.enabled=true` and `transport=encrypted_signed_relay_v1`. Private prior-policy backup preserved. **33/33 regression tests PASS** after activation.
+
+Two distinct idempotency-keyed `research_search` jobs completed **unattended by the original Mac 2-minute cron** on attempt 1: Mac Brain IDs `9979207f-3d99-4e83-a2b8-6c0af505af61`, `0d65e36d-a6f7-45ef-8358-490ef0be29a4` with sealed Dell request IDs `a35b6926-d13a-4ce7-b869-ca1caef28770`, `9d2557c8-3cb0-4d52-af42-52259f3dc7ce`, **5 source-attributed HTTPS results each**. Brain completed count increased **11 → 13**, quota ledger **2** requests. A controlled Dell research-only service restart preceded the second job; a subsequent bounded **24-second worker interruption** retained an in-flight encrypted Mac request and delivered its signed result after restoration (`3ea74e16-7349-4cbb-97d3-31587c41eac7`). An untrusted personal-email query was rejected locally before network use. Final Supabase status 2 paired identities, 5 completed encrypted requests, 0 inflight/stale, 0 unsafe client permissions; both SSH host heartbeats online.
+
+**Gate 1 PASS**, **Gates 2–4 NOT certified**. Gate 4 still requires long-running/reboot/thermal/fault soak; Gate 2 actual Mac preview is still limited by its 68°C thermal guard. No root/Wi-Fi/SSH/firewall/publishing/spend or Moksha Master changes. Read [full Gate 1 certification](receipts/MARKETING_GATE1_CERTIFICATION_2026-10-21.md).
