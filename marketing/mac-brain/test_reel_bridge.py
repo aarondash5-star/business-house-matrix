@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Non-network, non-render tests for Marketing's Reel Studio adapter."""
 import importlib.util
+import json
 import tempfile
 from pathlib import Path
 import unittest
@@ -36,6 +37,26 @@ class ReelBridgeTest(unittest.TestCase):
         (d/"unsafe.png").symlink_to(d/"media.jpg")
         with self.assertRaisesRegex(RuntimeError,"no links"):
             self.mod.scan("batch1")
+    def test_qa_never_approves_publishing(self):
+        self.media()
+        dst=self.mod.OUTBOX/"batch1"
+        dst.mkdir(parents=True)
+        movie=dst/"reel_preview.mp4"
+        movie.write_bytes(b"synthetic unrendered bytes")
+        (dst/"report.json").write_text(json.dumps({
+            "status":"preview_only_not_published","movie":str(movie),
+            "size":[360,640],"has_video":True,"seconds":12,"outro":"WATCH MORE"
+        }))
+        result=self.mod.review("batch1")
+        self.assertTrue(result["technical_checks_passed"])
+        self.assertFalse(result["checks"]["rights_verified"])
+        self.assertFalse(result["checks"]["brand_reviewed"])
+        self.assertFalse(result["checks"]["not_generic_outro"])
+        self.assertFalse(result["approved_to_publish"])
+    def test_reel_review_no_preview_fails(self):
+        self.media()
+        with self.assertRaisesRegex(RuntimeError,"missing"):
+            self.mod.review("batch1")
     def test_render_off_by_default(self):
         self.media()
         with self.assertRaisesRegex(RuntimeError,"not enabled"):
