@@ -21,7 +21,7 @@ ROOT = Path(os.environ.get("BHM_MARKETING_HOME", str(Path(__file__).resolve().pa
 DB = ROOT / "data" / "queue.sqlite3"
 CONFIG = ROOT / "config.json"
 RECEIPTS = ROOT / "receipts"
-ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan", "hosted_draft", "research_search", "reel_preflight", "reel_render"}
+ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan", "hosted_draft", "research_search", "reel_preflight", "reel_render", "reel_review"}
 VERSION = "0.1.0"
 
 def stamp():
@@ -89,7 +89,7 @@ def safe_payload(task, payload):
     if task == "research_search":
         if not isinstance(payload.get("query"), str) or not 1 <= len(payload["query"].strip()) <= 220:
             raise ValueError("Research requires bounded query")
-    if task in ("reel_preflight", "reel_render"):
+    if task in ("reel_preflight", "reel_render", "reel_review"):
         batch = payload.get("batch_id")
         if not isinstance(batch, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}", batch):
             raise ValueError("Media batch ID must be a safe identifier")
@@ -171,6 +171,9 @@ def execute(task, payload):
     if task == "reel_render":
         import reel_bridge
         return reel_bridge.render(payload["batch_id"], payload["brief"], cfg)
+    if task == "reel_review":
+        import reel_bridge
+        return reel_bridge.review(payload["batch_id"])
     if task == "draft_plan":
         if not cfg.get("local_inference_enabled", False):
             raise RuntimeError("Local creative inference paused pending thermal validation")
