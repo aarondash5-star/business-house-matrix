@@ -26,6 +26,7 @@ DEV_DB=DEVBRAIN/"queue.sqlite3"
 DELL_RESEARCH=Path("/var/lib/generic-linux-automator-exec/matrix-searxng/local_search.py")
 ALLOWED={
  "research_search":{"department":"Concept","mode":"public_retrieval"},
+ "dev_docs_fetch":{"department":"Development","mode":"governed_external_mcp_read_only"},
  "dev_proposal":{"department":"Development","mode":"proposal_only"},
  "sandbox_qa":{"department":"QA/QC","mode":"isolated_test_execution"},
  "repair_known_issue":{"department":"EVOLUTION","mode":"bounded_verified_autorepair"},
@@ -86,6 +87,12 @@ def submit(project,action,brief,research_query="",idempotency=None):
     if not isinstance(brief,str) or not 2<=len(brief.strip())<=MAX_BRIEF:
         raise ValueError("Brief must be 2-2000 characters")
     if action=="research_search" and not research_query:research_query=brief
+    if action=="dev_docs_fetch":
+        verify=subprocess.run(
+            [sys.executable,str(HOME/"mcp_tool_router.py"),"validate",brief],
+            stdin=subprocess.DEVNULL,capture_output=True,text=True,timeout=15)
+        if verify.returncode or json.loads(verify.stdout).get("valid") is not True:
+            raise ValueError("Dev documentation URL rejected by MCP policy")
     q=validate_public(research_query)
     idem=idempotency or str(uuid.uuid4())
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{7,95}",idem):
@@ -182,6 +189,22 @@ def tick():
             if data.get("provider")!="self-hosted-searxng":raise RuntimeError("Wrong research provider")
             receipt(d,t["id"],"completed",data,None,"retrieval_only")
             out={"id":t["id"],"status":"completed","results":len(data.get("results",[]))}
+        elif t["action"]=="dev_docs_fetch":
+            proc=subprocess.run(
+                [sys.executable,str(HOME/"mcp_tool_router.py"),"fetch",t["brief"]],
+                stdin=subprocess.DEVNULL,capture_output=True,text=True,timeout=75)
+            if proc.returncode:
+                raise RuntimeError("Governed MCP document fetch failed; no automatic replay")
+            data=json.loads(proc.stdout)
+            if (data.get("provider")!="external-mcp" or
+                    data.get("tool_slot")!="mcp-fetch-docs" or
+                    data.get("writes_performed") is not False or not data.get("text")):
+                raise RuntimeError("Governed MCP result contract failed")
+            receipt(d,t["id"],"completed",data,None,"external_mcp_retrieval_only")
+            out={"id":t["id"],"status":"completed",
+                 "source":data.get("url"),"chars":data.get("content_chars"),
+                 "quota_event_id":data.get("quota_event_id"),
+                 "qa_level":"external_mcp_retrieval_only"}
         elif t["action"]=="sandbox_qa":
             batch=t["brief"]
             if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,47}",batch):
