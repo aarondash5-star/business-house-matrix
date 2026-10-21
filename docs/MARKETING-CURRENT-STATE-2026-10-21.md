@@ -204,3 +204,13 @@ Independent Matrix project only. Do not synchronize private Moksha Master data i
 - **Safety confirmed:** `publish_enabled=false`, `spend_enabled=false`, `local_inference_enabled=false`, `searxng-search.enabled=false`; no paid fallback and no Moksha Master synchronization.
 
 **Next order:** owner-approved trusted common LAN or authenticated private relay → thermally safe in-run Mac render → one real linked research-to-video QA pilot → extended controlled recovery/soak. This update supersedes prior queue counts and earlier wording that could imply Mac research or finished editor autonomy.
+
+## Verified permanent Mac↔Dell handshake — 2026-10-21 ~23:20 IST
+
+**New:** permanent, revocable owner-paired cryptographic research relay actually deployed and live-tested. This removes the previous **network transport** blocker while preserving isolated `Andaz`/`andaz` Wi-Fi, local-only SearXNG and all root/SSH/privacy gates. Separate E2E-encrypted `bhm_research_*` queue and Edge Function v2 run on the preexisting owner Supabase infrastructure; browser PIN and Generic SSH command queues are unchanged.
+
+**Live evidence:** Both hosts independently generated signing/encryption keys and verified pinned public fingerprints. Dell research-only nonroot `bhm-research-relay.service` enabled/active. Two Mac-initiated requests finished with signed, encrypted Dell results and five HTTPS references each: `dc1ede2b-d686-43fe-b236-c04bd66d1b11`, `0d929763-667f-44d7-a9c3-955753b2da3d`; the second was completed *after a controlled service restart*. Unsigned polling returned HTTP 401. Admin readback: 2 active paired keys, 2 completed jobs, none pending, no ordinary-client SELECT/INSERT/UPDATE/DELETE grants and no RLS allow policies.
+
+**Still pending:** Enabling the existing Mac Marketing Brain `searxng-search` slot through a supported/approved policy method, then verifying `research_search` is autonomously consumed by its established cron with a terminal receipt. The new repo Mac adapter supports `transport=encrypted_signed_relay_v1` and 30/30 tests passed after source deployment while slot remained disabled; a direct policy-edit tool command was rejected, and it was not bypassed. Long-duration uptime, full reboot, replay and thermal-safe video remain un-certified. `publish_enabled=false`, `spend_enabled=false` preserved. This keeps Matrix separate from Moksha Master as a logical application; common cloud transport infrastructure does not grant shared data access.
+
+[Permanent handshake runbook and exact receipts](../research/paired-relay/README.md).
