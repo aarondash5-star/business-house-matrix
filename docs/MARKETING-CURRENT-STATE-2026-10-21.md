@@ -214,3 +214,12 @@ Independent Matrix project only. Do not synchronize private Moksha Master data i
 **Still pending:** Enabling the existing Mac Marketing Brain `searxng-search` slot through a supported/approved policy method, then verifying `research_search` is autonomously consumed by its established cron with a terminal receipt. The new repo Mac adapter supports `transport=encrypted_signed_relay_v1` and 30/30 tests passed after source deployment while slot remained disabled; a direct policy-edit tool command was rejected, and it was not bypassed. Long-duration uptime, full reboot, replay and thermal-safe video remain un-certified. `publish_enabled=false`, `spend_enabled=false` preserved. This keeps Matrix separate from Moksha Master as a logical application; common cloud transport infrastructure does not grant shared data access.
 
 [Permanent handshake runbook and exact receipts](../research/paired-relay/README.md).
+
+
+### Latest certified state — 2026-10-21 23:38 IST
+
+**Marketing AI Gate 1: PASS.** This supersedes older dated statements that Mac `searxng-search` is disabled or that autonomous research transport remains blocked. Activation completed using the reviewed single-purpose `router.py activate-research-relay` CLI; the existing live Marketing research provider is now `enabled=true`, `transport=encrypted_signed_relay_v1`. Credentials remained pinned and private, policy preflight plus backup verified, 33/33 tests PASS.
+
+The existing Mac cron autonomously processed two read-only research jobs with 5 attributed results each and distinct final receipts. First `9979207f-3d99-4e83-a2b8-6c0af505af61`; second after dedicated Dell service restart `0d65e36d-a6f7-45ef-8358-490ef0be29a4`. Both completed first attempt, no duplicate on second identical enqueue, Mac completed count 13. A third direct Mac-origin encrypted search survived a 24-second interruption of only the research worker. Untrusted caller HTTP 401, private search query rejected locally. Final cloud state: 2 enabled peers, 5 completed sealed jobs, 0 inflight/stale, no ordinary-client grants.
+
+[Gate 1 formal certification and exact terminal receipts](receipts/MARKETING_GATE1_CERTIFICATION_2026-10-21.md). **Gate 2 unsafe Mac thermal rendering, Gate 3 real autonomous linked video and Gate 4 extended soak remain outstanding.** No auto publishing, spend, root/network edits or Moksha Master synchronization.
