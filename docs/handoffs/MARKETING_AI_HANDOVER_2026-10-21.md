@@ -144,3 +144,15 @@ Do not install LibreChat or OpenClaw as part of this Marketing task. Do not roll
 **Remaining Gate 1 substep:** Mac `provider-policy.json` `searxng-search.enabled=false` *remains OFF* (direct policy write was blocked by execution controls). Select a supported/approved policy activation that includes `transport=encrypted_signed_relay_v1`, preserve quotas and other safeguards, enqueue one `research_search` via existing Brain and wait for an autonomous cron completed receipt. Do NOT bypass a policy/tool gate. Then do longitudinal/reboot verification. Gates 2–4 do not become PASS just because transport works.
 
 No root, Wi-Fi, router, generic SSH shell gate, publishing, spending, browser PIN/OTP mechanism, or Moksha Master business data was modified.
+
+
+## RELEASE GATE 1 CLOSURE — 2026-10-21 23:38 IST (verified)
+
+**GATE 1 = CERTIFIED PASS.** The prior `searxng-search.enabled=false` note is superseded. Supported, fail-closed CLI `router.py activate-research-relay` was versioned, deployed, regression tested, executed successfully, and verified by live readback. Mac now uses `encrypted_signed_relay_v1` automatically through the existing Brain and cron worker.
+
+- **33/33 tests**, no policy safety regressions. Mac Brain read-only research jobs `9979207f-3d99-4e83-a2b8-6c0af505af61` and `0d65e36d-a6f7-45ef-8358-490ef0be29a4` completed first attempt with 5 attributed results each, transport cryptographic verification, quota ledger and duplicate-key protection. Dell research-only worker controlled restart recovered before second job.
+- 24-second dedicated worker interruption during a Mac-origin encrypted search recovered and returned sealed signed results under request `3ea74e16-7349-4cbb-97d3-31587c41eac7`. No new pairing or user PIN requested.
+- Negative private-data query rejected, no external SearXNG port, no untrusted data grant; both authenticated hosts online, no pending/stale cloud jobs.
+- Formal [Gate 1 completion evidence](../receipts/MARKETING_GATE1_CERTIFICATION_2026-10-21.md) is canonical, not the previous snapshot. Do not reopen the network/PIN/transport work without a new verified defect.
+
+**NEXT:** Gate 2 thermally safe real Mac Reel Studio preview. Preserve 68°C cutoff and user applications. Gate 3 autonomous research-to-Groq-to-real-media editing and QA, then Gate 4 long-running scheduled recovery/reboot certification. Neither Gate 2, 3 nor 4 has passed. Preserve no publishing, no spend, no unapproved root/network changes and strict separation from Moksha Master.
