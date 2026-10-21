@@ -45,3 +45,13 @@ Bounded correction: https://github.com/aarondash5-star/business-house-matrix/blo
 Reusable search skill: https://github.com/aarondash5-star/business-house-matrix/blob/main/skills/selfhosted-searxng-research/SKILL.md
 
 Distinguish `SOURCE_COMMITTED`, `PLUGIN_PUBLISHED`, `DELL_LIVE_VERIFIED`, `MAC_LIVE_DISABLED` and `OTHER_PROJECT_ADOPTION_PENDING` in status. Existing connected tool permissions are unchanged by documentation.
+
+## External MCP Dev integration — 2026-10-22 checkpoint
+Read [modular MCP release and receipts](../../docs/DEV_MCP_MODULAR_REUSE_2026-10-22.md) before calling this feature. **Source committed is not a live capability**.
+
+- The Mac Marketing `router.py` was adapted from the existing Dell `matrix-dev-router/matrix-route.py`; preserve model slots, key vaults and SQLite quota data. Never transfer Mac Groq keys or quotas to Dell.
+- Dell has an installed MIT `mcp-server-fetch` stdio adapter, validated with a real HTTPS Matrix repo fetch and source allowlist tests.
+- Dell model policy has one additive `tool_connections` slot `mcp-fetch-docs`, with 50/day, 3/min, 900-second cooldown, and no paid or private network fallback.
+- Canonical adapter `brain/mvp-controller/external_mcp.py`, governance `mcp_tool_router.py`, slot contract `mcp-tool-connection.template.json`, controller `controller.py`.
+- **Governed queue not yet activated:** The dedicated quota wrapper and updated controller are versioned in GitHub but not deployed while Generic Linux SSH is returning internal tool failures. Do not submit a live task until host verification, staging, controlled restart, idempotent queue receipt and negative tests pass.
+- Once certified, the allowed task is `dev_docs_fetch` with one canonical HTTPS allowlisted technical documentation URL; source output is untrusted `retrieval_only`, not independently tested code, and must not trigger shell, merge, deployment, billing or publishing.
