@@ -95,7 +95,7 @@ def _metric(row):
 def save_rows(rows, *, site, start, end, source, digest):
     site = property_id(site)
     start, end = days(start, end)
-    if source not in ("gsc_csv_export", "google_gsc_searchanalytics_api"):
+    if source not in ("gsc_csv_export", "google_gsc_searchanalytics_api", "engagement_core_gsc_readonly_bridge"):
         raise ValueError("Unsupported evidence source")
     if not isinstance(rows, list) or len(rows) > MAX_ROWS:
         raise ValueError("Bounded rows required")
@@ -133,6 +133,46 @@ def import_csv(filename, site, start, end):
         raise ValueError("GSC export exceeds 2500 rows")
     return save_rows(records, site=site, start=start, end=end,
                      source="gsc_csv_export", digest=hashlib.sha256(raw).hexdigest())
+
+
+def import_engagement_core(report, expected_site):
+    """Import only a verified WP Manager gsc_search payload; never any OAuth token.
+
+    The authenticated MCP tool transport is the outer trust boundary. This
+    routine independently validates the claimed property, schema, provenance,
+    date range, each numeric observation, and excludes private/secret queries.
+    """
+    site = property_id(expected_site)
+    if not isinstance(report, dict) or set(report) - {
+        "property", "start_date", "end_date", "dimensions", "rows", "source"
+    }:
+        raise ValueError("Unexpected WP GSC bridge response shape")
+    if report.get("source") != "google-search-console-direct" or report.get("property") != site:
+        raise ValueError("Wrong GSC source or property")
+    if report.get("dimensions") != ["query"]:
+        raise ValueError("Only query-dimension GSC search data may be imported")
+    start, end = days(report.get("start_date"), report.get("end_date"))
+    rows = report.get("rows")
+    if not isinstance(rows, list) or not 1 <= len(rows) <= 250:
+        raise ValueError("At least one real, bounded GSC observation required")
+    result = []
+    for row in rows:
+        if not isinstance(row, dict) or not isinstance(row.get("keys"), list) or len(row["keys"]) != 1:
+            raise ValueError("Invalid Search Analytics grouped query")
+        if set(row) - {"keys", "clicks", "impressions", "ctr", "position"}:
+            raise ValueError("Unapproved Search Analytics field in bridge result")
+        if not isinstance(row["keys"][0], str):
+            raise ValueError("Invalid Search Analytics query")
+        item = {"query": row["keys"][0], "clicks": row.get("clicks"),
+                "impressions": row.get("impressions"), "ctr": row.get("ctr"),
+                "position": row.get("position")}
+        if _metric(item) is not None:
+            result.append(item)
+    if not result:
+        raise ValueError("No privacy-safe genuine Search Analytics data")
+    digest = hashlib.sha256(json.dumps(result, sort_keys=True, ensure_ascii=True).encode()).hexdigest()
+    return save_rows(result, site=site, start=start, end=end,
+                     source="engagement_core_gsc_readonly_bridge", digest=digest)
 
 
 def fetch_api(start, end):
@@ -232,12 +272,18 @@ def main():
     s = sub.add_parser("status"); s.add_argument("--site")
     x = sub.add_parser("brief"); x.add_argument("topic"); x.add_argument("--site")
     x = sub.add_parser("import-csv"); x.add_argument("filename"); x.add_argument("--site", required=True); x.add_argument("--start", required=True); x.add_argument("--end", required=True)
+    x = sub.add_parser("import-bridge"); x.add_argument("--site", required=True)
     x = sub.add_parser("fetch-api"); x.add_argument("--start", required=True); x.add_argument("--end", required=True)
     a = p.parse_args()
     try:
         if a.command == "status": ans = status(a.site)
         elif a.command == "brief": ans = relevant(a.topic, site=a.site)
         elif a.command == "import-csv": ans = import_csv(a.filename, a.site, a.start, a.end)
+        elif a.command == "import-bridge":
+            raw = sys.stdin.buffer.read(65537)
+            if len(raw) > 65536:
+                raise ValueError("GSC bridge intake capped at 64KB")
+            ans = import_engagement_core(json.loads(raw), a.site)
         else: ans = fetch_api(a.start, a.end)
         print(json.dumps(ans, ensure_ascii=False, indent=2))
     except (ValueError, RuntimeError, OSError, sqlite3.Error) as e:
