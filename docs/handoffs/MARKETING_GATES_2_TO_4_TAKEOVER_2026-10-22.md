@@ -145,3 +145,19 @@ systemctl is-active generic-linux-automator.service cron.service mbpfan.service 
 \`\`\`
 
 Check Mac host heartbeat first and recover only according to [existing certified SSH runbook](https://github.com/karanzing1992/engagement-core/blob/main/docs/GENERIC_SSH_THREE_LANES_ROLLOUT_20261021.md). Do **not** duplicate unknown in-flight task \`f18b10b2-b295-4950-aef4-bf04fa12ce77\`, delete the new video, repeat renderer, change cooler/fan/thermal guard, claim human rights approval or publish. Browser reopening/tab restore may be needed by the desktop owner. Additional user-approved production creative review and 24h safety/load evidence remain necessary.
+
+
+### 5. Subsequent recovery and final independent file verification (supersedes 'outage unresolved' above)
+
+Mac Generic Linux SSH **recovered without re-pairing or sudo/network modifications**: read-only host check **2026-10-21 20:19:14 UTC** returned \`online=true\`, age 2 seconds with all control/operations/development lanes recent. The previously pending operations task \`f18b10b2-b295-4950-aef4-bf04fa12ce77\` had **completed/exit 0** at **20:18:07 UTC** after an intermittent Mac-side heartbeat outage. This is a verified delayed receipt; why the bridge was temporarily unreachable was not established, and it is **not** a 24h resilience certificate. No risky replay occurred.
+
+Actual MP4 \`ffprobe\` independent readback:
+- path \`/opt/business-house-matrix/marketing/brain/renders/moksha-originals-20261021/reel_preview.mp4\`
+- **484,850 bytes**, SHA-256 **\`ef0e20fae7a1f0811e3ed16bf0c20cbd23941ab509e6b54d7e4e74c365bd133f\`**
+- Video **H.264, 360×640, 24 fps**, 9.625s actual container duration, bit rate ~402,992bps; **no audio stream**. Report declares \`music_missing=true\`, \`has_audio=false\`.
+- Source order \`guest.jpg\`, \`official-logo.jpg\`, \`sauna.jpg\`; still-image slideshow, 3.2 seconds per source. Hook truncated to **"Arambol Goa Sauna and Ice Bath We"**. Generic outro **"WATCH MORE"**; this is a valid technical preview, **NOT** a viral/finished/branded production creative.
+- Mac temperature after reconnected verification ~54°C TC0F, 52°C core package, fan ~3996 RPM; four protected system services ACTIVE, browser process absent, \`render_enabled\` absent/false (not persistently changed), \`publish_enabled=false\`, \`spend_enabled=false\`.
+- The idempotent Mac Brain \`reel_review\` task \`16d4eaea-759a-491d-bb9e-6d641b59df21\` **completed autonomously by original cron on attempt 1** at ~20:18:01 UTC. Read-only task receipt verified via Mac SSH \`1d346737-82e3-4ef1-b337-9c2dda8ff603\` exit 0: \`technical_checks_passed=true\`, \`not_generic_outro=false\`, \`rights_verified=false\`, \`brand_reviewed=false\`, \`publication_blocked=true\`. Brain completed count **18**.
+- Gate 4 passive monitor stayed running: 5 samples across 20 minutes, min max sensor **46°C**, max **80°C**, zero reported service failures, \`result=NOT_CERTIFIED\`, terminal receipt \`1d346737-82e3-4ef1-b337-9c2dda8ff603\`. Not yet 24-hour passive observation or 24-hour stress test.
+
+**Revised immediate verdict:** Genuine **Gate 2 technical MP4 creation and QA PASS** at low load. Gate 2 *production creative acceptance* remains incomplete (no sound, generic/truncated text, source rights/brand signoff missing), Gate 3 separate linked end-to-end unattended render NOT certified, Gate 4 long-run and reboot testing NOT certified. All no-publish/no-spend/68°C policy limits preserved. Avoid automatic recurrence of user browser shutdown; staged media and prior partial-render archive preserved. Next creative improvement should reuse the same render pipeline with human-approved original music, better hooks/outro and real visual review, maintaining one-core low priority or equivalent hard scheduling cap and real-time thermal abort.
