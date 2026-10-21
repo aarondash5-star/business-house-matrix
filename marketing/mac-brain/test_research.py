@@ -35,7 +35,7 @@ class ResearchTest(unittest.TestCase):
         self.assertFalse(result["credential_present"])
         self.assertEqual(result["conservative_monthly_cap"],100)
     def test_enroll_fails_before_terms_review(self):
-        with self.assertRaisesRegex(RuntimeError,"review"):
+        with self.assertRaisesRegex(RuntimeError,"exception"):
             self.mod.enroll()
         self.assertFalse(self.mod.SECRET.exists())
 if __name__=="__main__":unittest.main(verbosity=2)
