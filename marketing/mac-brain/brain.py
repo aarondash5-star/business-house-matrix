@@ -21,7 +21,7 @@ ROOT = Path(os.environ.get("BHM_MARKETING_HOME", str(Path(__file__).resolve().pa
 DB = ROOT / "data" / "queue.sqlite3"
 CONFIG = ROOT / "config.json"
 RECEIPTS = ROOT / "receipts"
-ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan", "hosted_draft", "research_search", "research_extract", "reel_preflight", "reel_render", "reel_review", "trends_refresh", "trends_insight"}
+ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan", "hosted_draft", "research_search", "research_extract", "reel_preflight", "reel_render", "reel_review", "trends_refresh", "trends_insight", "research_brief"}
 VERSION = "0.1.0"
 
 def stamp():
@@ -92,7 +92,16 @@ def safe_payload(task, payload):
         raise ValueError("A bounded Trends insight brief is required")
     if task == "hosted_draft" and payload.get("include_trends",False) is not False and payload.get("include_trends",False) is not True:
         raise ValueError("include_trends must be boolean")
-    if task == "research_search":
+    if task == "research_brief":
+        if not isinstance(payload.get("topic"), str) or not 3 <= len(payload["topic"].strip()) <= 220:
+            raise ValueError("Unified research requires a bounded topic")
+        if payload.get("geo", "IN") not in ("IN", "GB", "RU", "US"):
+            raise ValueError("Unsupported research geography")
+        if not isinstance(payload.get("include_web", True), bool):
+            raise ValueError("include_web must be boolean")
+        if payload.get("site") is not None:
+            import gsc_metrics
+            gsc_metrics.property_id(payload["site"])
         if not isinstance(payload.get("query"), str) or not 1 <= len(payload["query"].strip()) <= 220:
             raise ValueError("Research requires bounded query")
     if task == "research_extract":
@@ -181,6 +190,11 @@ def execute(task, payload):
     if task == "trends_insight":
         import trends
         return trends.brief_context(payload["brief"],payload.get("geo","IN"))
+    if task == "research_brief":
+        import unified_research
+        return unified_research.collect(payload["topic"], geo=payload.get("geo", "IN"),
+                                        site=payload.get("site"),
+                                        include_web=payload.get("include_web", True))
     if task == "research_search":
         import searxng_research
         return searxng_research.search(payload["query"])
