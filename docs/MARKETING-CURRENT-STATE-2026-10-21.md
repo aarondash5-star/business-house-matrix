@@ -158,3 +158,10 @@ systemctl is-active cron generic-linux-automator.service ollama.service
 - **Current Tavily operational state: integrated but rate-limited/unavailable for live results**. The next step is a bounded retry after cooldown or owner enrollment of Tavily's separate 1,000-credits/month free API key.
 - Existing Groq API routing remains operational; Gemini, Cloudflare and OpenRouter disabled; publishing, spending, local creative inference and rendering remain disabled.
 - See [Marketing API Router](MAC-MARKETING-API-ROUTER.md) for exact controls, no-key mode and rollback.
+
+## Research engine replacement checkpoint — 2026-10-21
+- **Tavily retired** from live Marketing Brain routing. Historical Tavily files and request records are retained for rollback only.
+- **SearXNG** deployed and proven live on Dell via official AGPL container. Boot-persistent rootless service, localhost engine and restricted private LAN gateway. Live Dell-local searches returned relevant cited results.
+- **Mac SearXNG code deployed** and 24 automated tests passed. The live SearXNG policy slot remains disabled pending network reachability; Groq models stay active.
+- Blocker: Mac and Dell are isolated at Wi-Fi layer (ARP failure / no route to host in both directions), not merely the SearXNG gateway. Do not expose port to the public internet to bypass the issue.
+- See [deployment and detailed handoff](RESEARCH-SEARXNG-DEPLOYMENT-2026-10-21.md) for verified commands, service names, private addresses and rollback. Earlier mentions of Tavily in this historical document are superseded by this entry.
