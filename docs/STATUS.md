@@ -44,3 +44,11 @@ The earlier Matrix-wide pilot status above remains independently tracked. No Ope
 - **Dev Brain research integrated and tested:** `matrix-brain research-search`, optional public `--research-query` and evidence-containing LangGraph research node, with source receipts. Existing queue retained. No model-directed search, repository edit or paid API.
 - Mac Marketing Brain SearXNG still disabled until trusted inter-network connectivity is established; Tavily remains retired.
 - Full details: [Deployment and Dev integration](RESEARCH-SEARXNG-DEPLOYMENT-2026-10-21.md).
+
+## Cross-project research skill release — 2026-10-21
+- Published **private Generic Linux SSH MCP plugin v0.1.17**, release `pluginrel_6ad8b8350ef88191b4fec49bb4f876f9`, with new discovered skill `selfhosted-searxng-research` and updated README. Verified plugin file list confirms all existing skills preserved.
+- User-facing plugin: https://chatgpt.com/plugins/plugins_6ad64adab5e481918832cd516e779009 .
+- Portable repo skill: [SearXNG Research Skill](../skills/selfhosted-searxng-research/SKILL.md); stable [reusable research contract](REUSABLE-RESEARCH-CONTRACT.md) and [JSON response schema](../research/contracts/searxng-search-response-v1.schema.json).
+- Cross-project reuse is **documentation and safe calling guidance**, not automatic enablement, new MCP tools, project-data sync or additional machine privileges.
+- Dell local SearXNG search remains live. Mac SearXNG adapter remains disabled because machines are on separate Wi-Fi networks; host-private gateway stopped. Dev Brain query works locally via authorized SSH.
+- The installed plugin's root/sudo owner-approval skill remains unchanged; no root/sudo policy edits performed with this plugin release.
