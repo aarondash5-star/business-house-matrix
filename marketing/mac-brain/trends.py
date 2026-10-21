@@ -154,6 +154,8 @@ def csv_columns(text):
 
 def import_csv(filename,geo="IN",window="user_export"):
     if geo not in ALLOWED_GEO:raise ValueError("Unapproved geography")
+    if not isinstance(window,str) or not re.fullmatch(r"[A-Za-z0-9_\-]{1,48}",window):
+        raise ValueError("Window must be a safe identifier")
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,95}\.csv",filename):
         raise ValueError("Filename must be safe CSV basename")
     src=INBOX/filename
@@ -216,7 +218,7 @@ def brief_context(brief,geo="IN",limit=5):
                 "matched_context_tokens":matched,
                 "source_url":source,"signal_type":"recent_trending_news_query",
                 "matching_tokens_count":hits})
-    selected.sort(key=lambda x:(-x["matching_tokens_count"],x["observed_utc"]),reverse=False)
+    selected.sort(key=lambda x:(x["matching_tokens_count"],x["observed_utc"]),reverse=True)
     selected=selected[:limit]
     # Historical index points are returned within single comparison groups.
     # Don't rank or merge indices from different exports/windows.
