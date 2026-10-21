@@ -121,6 +121,36 @@ def render(batch_id, brief, config):
             "rights_check_required":True,"approved_to_publish":False,
             "auto_publish":False,"source_count":manifest["media_count"]}
 
+
+def review(batch_id):
+    """Read-only output QC; never converts a draft into publishing approval."""
+    src,dst=batch_paths(batch_id)
+    p=dst/"report.json"
+    if not p.is_file() or p.is_symlink():
+        raise RuntimeError("Preview report missing")
+    report=json.loads(p.read_text())
+    movie=dst/"reel_preview.mp4"
+    if not movie.is_file() or movie.is_symlink():
+        raise RuntimeError("Preview media missing")
+    expected=movie.resolve()
+    if Path(str(report.get("movie",""))).resolve()!=expected:
+        raise RuntimeError("Preview report references unexpected output")
+    checks={
+        "preview_only":report.get("status")=="preview_only_not_published",
+        "vertical":len(report.get("size",[]))==2 and report["size"][1]>report["size"][0],
+        "has_video":bool(report.get("has_video",False)),
+        "duration_sensible":isinstance(report.get("seconds"),(int,float)) and 4<=report["seconds"]<=60,
+        "not_generic_outro":report.get("outro","").strip().upper() not in ("WATCH MORE","FOLLOW FOR MORE",""),
+        "rights_verified":False, # independent licensing/asset consent QA must set separately
+        "brand_reviewed":False,
+    }
+    return {"batch_id":batch_id,"checks":checks,
+            "technical_checks_passed":all(checks[k] for k in ("preview_only","vertical","has_video","duration_sensible")),
+            "state":"DRAFT_NEEDS_HUMAN_QA",
+            "approved_to_publish":False,
+            "publication_blocked":True,
+            "video":str(movie),"source_dir":str(src)}
+
 def preflight(batch_id):
     info=scan(batch_id)
     info["render_entrypoint_present"]=REEL.is_file()
