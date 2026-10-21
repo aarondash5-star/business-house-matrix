@@ -87,3 +87,23 @@ A \`choose\` result of \`null\` while no account is enrolled is **expected**. No
 3. Preserve audit database \`provider-quota.sqlite3\` and private vault before removing router files.
 4. Restore \`brain.py.rollback-pre-router-integration\` if reverting the hosted task.
 5. Existing Mac cron, Ollama, Generic Linux SSH and Reel Studio are unaffected by this module.
+
+
+## Groq-first activation — 2026-10-21
+Groq remains the first preferred provider. The existing two Groq slots share one securely enrolled key and a conservative 40-request-per-day accounting group.
+
+Verified official Free-plan docs: both \`openai/gpt-oss-120b\` and \`qwen/qwen3.8-27b\` are listed at 30 RPM, 1,000 RPD, 8,000 TPM and 200,000 TPD as standard Free plan limits (subject to the account dashboard). Source: https://console.groq.com/docs/rate-limits . Groq's API supports chat completions at \`https://api.groq.com/openai/v1/chat/completions\` (source: https://console.groq.com/docs/api-reference).
+
+Groq key creation: https://console.groq.com/keys ; Free plan: check Billing and Limits in https://console.groq.com/settings/limits.
+
+**From the Mac's human login, interactive terminal** (not SSH job arguments):
+
+\`\`\`bash
+sudo -u generic-auto-exec python3 /opt/business-house-matrix/marketing/brain/router.py enroll groq-creative-oss120 --free-plan-confirmed
+sudo -u generic-auto-exec python3 /opt/business-house-matrix/marketing/brain/router.py verify-provider groq-creative-oss120
+sudo -u generic-auto-exec python3 /opt/business-house-matrix/marketing/brain/router.py verify-provider groq-copy-qwen
+\`\`\`
+
+The enrollment step prompts invisibly and saves a 0600 secret file. \`verify-provider\` checks authentication and model availability via the authenticated model-list endpoint, **without performing inference**. Activating the slots is a separate decision; leave \`online_enabled\` false until Groq Free plan/no-billing is confirmed and a bounded live test has passed.
+
+Current status: Mac online and queue active, **no Groq key enrolled**, Groq slots disabled. A no-credential verification was tested to fail safely and ten isolated router/brain regression tests passed after adding the authenticated model check.
