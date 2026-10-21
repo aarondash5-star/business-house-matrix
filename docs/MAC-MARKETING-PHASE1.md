@@ -83,3 +83,13 @@ Documentation owner: Business House AI Matrix / Marketing department.
 - Mac adapter should reuse **policy semantics and tests**, not call Dell's privileged CLI over an unrestricted remote shell. For Mac, provider enrollment and account authorization remain separate. Use localhost-only adapters and explicit per-provider enablement.
 - Live Dell dev brain `matrix-dev-brain.service` active under `generic-auto-exec`; it is separate from the Mac Marketing Brain. No Dell changes performed.
 - Local Mac creative pilot now uses max 64 generated tokens, 2048 context and 2 inference threads to reduce load. First `draft_plan` job queued for autonomous resource-gated processing; result not yet verified at this point.
+
+## Thermal gate and first creative test — 2026-10-21 ~15:30 IST
+- First autonomous Ollama `draft_plan` task (receipt `a03e0d41-a6e6-4d96-be62-40e441fe55f3`) **COMPLETED** using local Qwen3 with 64-token output cap, 2 inference threads and 2048 context.
+- Under inference load, CPU `coretemp` reached **90°C** and fan reached ~6492 RPM. Pre-start thermal guard alone was inadequate for sustained autonomous inference.
+- **Immediate safety action executed:** `local_inference_enabled=false`, `max_core_temp_c=0.0` on Mac runtime. Source `brain.py` updated to fail-closed by default before any creative Ollama request.
+- Safety lockdown verified: `brain.execute('draft_plan', ...)` returns `RuntimeError: Local creative inference paused pending thermal validation` **without an Ollama request**.
+- Four regression tests PASS after patch; Mac cooled to about 77°C, fan ~5009 RPM; SSH automator, Ollama and cron remain active.
+- Scheduled local queue, offline receipt capture, health monitoring, and external permission restrictions continue. No further autonomous creative generation until improved thermal controls or a remote/Dell worker is proven safe.
+- Better next architecture: keep Mac coordinating offline, direct compute-heavy creative inference to validated external free hosted providers or an authorized Dell worker; use a smaller resource-tested local model only when thermal performance is acceptable.
+- Operational source safety patch commit: `ff1f7d9384f58c2e5f526bcaf15ae7ae73461d86`.
