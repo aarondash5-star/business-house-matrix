@@ -157,6 +157,8 @@ def poll_dev(d,t):
                  "proposal_only":True,"tests_executed":False,
                  "repository_changed":False,
                  "source_lookup_available":result.get("source_lookup_available",False),
+                 "mcp_docs_attached":result.get("mcp_docs_attached",False),
+                 "mcp_source_url":result.get("mcp_source_url"),
                  "artifacts":list((DEVBRAIN/"artifacts"/remote).glob("*.md")) and
                      sorted(p.name for p in (DEVBRAIN/"artifacts"/remote).glob("*")) or []}
         receipt(d,t["id"],state,payload,None if verified else "Incomplete Dev receipt",qa)
