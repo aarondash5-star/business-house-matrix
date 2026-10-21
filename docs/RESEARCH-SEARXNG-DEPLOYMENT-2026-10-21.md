@@ -116,3 +116,7 @@ sudo matrix-brain selftest
 - **DELL_LIVE:** owner-scoped local SearXNG works via authenticated Generic Linux SSH's read-only CLI; Dev Brain integrated as opt-in research step. **MAC_LIVE:** research router disabled until secure private network path is verified.
 - **CONSUMER_ADOPTION:** no other project was silently connected. Reuse requires an explicit opt-in from each project; do not synchronize private prompts, credentials, data stores, or unrestricted shell access. Existing plugin only supplies reusable instructions, not a new search API or tool permission.
 - **IMPORTANT:** Dell and Mac root/sudo privilege policies remain governed by separate fresh owner approval; the skill update did not change Linux permissions, Supabase MCP/backend, credential vaults, Wi-Fi or firewall.
+
+
+## Final end-to-end Dev Brain verification — 2026-10-21
+The research-assisted job `cad4904e-7aec-4678-ad71-d170ad2c4841` completed `review_passed` with all five private mode-0600 artifacts: `research.json` (2104 bytes), `plan.md` (1778), `implementation.md` (2850), `review.md` (1149), and `result.json` (302). Its report says `source_lookup_available=true`, `tests_executed=false`, and `repository_changed=false`. This confirms the four-stage proposal workflow—not tested or deployed code. Dell SearXNG, Dev Brain and SSH bridge remained active.
