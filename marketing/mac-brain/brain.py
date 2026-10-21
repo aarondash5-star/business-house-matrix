@@ -21,7 +21,7 @@ ROOT = Path(os.environ.get("BHM_MARKETING_HOME", str(Path(__file__).resolve().pa
 DB = ROOT / "data" / "queue.sqlite3"
 CONFIG = ROOT / "config.json"
 RECEIPTS = ROOT / "receipts"
-ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan", "hosted_draft", "research_search", "research_extract", "reel_preflight", "reel_render", "reel_review"}
+ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan", "hosted_draft", "research_search", "research_extract", "reel_preflight", "reel_render", "reel_review", "trends_refresh", "trends_insight"}
 VERSION = "0.1.0"
 
 def stamp():
@@ -86,6 +86,12 @@ def safe_payload(task, payload):
             raise ValueError("draft_plan requires nonempty 'brief' string")
         if len(payload["brief"]) > 2500:
             raise ValueError("Brief too long")
+    if task in ("trends_refresh", "trends_insight") and payload.get("geo","IN") not in ("IN","US","GB","RU"):
+        raise ValueError("Unsupported Google Trends geography")
+    if task == "trends_insight" and (not isinstance(payload.get("brief"),str) or not 2<=len(payload["brief"].strip())<=2000):
+        raise ValueError("A bounded Trends insight brief is required")
+    if task == "hosted_draft" and payload.get("include_trends",False) is not False and payload.get("include_trends",False) is not True:
+        raise ValueError("include_trends must be boolean")
     if task == "research_search":
         if not isinstance(payload.get("query"), str) or not 1 <= len(payload["query"].strip()) <= 220:
             raise ValueError("Research requires bounded query")
@@ -164,7 +170,17 @@ def execute(task, payload):
             raise RuntimeError("Hosted routing not enabled")
         import router
         profile = payload.get("profile", "creative")
-        return router.run(profile, payload["brief"])
+        prompt = payload["brief"]
+        if payload.get("include_trends",False):
+            import trends
+            prompt = trends.enrich(prompt,payload.get("geo","IN"))
+        return router.run(profile,prompt)
+    if task == "trends_refresh":
+        import trends
+        return trends.refresh(payload.get("geo","IN"))
+    if task == "trends_insight":
+        import trends
+        return trends.brief_context(payload["brief"],payload.get("geo","IN"))
     if task == "research_search":
         import searxng_research
         return searxng_research.search(payload["query"])
