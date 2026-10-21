@@ -49,3 +49,8 @@ Existing Dell model policy: `/var/lib/generic-linux-automator-exec/.local/share/
 
 ## Explicit status at writing
 **Mac modular router: VERIFIED. Dell modular model router: VERIFIED. Dell source-restricted upstream MCP: VERIFIED. MCP slot model policy: LIVE. Governed quota wrapper in durable Dev queue: SOURCE COMMITTED / LIVE BLOCKED BY SSH CONNECTOR.**
+
+
+## FINAL LIVE RELEASE — 2026-10-22 IST (supersedes previous blocker)
+
+**Dell Dev modular external MCP: DEPLOYED AND VERIFIED LIVE.** The Generic Linux SSH bridge recovered. Exact release and all terminal receipts are in [Dev MCP live certification](receipts/DEV_MCP_LIVE_CERTIFICATION_2026-10-22.md). Pinned three-file release `e82d5d6e7dd785cbbee9e9adcab91dbde0a2b8e1` is installed with backup, controller restarted active, staging/selftests and model policy PASS. Real autonomous central `dev_docs_fetch` job `6a646a11-5c0d-410c-beb1-3ee5a3a1afe8` completed first attempt, 3,795 characters from Matrix public README, tool slot `mcp-fetch-docs`, quota event 1, no file writes. Duplicate key was deduplicated; localhost and foreign repo were blocked. Isolated 3/min quota, cooldown and disabled policy checks passed without modifying live quota. SearXNG, research relay and controller all active. **This enables read-only Dev documentation retrieval, not automatic source injection into all code proposals or autonomous repository modifications.**
