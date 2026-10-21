@@ -73,7 +73,7 @@ A \`choose\` result of \`null\` while no account is enrolled is **expected**. No
 
 ## Verified 2026-10-21
 - Mac router source installed, schema validation PASS: four slots, paid inference denied.
-- Five synthetic isolated router tests PASS: strict allowlist, all-disabled no-network status, fail-closed run, interactive enrollment restriction, grouped quota enforcement.
+- Six synthetic isolated router tests PASS: strict allowlist, all-disabled no-network status, fail-closed run, interactive enrollment restriction, grouped quota enforcement, and simulated 429 automatic fallback with two auditable reservations.
 - Four preexisting Brain unit tests PASS and online-task disabled guard PASS.
 - File permissions: credential vault 0700, policy/router/quota database 0600.
 - Cloudflare account-ID format negative test PASS.
