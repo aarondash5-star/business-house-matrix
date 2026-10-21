@@ -28,6 +28,7 @@ ALLOWED={
  "research_search":{"department":"Concept","mode":"public_retrieval"},
  "dev_docs_fetch":{"department":"Development","mode":"governed_external_mcp_read_only"},
  "dev_proposal":{"department":"Development","mode":"proposal_only"},
+ "website_stage":{"department":"Development","mode":"private_static_staging_only"},
  "sandbox_qa":{"department":"QA/QC","mode":"isolated_test_execution"},
  "repair_known_issue":{"department":"EVOLUTION","mode":"bounded_verified_autorepair"},
  "marketing_draft":{"department":"Marketing","mode":"blocked_until_private_route"},
@@ -87,6 +88,8 @@ def submit(project,action,brief,research_query="",idempotency=None):
     if not isinstance(brief,str) or not 2<=len(brief.strip())<=MAX_BRIEF:
         raise ValueError("Brief must be 2-2000 characters")
     if action=="research_search" and not research_query:research_query=brief
+    if action=="website_stage" and (project!="moksha_overhaul" or brief.strip()!="moksha_overhaul_v1"):
+        raise ValueError("Website staging has no approved project/manifest scope")
     if action=="dev_docs_fetch":
         verify=subprocess.run(
             [sys.executable,str(HOME/"mcp_tool_router.py"),"validate",brief],
@@ -243,6 +246,19 @@ def tick():
             receipt(d,t["id"],state,data,None if state=="completed" else "Rule-based correction failed independent tests",
                     "executed_isolated_unit_tests")
             out={"id":t["id"],"status":state,"qa_level":"executed_isolated_unit_tests"}
+        elif t["action"]=="website_stage":
+            result=subprocess.run([sys.executable,str(HOME/"site_staging.py"),"build",t["project"],t["brief"]],
+                capture_output=True,text=True,stdin=subprocess.DEVNULL,timeout=45)
+            if result.returncode:
+                raise RuntimeError("Private staging build rejected: "+(result.stderr or "")[-180:])
+            data=json.loads(result.stdout)
+            if (data.get("state")!="private_preview_ready" or data.get("publication") is not False
+                or data.get("spend") is not False or data.get("qa_passed") is not True
+                or data.get("nonindexed") is not True or data.get("external_services") is not False):
+                raise RuntimeError("Private staging contract failed")
+            receipt(d,t["id"],"completed",data,None,"private_static_preview_qa")
+            out={"id":t["id"],"status":"completed","qa_level":"private_static_preview_qa",
+                 "pages":data["pages"],"local_path":data["local_path"]}
         elif t["action"]=="dev_proposal":
             sys.path.insert(0,str(DEVBRAIN))
             import brain
@@ -327,7 +343,13 @@ def test():
             c=submit("marketing","video_preview","Test a safe video draft")
             assert a["id"]==b["id"] and b["deduplicated"]
             assert c["status"]=="blocked"
-            assert status()["counts"]=={"queued":1,"blocked":1}
+            try:submit("unapproved","website_stage","moksha_overhaul_v1")
+            except ValueError:pass
+            else:raise AssertionError("Unapproved staging project accepted")
+            staged=submit("moksha_overhaul","website_stage","moksha_overhaul_v1",idempotency="test-staging-route-20261022")
+            duplicate=submit("moksha_overhaul","website_stage","moksha_overhaul_v1",idempotency="test-staging-route-20261022")
+            assert staged["status"]=="queued" and duplicate["id"]==staged["id"]
+            assert status()["counts"]=={"queued":2,"blocked":1}
             assert recover()["flagged_uncertain_dispatches"]==0
             try:submit("devpilot","research_search","contact", "email alice@example.com")
             except ValueError:pass
