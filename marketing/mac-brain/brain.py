@@ -28,7 +28,7 @@ def stamp():
 
 def configure():
     defaults = {
-        "version": 1, "online_enabled": False, "publish_enabled": False,
+        "version": 1, "online_enabled": False, "local_inference_enabled": False, "publish_enabled": False,
         "spend_enabled": False, "max_concurrent_jobs": 1,
         "local_models": {"planning": "qwen3:1.7b", "vision": "moondream:v2",
                          "code": "qwen2.5-coder:3b"},
@@ -147,6 +147,8 @@ def execute(task, payload):
         return {"ok": True, "models": sorted(m["name"] for m in response.get("models", [])),
                 "mode": "local"}
     if task == "draft_plan":
+        if not cfg.get("local_inference_enabled", False):
+            raise RuntimeError("Local creative inference paused pending thermal validation")
         local_resource_guard(cfg)
         model = cfg["local_models"]["planning"]
         prompt = ("You are a Marketing department planning assistant. Provide only a "
