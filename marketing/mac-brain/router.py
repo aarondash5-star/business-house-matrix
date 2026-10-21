@@ -382,6 +382,64 @@ def activate(slot):
     save_policy(p)
     return {"enabled": True, "slot": slot}
 
+def activate_research_relay():
+    """Owner-approved activation for one already-paired read-only research tool.
+
+    Never enroll devices, replace keys, change LAN, or activate other providers.
+    """
+    import subprocess
+    local = Path("/var/lib/generic-linux-automator-exec/matrix-research-transport/transport.py")
+    if not local.is_file() or local.is_symlink():
+        raise RuntimeError("Pinned research transport missing or unsafe")
+    cfg = json.loads(BRAIN_CONFIG.read_text())
+    if cfg.get("publish_enabled") is not False or cfg.get("spend_enabled") is not False or cfg.get("local_inference_enabled") is not False:
+        raise RuntimeError("Publishing, spending and local inference must remain off")
+    policy = read_policy()
+    slots = [x for x in policy.get("tool_connections", []) if x.get("id") == "searxng-search"]
+    if len(slots) != 1:
+        raise RuntimeError("Expected exactly one approved SearXNG search tool")
+    slot = slots[0]
+    if not (slot.get("provider") == "searxng"
+            and slot.get("self_hosted") is True
+            and slot.get("open_source_license_reviewed") is True
+            and slot.get("paid_fallback_allowed") is False
+            and slot.get("conservative_daily_requests", 0) <= 100):
+        raise RuntimeError("Self-hosted no-paid research checks failed")
+    for action in ("identity", "selftest", "health"):
+        result = subprocess.run([sys.executable, str(local), action],
+                                capture_output=True, text=True, timeout=18,
+                                stdin=subprocess.DEVNULL, check=False)
+        if result.returncode:
+            raise RuntimeError("Paired research " + action + " check failed")
+        try: report = json.loads(result.stdout)
+        except ValueError: raise RuntimeError("Malformed paired research preflight") from None
+        if action == "identity" and not (report.get("host_id") == "mac-linux"
+                and report.get("fingerprint") == "a14b45012cbc7d39b52b6a68"
+                and report.get("trusted_peer") == "fb011d3c5f91d65b50c7184c"):
+            raise RuntimeError("Unexpected pinned research host identity")
+        if action == "selftest" and report.get("passed") is not True:
+            raise RuntimeError("Cryptographic tests failed")
+        if action == "health" and not (report.get("service") == "bhm-research-v1"
+                and report.get("healthy") is True and report.get("authenticated_jobs_only") is True
+                and report.get("public_search_port") is False):
+            raise RuntimeError("Private relay is not ready")
+    if slot.get("enabled") is True and slot.get("transport") == "encrypted_signed_relay_v1":
+        return {"enabled": True, "already_active": True, "tool": slot["id"]}
+    if slot.get("enabled") is True:
+        raise RuntimeError("Unknown currently active tool transport; fail closed")
+    backup = POLICY.with_name("provider-policy.json.pre-bhm-research-20261021")
+    if not backup.exists():
+        private_write(backup, POLICY.read_text())
+    slot.update({
+        "enabled": True,
+        "transport": "encrypted_signed_relay_v1",
+        "endpoint": "Dell localhost SearXNG via authenticated sealed HTTPS relay",
+        "notes": "Permanent revocable Ed25519-paired devices and sealed Mac-Dell research; no IP gateway, no paid fallback."
+    })
+    save_policy(policy)
+    return {"enabled": True, "tool": slot["id"],
+            "transport": slot["transport"], "read_only": True, "paid": False}
+
 def main():
     p = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="command", required=True)
@@ -390,6 +448,7 @@ def main():
     c = sub.add_parser("choose"); c.add_argument("--profile", choices=sorted(PROFILES), default="creative")
     e = sub.add_parser("enroll"); e.add_argument("slot"); e.add_argument("--free-plan-confirmed", action="store_true")
     a = sub.add_parser("activate"); a.add_argument("slot")
+    sub.add_parser("activate-research-relay")
     v = sub.add_parser("verify-provider"); v.add_argument("slot")
     aid = sub.add_parser("set-account"); aid.add_argument("slot"); aid.add_argument("--account-id", required=True)
     d = sub.add_parser("disable"); d.add_argument("slot")
@@ -407,6 +466,8 @@ def main():
         print(json.dumps(enroll(args.slot,args.free_plan_confirmed)))
     elif args.command == "activate":
         print(json.dumps(activate(args.slot)))
+    elif args.command == "activate-research-relay":
+        print(json.dumps(activate_research_relay()))
     elif args.command == "verify-provider":
         print(json.dumps(verify_provider(args.slot)))
     elif args.command == "set-account":
