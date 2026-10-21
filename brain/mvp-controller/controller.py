@@ -27,6 +27,7 @@ DELL_RESEARCH=Path("/var/lib/generic-linux-automator-exec/matrix-searxng/local_s
 ALLOWED={
  "research_search":{"department":"Concept","mode":"public_retrieval"},
  "dev_proposal":{"department":"Development","mode":"proposal_only"},
+ "sandbox_qa":{"department":"QA/QC","mode":"isolated_test_execution"},
  "marketing_draft":{"department":"Marketing","mode":"blocked_until_private_route"},
  "video_preview":{"department":"Marketing","mode":"blocked_until_thermal_QA"},
 }
@@ -180,6 +181,21 @@ def tick():
             if data.get("provider")!="self-hosted-searxng":raise RuntimeError("Wrong research provider")
             receipt(d,t["id"],"completed",data,None,"retrieval_only")
             out={"id":t["id"],"status":"completed","results":len(data.get("results",[]))}
+        elif t["action"]=="sandbox_qa":
+            batch=t["brief"]
+            if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,47}",batch):
+                raise ValueError("Sandbox batch must be a safe identifier")
+            runner=HOME/"sandbox.py"
+            result=subprocess.run([sys.executable,str(runner),"run",batch],
+                                  stdin=subprocess.DEVNULL,capture_output=True,text=True,
+                                  timeout=60)
+            if result.returncode:
+                raise RuntimeError("Sandbox runner rejected batch or execution failed")
+            data=json.loads(result.stdout)
+            state="completed" if data.get("qa_passed") is True and data.get("tests_executed") is True else "needs_review"
+            receipt(d,t["id"],state,data,None if state=="completed" else "Isolated tests did not pass",
+                    "executed_isolated_unit_tests")
+            out={"id":t["id"],"status":state,"qa_level":"executed_isolated_unit_tests"}
         elif t["action"]=="dev_proposal":
             sys.path.insert(0,str(DEVBRAIN))
             import brain
@@ -215,7 +231,7 @@ def status(limit=12):
       "capabilities":{k:v["mode"] for k,v in ALLOWED.items()},
       "counts":groups,"evolution_outcomes":feedback,
       "tasks":[dict(r) for r in all_],"paid":False,"auto_publish":False,
-      "allow_shell_injection":False,"sandbox_execution":False}
+      "allow_shell_injection":False,"sandbox_execution":True}
 
 def show(job_id):
     d=connect()
