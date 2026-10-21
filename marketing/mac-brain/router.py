@@ -307,6 +307,7 @@ def main():
     c = sub.add_parser("choose"); c.add_argument("--profile", choices=sorted(PROFILES), default="creative")
     e = sub.add_parser("enroll"); e.add_argument("slot"); e.add_argument("--free-plan-confirmed", action="store_true")
     a = sub.add_parser("activate"); a.add_argument("slot")
+    aid = sub.add_parser("set-account"); aid.add_argument("slot"); aid.add_argument("--account-id", required=True)
     d = sub.add_parser("disable"); d.add_argument("slot")
     test = sub.add_parser("run"); test.add_argument("--profile", choices=sorted(PROFILES), default="creative")
     test.add_argument("--prompt", required=True)
@@ -322,6 +323,16 @@ def main():
         print(json.dumps(enroll(args.slot,args.free_plan_confirmed)))
     elif args.command == "activate":
         print(json.dumps(activate(args.slot)))
+    elif args.command == "set-account":
+        policy = read_policy()
+        s = next((x for x in policy["connections"] if x["id"] == args.slot), None)
+        if s is None or s["provider"] != "cloudflare-workers-ai":
+            raise RuntimeError("account IDs are accepted only for configured Cloudflare slots")
+        if not re.fullmatch(r"[0-9a-fA-F]{32}", args.account_id):
+            raise RuntimeError("Cloudflare Account ID must be 32 hexadecimal characters")
+        s["account_id"] = args.account_id
+        save_policy(policy)
+        print(json.dumps({"account_id_saved": True, "slot": s["id"]}))
     elif args.command == "disable":
         policy = read_policy(); s = next((x for x in policy["connections"] if x["id"] == args.slot),None)
         if s is None: raise RuntimeError("unknown slot")
