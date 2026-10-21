@@ -55,3 +55,7 @@ Retained live backups:
 - `controller.py.pre-fairness-20261022`
 
 To roll back just this route, restore the first backup through owner-authorized SSH, run `selftest`, restart only `bhm-autonomy-controller.service` and check `is-active`; do not remove unrelated queues or prior receipts. Leave photo/manifest/input files isolated as needed.
+
+### Additional independent browser smoke QA
+
+MPL-licensed, preinstalled system Firefox (not Playwright's absent browser download) rendered the local private preview at **390×820 mobile** and **1440×900 desktop**, each through separate headless invocations (successful exit 0). Saved private screenshot files are `preview-mobile-firefox.png` (96,002 bytes) and `preview-desktop-firefox.png` (220,339 bytes). Image dimensions confirmed; pixel standard deviations were [87.9, 76.2, 81.6] and [83.8, 73.9, 77.5], respectively, excluding blank capture. This is **browser-render smoke QA**, not full visual inspection, accessibility compliance, clickthrough verification, or a user-accessible screenshot link.
