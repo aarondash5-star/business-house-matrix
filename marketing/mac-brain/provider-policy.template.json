@@ -81,6 +81,41 @@
         "review": 80,
         "fast": 80
       }
+    },
+    {
+      "id": "gemini-flash-candidate",
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "enabled": false,
+      "free_plan_confirmed": false,
+      "model_license_approved": false,
+      "license_review_required": true,
+      "data_training_on_free_tier": true,
+      "quota_group": "google-gemini-free-project",
+      "max_daily_requests": 5,
+      "max_minute_requests": 1,
+      "preference": {
+        "creative": 60,
+        "copy": 60,
+        "research": 60,
+        "vision": 55,
+        "review": 50,
+        "fast": 70
+      }
+    }
+  ],
+  "tool_connections": [
+    {
+      "id": "tavily-search",
+      "provider": "tavily",
+      "type": "search",
+      "enabled": false,
+      "free_plan_confirmed": false,
+      "license_review_required": true,
+      "quota_group": "tavily-free-month",
+      "max_monthly_credits": 1000,
+      "conservative_monthly_credits": 100,
+      "note": "Proprietary hosted search service. Distinct from inference routes. No search adapter or credential installed."
     }
   ]
 }
