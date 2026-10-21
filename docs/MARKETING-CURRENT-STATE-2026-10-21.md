@@ -169,3 +169,6 @@ systemctl is-active cron generic-linux-automator.service ollama.service
 
 ### Network clarification — 2026-10-21
 Mac `Andaz` and Dell `andaz` are DIFFERENT Wi-Fi networks (distinct BSSIDs/gateway responses), even though both were assigned `192.168.0.x`. Their overlapping subnets cannot reach each other. Mac Marketing's SearXNG adapter therefore remains disabled. The unused Dell LAN gateway was stopped to prevent LAN exposure; Dell Dev can search SearXNG locally with no cross-network dependency. No unapproved SSID changes or paid relay were made. See [updated SearXNG deployment](RESEARCH-SEARXNG-DEPLOYMENT-2026-10-21.md).
+
+### Capability reuse reference — 2026-10-21
+Private Generic Linux SSH plugin v0.1.17 now includes the [SearXNG cross-project skill](../skills/selfhosted-searxng-research/SKILL.md) with [read-only API contract](REUSABLE-RESEARCH-CONTRACT.md). This adds instructions for approved Dell-local read-only research to other projects but **does not activate** Mac `searxng-search`; the two Wi-Fi networks are still isolated. Other projects require their own explicit adoption and data policy.
