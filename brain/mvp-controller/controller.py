@@ -28,6 +28,7 @@ ALLOWED={
  "research_search":{"department":"Concept","mode":"public_retrieval"},
  "dev_proposal":{"department":"Development","mode":"proposal_only"},
  "sandbox_qa":{"department":"QA/QC","mode":"isolated_test_execution"},
+ "repair_known_issue":{"department":"EVOLUTION","mode":"bounded_verified_autorepair"},
  "marketing_draft":{"department":"Marketing","mode":"blocked_until_private_route"},
  "video_preview":{"department":"Marketing","mode":"blocked_until_thermal_QA"},
 }
@@ -194,6 +195,26 @@ def tick():
             data=json.loads(result.stdout)
             state="completed" if data.get("qa_passed") is True and data.get("tests_executed") is True else "needs_review"
             receipt(d,t["id"],state,data,None if state=="completed" else "Isolated tests did not pass",
+                    "executed_isolated_unit_tests")
+            out={"id":t["id"],"status":state,"qa_level":"executed_isolated_unit_tests"}
+            # Safe self-repair only for one exact, reproduced defect in isolated staging.
+            if (state=="needs_review" and "has no attribute 'cancel'" in str(data.get("output_tail",""))
+                  and "TaskGroup" in str(data.get("output_tail","")) and not batch.endswith("-fixed")):
+                auto_key="auto-repair-"+batch
+                follow=submit(t["project"],"repair_known_issue",batch,idempotency=auto_key)
+                out["safe_repair_queued"]=follow["id"]
+        elif t["action"]=="repair_known_issue":
+            batch=t["brief"]
+            if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,40}",batch):
+                raise ValueError("Approved short failed batch ID required")
+            result=subprocess.run(
+                [sys.executable,str(HOME/"repair.py"),batch,"--attempt","1"],
+                stdin=subprocess.DEVNULL,capture_output=True,text=True,timeout=65)
+            if result.returncode:
+                raise RuntimeError("No safe verified automated repair for this defect")
+            data=json.loads(result.stdout)
+            state="completed" if data.get("new_qc")=="tests_passed" else "needs_review"
+            receipt(d,t["id"],state,data,None if state=="completed" else "Rule-based correction failed independent tests",
                     "executed_isolated_unit_tests")
             out={"id":t["id"],"status":state,"qa_level":"executed_isolated_unit_tests"}
         elif t["action"]=="dev_proposal":
