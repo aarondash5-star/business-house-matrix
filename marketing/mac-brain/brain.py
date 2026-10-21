@@ -102,6 +102,7 @@ def safe_payload(task, payload):
         if payload.get("site") is not None:
             import gsc_metrics
             gsc_metrics.property_id(payload["site"])
+    if task == "research_search":
         if not isinstance(payload.get("query"), str) or not 1 <= len(payload["query"].strip()) <= 220:
             raise ValueError("Research requires bounded query")
     if task == "research_extract":
