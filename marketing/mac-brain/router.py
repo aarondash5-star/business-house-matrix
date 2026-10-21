@@ -292,6 +292,12 @@ def activate(slot):
     s = next((item for item in p["connections"] if item["id"] == slot), None)
     if s is None:
         raise RuntimeError("unknown slot")
+    if s.get("credential_ref"):
+        parent = next((x for x in p["connections"] if x["id"] == s["credential_ref"]), None)
+        if not parent or parent["provider"] != s["provider"]:
+            raise RuntimeError("invalid provider credential reference")
+        if parent.get("free_plan_confirmed", False):
+            s["free_plan_confirmed"] = True
     ok, reason = eligibility({**s, "enabled": True})
     if not ok:
         raise RuntimeError("cannot activate: " + reason)
