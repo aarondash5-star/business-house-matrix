@@ -166,11 +166,11 @@ def execute(task, payload):
         profile = payload.get("profile", "creative")
         return router.run(profile, payload["brief"])
     if task == "research_search":
-        import research
-        return research.search(payload["query"])
+        import searxng_research
+        return searxng_research.search(payload["query"])
     if task == "research_extract":
-        import research
-        return research.extract(payload["url"])
+        import searxng_research
+        return searxng_research.extract(payload["url"])
     if task == "reel_preflight":
         import reel_bridge
         return reel_bridge.preflight(payload["batch_id"])
