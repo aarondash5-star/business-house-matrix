@@ -35,3 +35,9 @@ GitHub Actions runs validation and, after separate cloud identity/configuration 
 - [Local UI-only Compose pilot](pilot/README.md)
 
 **Safety:** Do not commit credentials, private data, user conversations, database snapshots, backups, uploads or encryption keys. The CI scan is not a substitute for thorough security review. Existing business projects and cloud accounts are not shared with this Matrix.
+
+
+## Autonomous MVP pilot checkpoint — 2026-10-21
+- [Live autonomous MVP implementation, QA, and blockers](docs/AUTONOMOUS-MVP-IMPLEMENTATION-2026-10-21.md)
+- [Central durable dispatcher](brain/mvp-controller/controller.py) · [isolated QA](brain/mvp-controller/sandbox.py) · [bounded correction](brain/mvp-controller/repair.py)
+- Dell research/proposal/isolated unit-test and one unattended known-error EVOLUTION correction are verified. Mac public Trends and Groq creative planning are verified. Cross-machine routing, finished reels, safe OSI-approved UI and full department autonomy are still incomplete.
