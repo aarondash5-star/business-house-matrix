@@ -8,7 +8,7 @@ Host: `mac-linux` (KARAN). Source is tracked in this public repository. The Mac'
 - Local Ollama models discoverable through `localhost:11434`.
 - Allowlist: `ping`, `ollama_health`, `draft_plan` only. Does not execute code suggested by AI.
 - Policy file `config.json` (owner-only): all online providers, social publishing and spend disabled.
-- Resource floor before creative inference: available RAM >= 1900 MB; coretemp < 86°C.
+- Creative inference default **disabled** after a 90°C CPU observation. Available RAM >= 1900 MB and coretemp < 86°C were initial pre-run floors but did not prevent thermal buildup during generation.
 - Nonroot worker `worker.sh`, serialized with flock; system cron runs it every 2 minutes, at most 100 seconds per job. Cron persistence depends on `cron.service` being active/enabled.
 
 ## Operator commands (on Mac)
@@ -27,7 +27,7 @@ crontab -l
 ## Boundaries
 - This does not yet connect or replace `reel-studio`, and does not schedule any social publication.
 - LangGraph, external provider APIs and Dell-router integration are NOT implemented at this stage. Their deployment follows dependency, license, quota and interface audits.
-- Ollama creative inference is subject to CPU temperature and available RAM; a task may retry and eventually fail safely.
+- Ollama creative inference is **SAFETY-LOCKED OFF**: `local_inference_enabled=false` in runtime config and source default. `draft_plan` cannot make an inference request until explicitly re-enabled after thermal mitigation and validation.
 - No secrets in the public GitHub repository. Do not commit runtime config, user footage, queue database, receipts or worker logs.
 - Current cron job only runs allowed local tasks; no arbitrary shell or root privilege.
 
@@ -45,3 +45,6 @@ crontab -l
 - Install compatible MIT-licensed LangGraph into an isolated venv after dependency/licensing review.
 - Connect to a read-only Reel Studio adapter and run a zero-publication workflow.
 - Complete restart/recovery/fault tests and update the Phase 1 status ledger.
+
+## 2026-10-21 thermal incident
+An autonomous 64-token Qwen3 draft passed but drove the CPU sensor to 90°C and maximum fan. Mac runtime now enforces a fail-closed local inference lock. Keep the worker running for low-impact queue tasks; do not re-enable model generation merely by raising the thermal threshold. Use an optimized smaller model or remote worker after validating performance and recovery.
