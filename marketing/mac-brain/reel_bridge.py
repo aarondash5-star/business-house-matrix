@@ -16,6 +16,7 @@ BRAIN = Path(__file__).resolve().parent
 INBOX = BRAIN / "media-inbox"
 OUTBOX = BRAIN / "renders"
 REEL = BRAIN.parent / "reel-studio" / "reel.py"
+REEL_PYTHON = REEL.parent / ".venv" / "bin" / "python"
 EXT = {".mp4",".mov",".mkv",".webm",".m4v",".jpg",".jpeg",".png",".webp"}
 MAX_MEDIA = 12
 MAX_FILE_BYTES = 1_000_000_000
@@ -77,13 +78,13 @@ def render(batch_id, brief, config):
     maximum = min(70.0, float(config.get("render_max_temp_c",68.0)))
     if temp is None or temp >= maximum:
         raise RuntimeError("Render blocked by thermal guard; no suitable sensor or too hot")
-    if not REEL.is_file():
-        raise RuntimeError("Original Reel Studio entrypoint missing")
+    if not REEL.is_file() or not REEL_PYTHON.is_file():
+        raise RuntimeError("Original Reel Studio or its isolated Python environment missing")
     out=Path(manifest["destination"])
     if out.exists() and any(out.iterdir()):
         raise RuntimeError("Nonempty render destination; refuse overwrite")
     out.mkdir(mode=0o700,parents=True,exist_ok=True)
-    cmd=["/usr/bin/python3",str(REEL),"--input",manifest["source"],
+    cmd=[str(REEL_PYTHON),str(REEL),"--input",manifest["source"],
          "--output",str(out),"--brief",brief,
          "--seconds","12","--width","360","--no-ai"]
     # This entrypoint uses fixed arguments, no shell, no AI, no stock query.
@@ -91,12 +92,21 @@ def render(batch_id, brief, config):
     proc=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
                           text=True,start_new_session=True,
                           preexec_fn=lambda: os.nice(10))
-    try:
-        stdout,stderr=proc.communicate(timeout=100)
-    except subprocess.TimeoutExpired:
-        os.killpg(proc.pid,signal.SIGKILL)
-        proc.communicate()
-        raise RuntimeError("Reel preview timed out and process group was stopped")
+    end = time.monotonic()+100
+    while True:
+        try:
+            stdout,stderr=proc.communicate(timeout=min(2.0,max(0.1,end-time.monotonic())))
+            break
+        except subprocess.TimeoutExpired:
+            measured=mac_temperature_c()
+            if measured is None or measured >= maximum:
+                os.killpg(proc.pid,signal.SIGKILL)
+                proc.communicate()
+                raise RuntimeError("Reel preview stopped by in-run thermal monitor")
+            if time.monotonic()>=end:
+                os.killpg(proc.pid,signal.SIGKILL)
+                proc.communicate()
+                raise RuntimeError("Reel preview timed out and process group was stopped")
     if proc.returncode:
         raise RuntimeError("Reel preview failed: exit "+str(proc.returncode)+" "+stderr[-180:])
     result=out/"report.json"
