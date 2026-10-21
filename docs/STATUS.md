@@ -30,3 +30,10 @@ For accurate Marketing facts use **[current-state handoff](MARKETING-CURRENT-STA
 - Next stage: QA-gated Reel Studio integration using real footage, then Tavily research connector and controlled provider expansion.
 
 The earlier Matrix-wide pilot status above remains independently tracked. No Open WebUI/Temporal/MCP production deployment is implied by Marketing's successful Groq pilot.
+
+
+## Research engine change — 2026-10-21
+- Tavily **deprecated**: removed from operational Mac research provider registry and Brain imports; old code/database archived locally.
+- Dell self-hosted rootless **SearXNG live and boot-persistent**; native and Dell-local CLI search verified.
+- Mac replacement client and task connection deployed, **disabled pending private reachability**. Wi-Fi hosts cannot ARP each other; Mac-to-Dell SSH and TCP failed before gateway. No public endpoint exposed.
+- [Detailed rollout, safety, blocker, restart and rollback](RESEARCH-SEARXNG-DEPLOYMENT-2026-10-21.md).
