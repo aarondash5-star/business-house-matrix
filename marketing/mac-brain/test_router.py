@@ -55,12 +55,13 @@ class MarketingRouterTest(unittest.TestCase):
         gemini = next(x for x in p["connections"] if x["id"]=="gemini-flash-candidate")
         self.assertFalse(gemini["enabled"])
         self.assertFalse(gemini["model_license_approved"])
-        self.assertEqual(p["tool_connections"][0]["id"], "tavily-search")
+        self.assertEqual(p["tool_connections"][0]["id"], "searxng-search")
+        self.assertEqual(p["tool_connections"][0]["provider"], "searxng")
         self.assertFalse(p["tool_connections"][0]["enabled"])
         p["tool_connections"][0]["enabled"] = True
-        p["tool_connections"][0]["public_only"] = False
+        p["tool_connections"][0]["self_hosted"] = False
         self.r.POLICY.write_text(json.dumps(p))
-        with self.assertRaisesRegex(RuntimeError, "Tavily research requires"):
+        with self.assertRaisesRegex(RuntimeError, "SearXNG requires"):
             self.r.read_policy()
 
     def test_all_providers_disabled(self):
