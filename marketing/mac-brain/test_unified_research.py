@@ -163,5 +163,28 @@ class UnifiedResearchTests(unittest.TestCase):
             gsc_metrics.import_engagement_core({**sample,"rows":[]},"https://example.org/")
         self.assertEqual(gsc_metrics.status()["stored_query_rows"], 0)
 
+    def test_repeat_import_is_true_noop_and_original_receipt_preserved(self):
+        site="https://example.org/"
+        report={"property":site,"start_date":"2026-09-20",
+                "end_date":"2026-10-18","dimensions":["query"],
+                "source":"google-search-console-direct",
+                "rows":[{"keys":["sauna and mud bath goa"],"clicks":3,
+                         "impressions":100,"ctr":0.03,"position":5.5}]}
+        first=gsc_metrics.import_engagement_core(report,site)
+        assert first["status"]=="ingested"
+        conn=gsc_metrics.db()
+        original=conn.execute("SELECT imported FROM batches WHERE batch=?",(first["batch"],)).fetchone()
+        conn.close()
+        second=gsc_metrics.import_engagement_core(report,site)
+        self.assertEqual(second["status"],"unchanged")
+        self.assertEqual(second["batch"],first["batch"])
+        conn=gsc_metrics.db()
+        later=conn.execute("SELECT imported FROM batches WHERE batch=?",(first["batch"],)).fetchone()
+        count=conn.execute("SELECT count(*) FROM batches").fetchone()[0]
+        conn.close()
+        self.assertEqual(original,later)
+        self.assertEqual(count,1)
+        self.assertEqual(gsc_metrics.status(site)["stored_query_rows"],1)
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
