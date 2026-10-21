@@ -60,3 +60,10 @@ SearXNG-supported Dell Dev Brain job `cad4904e-7aec-4678-ad71-d170ad2c4841` comp
 
 ### Final reusable plugin release — 2026-10-21
 The private owned **generic-linux-ssh-mcp plugin v0.1.18** supersedes v0.1.17. Release `pluginrel_6ad8b9ab9b008191a961563c5e9d2d03` updates the reusable SearXNG skill with the verified `review_passed` Dev research proposal result; plugin file readback confirmed all original skills preserved. This is a skills/docs release only, **not** a backend/MCP permission change or automatic access for other projects. Plugin: https://chatgpt.com/plugins/plugins_6ad64adab5e481918832cd516e779009 .
+
+
+### Autonomous controller and QA pilot — 2026-10-21
+- Central Dell controller daemon `bhm-autonomy-controller.service` live and boot-enabled, with durable SQLite queue, explicit department routes, idempotent submissions, and outcomes feedback ledger. Source: [MVP controller](../brain/mvp-controller/controller.py).
+- Dell rootless sandbox QA ran actual tests. An old Dev model's review PASS was disproven by an independent Python error; a narrow EVOLUTION repair task subsequently completed automatically and retested passing. This verifies **one bounded rule only**.
+- Mac Google Trends public RSS (10 entries), six tests, six-hour cron, Groq-assisted creative draft receipt all verified. SearXNG cross-host reachability, safe sustained reel rendering, and approved Open WebUI license/frontend remain blocked.
+- Detailed [autonomous MVP checkpoint](AUTONOMOUS-MVP-IMPLEMENTATION-2026-10-21.md). Do not mark the whole Matrix completed.
