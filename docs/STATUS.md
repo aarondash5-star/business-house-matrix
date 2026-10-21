@@ -56,3 +56,7 @@ The earlier Matrix-wide pilot status above remains independently tracked. No Ope
 
 ## 2026-10-21 — Verified Dev research completion
 SearXNG-supported Dell Dev Brain job `cad4904e-7aec-4678-ad71-d170ad2c4841` completed with `review_passed`, a saved source-evidence file, plan, implementation, review and receipt. The result explicitly reports `tests_executed=false` and `repository_changed=false`: this verifies proposal generation and textual QA, not execution or deployment.
+
+
+### Final reusable plugin release — 2026-10-21
+The private owned **generic-linux-ssh-mcp plugin v0.1.18** supersedes v0.1.17. Release `pluginrel_6ad8b9ab9b008191a961563c5e9d2d03` updates the reusable SearXNG skill with the verified `review_passed` Dev research proposal result; plugin file readback confirmed all original skills preserved. This is a skills/docs release only, **not** a backend/MCP permission change or automatic access for other projects. Plugin: https://chatgpt.com/plugins/plugins_6ad64adab5e481918832cd516e779009 .
