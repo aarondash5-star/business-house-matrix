@@ -68,7 +68,7 @@ def selftest():
         calls.append(u)
         return {"url":u,"provider":"external-mcp","tool_slot":"mcp-fetch-docs",
                 "writes_performed":False,"text":"Official Python task documentation."}
-    r=enrich("","asyncio TaskGroup","",""+"" if False else stub)
+    r=enrich("","asyncio TaskGroup","",stub)
     assert r["available"] and calls==[url]
     assert not safe_url("https://127.0.0.1/") and not safe_url("https://docs.python.org/a?token=1")
     assert enrich("","","a marketing poster",stub)["available"] is False
