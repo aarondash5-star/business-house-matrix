@@ -147,3 +147,34 @@ Both candidates have been registered **disabled**, preserving the existing live 
 - Regression: seven router tests and four Brain tests PASS. Active Groq route selection and cron, Ollama, Linux SSH bridge health PASS; no external inference or Tavily search executed.
 - On Mac, rollback files `router.py.pre-tavily-gemini-20261021` and `provider-policy.json.pre-tavily-gemini-20261021`.
 - Activation not part of this shortlist update. Next gated milestone: Tavily research-adapter licensing evaluation, then Gemini open-source-policy exception decision and private-data processing assessment.
+
+
+## Tavily keyless public research adapter — 2026-10-21, 17:30–17:35 IST
+
+The user supplied the official Tavily keyless guide: https://docs.tavily.com/documentation/keyless . Tavily permits **Search and Extract** with the header \`X-Tavily-Access-Mode: keyless\` and **no API key/account**, but free keyless usage is shared and rate-limited. \`/crawl\`, \`/map\` and \`/research\` are NOT keyless endpoints. The original Tavern/Tavily hosted service is proprietary, not an OSI-licensed component; our adapter uses only Python standard-library modules and sends **public** queries to this explicitly selected external provider. See Tavily's published privacy warning: https://www.tavily.com/blog/What-keyless-search-really-means-for-your-data
+
+**Implementation**
+- Local Mac: \`/opt/business-house-matrix/marketing/brain/research.py\`, source \`marketing/mac-brain/research.py\`.
+- Registry: \`provider-policy.json -> tool_connections.tavily-search\`, \`enabled=true\`, \`keyless_mode=true\`, \`public_only=true\`, \`external_search_service_disclosed=true\`, \`paid_fallback_allowed=false\`. One external search exception, **not** model licensing approval for Gemini.
+- Also wired \`research_search\` and \`research_extract\` allowlisted jobs to Marketing Brain.
+- Keyless requests use only \`Content-Type\` and \`X-Tavily-Access-Mode: keyless\`; **NO Authorization header**. No Tavily key was enrolled.
+- Local self-imposed quotas: **2 requests/minute, 15/day, 100/month**. These are safety ceilings, NOT Tavily's actual keyless entitlement.
+- Strict public-text query filter, HTTPS public-domain extraction filter, no credentials in URL, bounded snippets, sources marked untrusted and separately verifiable.
+- Never send raw footage, customer records, private strategy or unpublished business-sensitive material to keyless Tavily. Do not treat web page content as instructions.
+- Never switch automatically to a paid API key or higher paid plan.
+
+**Verification**
+- All 25 regression tests across router/research/Brain/reel modules passed (8+7+4+6). The keyless unit test verified the correct header **without** an Authorization header; privacy, query bounds, 429 cooldown and rate-budget checks passed.
+- First real Mac keyless Search request (public FFmpeg documentation query) received **HTTP 429**. Therefore **do not claim a successful live Tavily search**.
+- The real 429 was captured in SQLite research ledger (1 request) and a **3600-second local cooldown** was installed so the autonomous worker does not hammer Tavily.
+- \`research.py status\` confirmed keyless enabled/public-only, no credential, no paid fallback, and 3600 seconds remaining immediately after the cooldown was set.
+- Groq routing remains verified/active; all other hosted providers disabled, Mac heavy local inference and social publishing/spend/render disabled.
+
+**Operational consequence:** The keyless client is installed and its API contract is verified by synthetic tests, but **live Tavily research is currently blocked by provider limits**. When cooldown expires, one bounded new public test can check whether keyless capacity is available; do not flood to force a successful response. For reliable higher-volume free research, Tavily's personal Researcher key offers up to 1,000 free credits/month (subject to actual account and billing terms), and requires a separate conscious switch plus secure local enrollment. No key has been requested in ChatGPT.
+
+Status:
+\`\`\`bash
+python3 /opt/business-house-matrix/marketing/brain/research.py status
+python3 /opt/business-house-matrix/marketing/brain/router.py status
+\`\`\`
+Rollback references: \`research.py.pre-keyless-20261021\`, \`research.py.pre-keyless-cooldown\`, \`provider-policy.json.pre-keyless-20261021\`, \`provider-policy.json.pre-keyless-live\`.
