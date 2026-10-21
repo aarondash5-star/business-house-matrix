@@ -78,6 +78,30 @@ class ResearchTest(unittest.TestCase):
         self.assertNotIn("authorization",headers)
         self.assertFalse(self.mod.SECRET.exists())
 
+    def test_keyless_429_creates_cooldown_without_retry(self):
+        self.mod.router.read_policy=lambda:{"tool_connections":[{
+            "id":"tavily-search","provider":"tavily","enabled":True,
+            "keyless_mode":True,"public_only":True,
+            "external_search_service_disclosed":True,
+            "conservative_monthly_credits":100}]}
+        import urllib.error
+        orig=self.mod.urllib.request.urlopen
+        calls=[]
+        def response(request, timeout=None):
+            calls.append(1)
+            raise urllib.error.HTTPError("https://api.tavily.com/search",429,
+                "rate limited",{"Retry-After":"600"},None)
+        self.mod.urllib.request.urlopen=response
+        try:
+            with self.assertRaisesRegex(RuntimeError,"cooldown 600"):
+                self.mod.search("public travel industry research")
+            self.assertGreaterEqual(self.mod.state()["keyless_cooldown_seconds_remaining"],590)
+            with self.assertRaisesRegex(RuntimeError,"temporarily rate-limited"):
+                self.mod.search("public wellness travel insights")
+            self.assertEqual(len(calls),1)
+        finally:
+            self.mod.urllib.request.urlopen=orig
+
     def test_keyless_budget_enforced(self):
         self.mod.router.read_policy=lambda:{"tool_connections":[{
             "id":"tavily-search","provider":"tavily","enabled":True,
