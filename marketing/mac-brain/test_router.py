@@ -53,6 +53,38 @@ class MarketingRouterTest(unittest.TestCase):
             self.r.enroll("groq-creative-oss120", free_confirmed=True)
         self.assertFalse(self.r.VAULT.exists())
 
+    def test_synthetic_429_falls_back_without_network(self):
+        p = self.r.read_policy()
+        self.r.VAULT.mkdir(mode=0o700)
+        key = self.r.VAULT / "groq-creative-oss120.key"
+        key.write_text("synthetic-key-never-used")
+        key.chmod(0o600)
+        for s in p["connections"][:2]:
+            s["enabled"] = True
+            s["free_plan_confirmed"] = True
+        p["connections"][1]["credential_ref"] = "groq-creative-oss120"
+        self.r.POLICY.write_text(json.dumps(p))
+        self.r.BRAIN_CONFIG.write_text('{"online_enabled":true}')
+        attempted = []
+        original_call = self.r.call_api
+        def mock_call(s, prompt, **kwargs):
+            attempted.append(s["id"])
+            if s["id"] == "groq-creative-oss120":
+                raise self.r.ProviderFailure(429)
+            return "Sample creative concept"
+        self.r.call_api = mock_call
+        try:
+            result = self.r.run("creative", "Propose a concept")
+        finally:
+            self.r.call_api = original_call
+        self.assertEqual(result["slot"], "groq-copy-qwen")
+        self.assertEqual(len(attempted), 2)
+        db = self.r.db()
+        outcomes = db.execute("SELECT outcome FROM events ORDER BY id").fetchall()
+        self.assertEqual([x[0] for x in outcomes], ["failed", "ok"])
+        self.assertIsNotNone(db.execute("SELECT until_epoch FROM cooldowns WHERE slot='groq-creative-oss120'").fetchone())
+        db.close()
+
     def test_quota_group_sharing_and_cooldown(self):
         p = self.r.read_policy()
         self.r.VAULT.mkdir(mode=0o700)
