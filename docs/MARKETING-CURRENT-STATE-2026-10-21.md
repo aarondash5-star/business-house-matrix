@@ -146,3 +146,15 @@ systemctl is-active cron generic-linux-automator.service ollama.service
 4. Live Mac status and test results. **Never assume this dated document is live truth after 2026-10-21.**
 
 **Explicit exclusions:** no modifications to Moksha Master, no OpenClaw before first pilot evaluation, no LibreChat (Open WebUI selected), no unsupported claims of complete nine-department or video autonomous operation. 
+
+
+## Update — Tavily keyless, 2026-10-21
+
+- Source: https://docs.tavily.com/documentation/keyless . Tavily Search and Extract keyless endpoints supported, no account/key required, free but rate-limited. External Tavily is a proprietary SaaS (not an open-source model).
+- Mac research adapter installed, connected to Brain tasks \`research_search\` and \`research_extract\`; only public non-sensitive queries or public HTTPS URLs permitted. **No Tavily key stored**.
+- Activated Tavily's public-only keyless registry entry with self-imposed 2/minute, 15/day, 100/month caps and no paid fallback, leaving Groq live.
+- First **real** Tavily keyless search returned **HTTP 429**; it did **not** return successful research results. Stored the rejection and started a 1-hour local cooldown against repeated calls.
+- Verified 25 tests passed (8 router, 7 Tavily research, 4 Brain, 6 Reel Studio bridge). The HTTP request mock verified no Authorization header.
+- **Current Tavily operational state: integrated but rate-limited/unavailable for live results**. The next step is a bounded retry after cooldown or owner enrollment of Tavily's separate 1,000-credits/month free API key.
+- Existing Groq API routing remains operational; Gemini, Cloudflare and OpenRouter disabled; publishing, spending, local creative inference and rendering remain disabled.
+- See [Marketing API Router](MAC-MARKETING-API-ROUTER.md) for exact controls, no-key mode and rollback.
