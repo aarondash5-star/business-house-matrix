@@ -33,7 +33,7 @@ class ResearchTest(unittest.TestCase):
         result=self.mod.state()
         self.assertFalse(result["enabled"])
         self.assertFalse(result["credential_present"])
-        self.assertEqual(result["conservative_monthly_cap"],100)
+        self.assertEqual(result["conservative_monthly_request_cap"],100)
     def test_public_query_dlp(self):
         for q in ("help alice@example.com", "find phone +919876543210",
                   "private customer list", "api key leaked"):
