@@ -71,3 +71,11 @@ This affects the automation service account, NOT the desktop owner's interactive
 - A fully autonomous MVP is **not** achieved until central coordinator can securely delegate to both machines, execute approved development and marketing tools, run independent tests, correct bounded faults, and deliver a real video/code artifact without repeated intervention.
 - Immediate gates: cross-network secure path; thermal-safe Mac reel; source-grounded creative→edit→QA; actually tested code results; safe frontend licensing and access; outage/reboot resilience.
 - Verify each step with completed tool receipts and asset checks. A pending, queued, failed or blocked tool call is never described as done.
+
+
+## Verified unattended failure → EVOLUTION correction, 2026-10-21
+
+- Controller task `c54a717f-f0bb-486b-85e9-cb986800fc52` autonomously ran independent Python 3.12 QA against extracted model source and found `TaskGroup` has no `cancel()` method. Saved failed QA receipt; it did **not** accept earlier model review PASS as correctness.
+- Controller automatically enqueued EVOLUTION repair task `999d4a42-18bf-4e0f-8fef-8527d256b61e`. Rootless user service executed a **bounded, exact known rule**, staged separate corrected source, reran isolated unit tests without network/host writes, and finalized the repair as `completed` with QA level `executed_isolated_unit_tests`.
+- Verified both 0600 receipts: `/var/lib/generic-linux-automator-exec/matrix-controller/repair-receipts/auto-repair-pilot-20261021-attempt-1.json` and `sandbox-receipts/auto-repair-pilot-20261021-fixed.json`. This is a genuine **unattended** repair-and-retest loop for this one recognized defect, *not* arbitrary freeform AI self-repair.
+- Earlier manual fixed-batch test also passed after correcting container mount permissions; the failed attempts remain in the ledger, not deleted. SearXNG, Dev Brain, dispatcher, and Generic SSH services remained active.
