@@ -60,7 +60,7 @@ class MarketingRouterTest(unittest.TestCase):
         p["tool_connections"][0]["enabled"] = True
         p["tool_connections"][0]["public_only"] = False
         self.r.POLICY.write_text(json.dumps(p))
-        with self.assertRaisesRegex(RuntimeError, "requires Free-plan"):
+        with self.assertRaisesRegex(RuntimeError, "Tavily research requires"):
             self.r.read_policy()
 
     def test_all_providers_disabled(self):
