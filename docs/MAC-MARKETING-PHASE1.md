@@ -104,3 +104,16 @@ Documentation owner: Business House AI Matrix / Marketing department.
 - Additional Cloudflare account ID command and grouped Groq credential reference implemented; no login/key enrollment performed remotely.
 - **Next external dependency:** owner must verify and enroll Free-plan keys through an interactive terminal, confirm no paid billing, validate vendor model and rate-limit meters, then explicitly enable Brain online routing. This cannot be marked live yet.
 - Canonical provider runbook: [Mac modular API router](MAC-MARKETING-API-ROUTER.md).
+
+## Groq first-provider activation — 2026-10-21
+- [x] Groq secure key enrollment confirmed via Groq authenticated model-list endpoint.
+- [x] Both Groq creative and copy slots activated, shared credential and quota.
+- [x] Real GPT-OSS 120B direct creative API smoke: response returned, request recorded.
+- [x] Real Qwen3.8 27B Marketing Brain `hosted_draft` queue -> worker -> API -> receipt: completed successfully.
+- [x] Brain online routing enabled, with private rollback config snapshot.
+- [x] Publishing, paid spend and Mac local creative inference remain disabled.
+- [ ] Check vendor dashboard usage/meters for the two live requests.
+- [ ] Add Marketing QA fact-checking / unsupported-claims gating before any publishing.
+- [ ] Connect Reel Studio assets and end-to-end creative production.
+- [ ] Enable Cloudflare/OpenRouter only after separate verified Free-plan enrollments.
+- [ ] Full recovery and offline integration drills.
