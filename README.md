@@ -22,6 +22,9 @@ GitHub Actions runs validation and, after separate cloud identity/configuration 
 ## Start here
 
 - [Current status](docs/STATUS.md)
+- [**Marketing Brain — verified live checkpoint (2026-10-21)**](docs/MARKETING-CURRENT-STATE-2026-10-21.md)
+- [Marketing Phase 1 history](docs/MAC-MARKETING-PHASE1.md)
+- [Marketing modular provider router](docs/MAC-MARKETING-API-ROUTER.md)
 - [Architecture decision ADR-0003](docs/ADR-0003-github-cloud-control.md)
 - [Public-repository exception and CI policy ADR-0004](docs/ADR-0004-public-github-and-safety-ci.md)
 - [Cloud bootstrap prerequisites](docs/CLOUD-BOOTSTRAP.md)
