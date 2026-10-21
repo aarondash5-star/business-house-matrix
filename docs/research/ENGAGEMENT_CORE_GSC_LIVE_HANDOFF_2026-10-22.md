@@ -43,3 +43,8 @@ python3 "$B/brain.py" receipt 78369f74-4d48-4802-b006-3b54dd6da5ad
 ```
 
 **Keep credentials inside WordPress; no direct public GSC proxy; no WordPress change made.** No publication/spending enabled, Mac 68°C render protection unchanged, Gate 1 research transport unchanged.
+
+
+## Final autonomous acceptance — verified
+
+**Mac cron completed** `research_brief` job `78369f74-4d48-4802-b006-3b54dd6da5ad` **on attempt 1**, without manually invoking `work-once`, in **0.011 s**. The result independently reports `verified_property_performance.status="observed"`, source `engagement_core_gsc_readonly_bridge`, property `https://mokshagoa.com/`, **10 relevant source-attributed query observations** from the persisted 50-row snapshot and `publish_approval=false`. Queue state advanced **14→15 completed**. SSH final receipt `22390ef7-6179-455b-9f46-66f692b46eae` terminal status completed, exit 0. This proves the **local GSC evidence is consumed autonomously**, **not** that the original Google data source is fetched unattended from WordPress to Mac. WordPress stays the only Google OAuth owner.
