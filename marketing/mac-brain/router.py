@@ -77,8 +77,12 @@ def read_policy():
     for tool in p.get("tool_connections", []):
         if tool.get("id") != "tavily-search" or tool.get("provider") != "tavily" or tool.get("type") != "search":
             raise RuntimeError("unrecognized external research tool")
-        if tool.get("enabled") is not False:
-            raise RuntimeError("external research tool requires separate integration and permission review")
+        if tool.get("enabled") and not (
+                tool.get("free_plan_confirmed",False)
+                and tool.get("service_terms_reviewed",False)
+                and tool.get("open_source_policy_exception_approved",False)
+                and tool.get("paid_fallback_allowed",False) is False):
+            raise RuntimeError("external research tool requires Free-plan, licensing exception and terms review")
     return p
 
 def db():
