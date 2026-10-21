@@ -125,5 +125,43 @@ class UnifiedResearchTests(unittest.TestCase):
                 brain.safe_payload("research_brief", data)
 
 
+    def test_verified_wordpress_bridge_real_metrics_import_and_relevance(self):
+        report = {
+            "property": "https://example.org/", "start_date": "2026-09-20",
+            "end_date": "2026-10-18", "dimensions": ["query"],
+            "source": "google-search-console-direct",
+            "rows": [
+                {"keys": ["mud bath goa"], "clicks": 5, "impressions": 97,
+                 "ctr": 5/97, "position": 1.48},
+                {"keys": ["contact someone@example.org"], "clicks": 2,
+                 "impressions": 3, "ctr": 2/3, "position": 4.5}
+            ]
+        }
+        result = gsc_metrics.import_engagement_core(report, "https://example.org/")
+        self.assertEqual(result["rows"], 1)
+        self.assertEqual(result["source"], "engagement_core_gsc_readonly_bridge")
+        saved = gsc_metrics.relevant("mud bath", site="https://example.org/")
+        self.assertEqual(saved["status"], "observed")
+        self.assertEqual(saved["rows"][0]["impressions"], 97)
+        self.assertNotIn("someone@example.org", json.dumps(saved))
+        self.assertFalse(gsc_metrics.status()["oauth_configured"])
+
+    def test_bridge_fails_closed_for_foreign_property_or_wrong_source(self):
+        sample = {"property":"https://example.org/","start_date":"2026-09-20",
+                  "end_date":"2026-10-18","dimensions":["query"],
+                  "source":"google-search-console-direct","rows":[
+                    {"keys":["sauna goa"],"clicks":1,"impressions":2,"ctr":0.5,"position":2.0}]}
+        with self.assertRaises(ValueError):
+            gsc_metrics.import_engagement_core(sample,"https://another.org/")
+        with self.assertRaises(ValueError):
+            gsc_metrics.import_engagement_core({**sample,"source":"unknown"},"https://example.org/")
+        with self.assertRaises(ValueError):
+            gsc_metrics.import_engagement_core({**sample,"dimensions":["page"]},"https://example.org/")
+        with self.assertRaises(ValueError):
+            gsc_metrics.import_engagement_core({**sample,"private_token":"never"},"https://example.org/")
+        with self.assertRaises(ValueError):
+            gsc_metrics.import_engagement_core({**sample,"rows":[]},"https://example.org/")
+        self.assertEqual(gsc_metrics.status()["stored_query_rows"], 0)
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
