@@ -50,7 +50,8 @@ P3 channel integration behind approval; P4 measured outcomes driving EVOLUTION.
 - [x] Mac/Dell online/read-only inspection.
 - [x] Existing editing stack discovered for reuse.
 - [x] Isolated Marketing Brain v0.1.0 installed and smoke tested; all four unit tests passed.
-- [ ] Dell router contract located, audited and integrated (read-only inspection ongoing).
+- [x] Dell router contract and provenance located; read-only architecture audit completed.
+- [ ] Dell-compatible Mac provider adapter integrated; hosted connections intentionally disabled.
 - [x] Nonroot cron worker enabled at 2-minute cadence; autonomous handoff tested (host cron service enabled).
 - [ ] External providers integrated with verified quotas/licensing.
 - [ ] Editing pipeline connected to Marketing Brain.
@@ -74,3 +75,11 @@ Documentation owner: Business House AI Matrix / Marketing department.
 - No outside API credentials, providers or social publishing actions connected. No video edits executed yet.
 - Rollback copy: `brain/brain.py.rollback-v0.1.0`; original crontab saved to `brain/data/crontab-before-marketing-phase1.txt`.
 - Next: first creative model draft under resource policy, isolate LangGraph dependencies, Dell router contract audit, Reel Studio read-only adapter, restart/offline tests.
+
+## Dell router compatibility discovery — 2026-10-21
+- Confirmed Dell routing documentation `/opt/business-house-matrix/MATRIX_API_ROUTER_2026-10-20.md` and CLI `/usr/local/bin/matrix-route`.
+- Existing implementation is a stdlib-based **Pi CLI router**, not a general HTTP API gateway. It manages preference profiles, policy allowlists, conservative quota reservations, per-provider cooldown, fallback and SQLite audit ledger.
+- Existing hosted Groq/Cloudflare/NVIDIA slots disabled; no hosted production-access assumption. Free-plan and model-license gates are required before activation; NVIDIA developer endpoints have production use restrictions. Do not copy keys or policies unreviewed.
+- Mac adapter should reuse **policy semantics and tests**, not call Dell's privileged CLI over an unrestricted remote shell. For Mac, provider enrollment and account authorization remain separate. Use localhost-only adapters and explicit per-provider enablement.
+- Live Dell dev brain `matrix-dev-brain.service` active under `generic-auto-exec`; it is separate from the Mac Marketing Brain. No Dell changes performed.
+- Local Mac creative pilot now uses max 64 generated tokens, 2048 context and 2 inference threads to reduce load. First `draft_plan` job queued for autonomous resource-gated processing; result not yet verified at this point.
