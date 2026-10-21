@@ -115,7 +115,11 @@
       "quota_group": "tavily-free-month",
       "max_monthly_credits": 1000,
       "conservative_monthly_credits": 100,
-      "note": "Proprietary hosted search service. Distinct from inference routes. No search adapter or credential installed."
+      "note": "Public-only Tavily keyless Search/Extract, shared rate limits, 100/month conservative local cap; no key, no paid fallback, proprietary hosted research service. Disabled in template, selectively enabled on owned Mac.",
+      "keyless_mode": true,
+      "public_only": true,
+      "external_search_service_disclosed": true,
+      "credential_required": false
     }
   ]
 }
