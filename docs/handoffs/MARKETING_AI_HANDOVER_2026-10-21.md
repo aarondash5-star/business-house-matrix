@@ -114,3 +114,19 @@ Do not install LibreChat or OpenClaw as part of this Marketing task. Do not roll
 ## Copy/paste prompt for the next chat
 
 > Continue the **independent Business House AI Matrix Marketing AI MVP** from this handover: https://github.com/aarondash5-star/business-house-matrix/blob/main/docs/handoffs/MARKETING_AI_HANDOVER_2026-10-21.md . First use the connected GitHub app to read the **entire** handover, the linked Marketing current-state document and SearXNG architecture. Use the connected Generic Linux SSH app to verify the live Mac and Dell state (host heartbeat and terminal receipts) before actions. Follow Golden Rule 0; reuse all existing services, code, queues, skills, assets and safety gates. Execute remaining gates in order: (1) secure persistent Mac-to-Dell research, (2) thermally safe real Mac render, (3) one unattended real-asset Moksha research-to-video-and-QA pilot, (4) restart/reconnect/retry/soak certification. Do not change Wi-Fi, router, SSH/root privileges without my explicit approval; do not override thermal guards; do not publish or spend. Keep Business House Matrix independent from Moksha Master. Update GitHub documents and report verified PASS/BLOCKED outcomes with exact job receipts.
+
+
+## Next-chat update — 2026-10-21 22:45–22:54 IST takeover receipts
+
+**New canonical receipt index:** [Live 4-gate evidence](../receipts/MARKETING_AI_RELEASE_GATES_2026-10-21.md). All four gates remain open. The earlier instructions and restrictions in this handover still apply.
+
+| Gate | Latest live result | Consequence |
+| --- | --- | --- |
+| 1. Authenticated private Mac→Dell search | **BLOCKED** — Mac curl health HTTP 000/timeout, ARP failed; different SSIDs and no existing approved overlay. Dell localhost search works; gateway OFF; Mac slot OFF | Need safe approved private transport and new Mac-origin JSON search before policy enable |
+| 2. Thermally safe Reel Studio render | **BLOCKED** — Mac hottest SMC 77°C then 75°C > 68°C limit; three real photos preflight PASS; no real Mac MP4 | Wait for sustainable safe heat conditions without killing user processes or changing thermal cutoff |
+| 3. Single linked autonomous video | **BLOCKED/NOT RUN** — no end-to-end research-to-render path yet | No duplicate video pilot or fabricated approval |
+| 4. Reconnect/restart/retry/soak | **PARTIAL** — Mac tests 30/30, Dell controller and sandbox tests pass, two unique jobs each deduplicate and complete unattended; 24h/fault soak NOT TESTED | Continue only safe bounded recovery drills after dependency repair |
+
+**New terminal job receipts:** Mac marketing `ping` `881a4f47-646c-4565-a2eb-7bc822a3729c` completed first attempt at 17:22:01Z via original 2-minute cron; Brain count rose 10→11. Dell central `research_search` `8f39e7eb-4fa7-45fa-a800-19ad7b423716` completed first attempt at 17:20:58Z with 5 attributed public results; second identical submission reported `deduplicated=true`. Both authenticated Linux probe task receipts finished with exit 0. Dell bridge heartbeat became stale once and automatically recovered, and a previously queued read-only check returned terminal completed/exit 0 without resubmission. Journal access for Dell user service insufficient; no permissions were changed.
+
+**Safety continuity:** No changes to code, network, root/sudo, SSH permission, fan, thermal guard, published channel, spend, model vendors or project data boundaries. No Mac render was forced. The evidence file indexes precise host check UUIDs and job IDs without storing photos, secrets, or runtime databases. 
