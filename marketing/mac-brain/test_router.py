@@ -37,6 +37,18 @@ class MarketingRouterTest(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "allowlisted"):
             self.r.read_policy()
 
+    def test_gemini_proprietary_guard_and_openrouter_key_gate(self):
+        p=self.r.read_policy()
+        slot=next(s for s in p["connections"] if s["provider"]=="gemini")
+        self.assertEqual(self.r.eligibility(slot)[1],"disabled")
+        forced={**slot,"enabled":True,"free_plan_confirmed":True}
+        self.assertEqual(self.r.eligibility(forced)[1],"license_review")
+        with self.assertRaisesRegex(RuntimeError,"proprietary-model exception"):
+            self.r.call_api(forced,"Synthetic content. Do not send to a vendor.")
+        router_slot=next(s for s in p["connections"] if s["provider"]=="openrouter")
+        with self.assertRaisesRegex(RuntimeError,"no securely enrolled"):
+            self.r.verify_provider(router_slot["id"])
+
     def test_candidate_vendor_slots_blocked(self):
         p = self.r.read_policy()
         self.assertEqual(len(p["connections"]), 5)
