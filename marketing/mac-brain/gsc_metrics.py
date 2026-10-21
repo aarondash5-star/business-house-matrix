@@ -106,6 +106,14 @@ def save_rows(rows, *, site, start, end, source, digest):
     c = db()
     try:
         c.execute("BEGIN IMMEDIATE")
+        prior = c.execute("SELECT site,start,end,source,rows_count FROM batches WHERE batch=?", (batch,)).fetchone()
+        if prior is not None:
+            if prior != (site, start, end, source, len(clean)):
+                raise ValueError("Existing GSC batch provenance mismatch")
+            c.rollback()
+            return {"status": "unchanged", "batch": batch, "property": site,
+                    "start": start, "end": end, "rows": len(clean),
+                    "source": source, "private_local_only": True}
         c.execute("INSERT OR REPLACE INTO batches VALUES(?,?,?,?,?,?,?)",
                   (batch, site, start, end, source, datetime.now(timezone.utc).isoformat(), len(clean)))
         c.execute("DELETE FROM observations WHERE batch=?", (batch,))
