@@ -47,7 +47,7 @@ def state():
     used=d.execute("SELECT count(*) FROM requests WHERE month=?",(month,)).fetchone()[0]
     d.close()
     return {"id":"tavily-search","enabled":bool(s.get("enabled",False)),
-            "license_review_required":not bool(s.get("service_terms_reviewed",False)),
+            "license_review_required":not (bool(s.get("service_terms_reviewed",False)) and bool(s.get("open_source_policy_exception_approved",False))),
             "free_plan_confirmed":bool(s.get("free_plan_confirmed",False)),
             "credential_present":cred,"used_this_month":used,
             "conservative_monthly_cap":min(MAX_MONTHLY,int(s.get("conservative_monthly_credits",MAX_MONTHLY))),
@@ -56,8 +56,8 @@ def state():
 def enroll():
     # Do not request/collect secrets until the legal and open-source gate is cleared.
     s=policy()
-    if not (s.get("service_terms_reviewed") and s.get("free_plan_confirmed")):
-        raise RuntimeError("Tavily terms/open-source-policy review and Free plan confirmation required")
+    if not (s.get("service_terms_reviewed") and s.get("free_plan_confirmed") and s.get("open_source_policy_exception_approved")):
+        raise RuntimeError("Tavily terms/open-source-policy exception and Free plan confirmation required")
     if not sys.stdin.isatty():raise RuntimeError("interactive hidden prompt required")
     if SECRET.exists():raise RuntimeError("credential already present, rotate explicitly")
     val=getpass.getpass("Tavily Researcher Free key (hidden): ").strip()
@@ -67,10 +67,22 @@ def enroll():
     with os.fdopen(fd,"w") as f:f.write(val+"\n")
     return {"enrolled":True,"enabled":False}
 
+def activate():
+    p=router.read_policy()
+    s=next((t for t in p.get("tool_connections",[]) if t.get("id")=="tavily-search"),None)
+    if not s or not (s.get("service_terms_reviewed") and s.get("free_plan_confirmed")
+                     and s.get("open_source_policy_exception_approved")):
+        raise RuntimeError("Explicit proprietary-service exception, terms and Free plan required")
+    if not SECRET.is_file() or SECRET.stat().st_mode & 0o077:
+        raise RuntimeError("Protected Tavily credential required")
+    s["enabled"]=True
+    router.save_policy(p)
+    return {"activated":True,"id":s["id"],"max_monthly_credits":MAX_MONTHLY}
+
 def search(query):
     s=policy()
     if not (s.get("enabled") and s.get("service_terms_reviewed") and
-            s.get("free_plan_confirmed")):
+            s.get("free_plan_confirmed") and s.get("open_source_policy_exception_approved")):
         raise RuntimeError("Tavily search disabled pending Free plan and service policy review")
     if not SECRET.is_file() or SECRET.stat().st_mode & 0o077:
         raise RuntimeError("No protected Tavily credential")
@@ -120,11 +132,12 @@ def search(query):
 def main():
     p=argparse.ArgumentParser()
     sp=p.add_subparsers(dest="cmd",required=True)
-    sp.add_parser("status");sp.add_parser("enroll")
+    sp.add_parser("status");sp.add_parser("enroll");sp.add_parser("activate")
     s=sp.add_parser("search");s.add_argument("query")
     a=p.parse_args()
     if a.cmd=="status":print(json.dumps(state(),indent=2))
     elif a.cmd=="enroll":print(json.dumps(enroll()))
+    elif a.cmd=="activate":print(json.dumps(activate()))
     else:print(json.dumps(search(a.query),indent=2))
 if __name__=="__main__":
     try: main()
