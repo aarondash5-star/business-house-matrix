@@ -21,7 +21,7 @@ ROOT = Path(os.environ.get("BHM_MARKETING_HOME", str(Path(__file__).resolve().pa
 DB = ROOT / "data" / "queue.sqlite3"
 CONFIG = ROOT / "config.json"
 RECEIPTS = ROOT / "receipts"
-ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan", "hosted_draft", "research_search", "reel_preflight", "reel_render", "reel_review"}
+ALLOWED_TASKS = {"ping", "ollama_health", "draft_plan", "hosted_draft", "research_search", "research_extract", "reel_preflight", "reel_render", "reel_review"}
 VERSION = "0.1.0"
 
 def stamp():
@@ -89,6 +89,9 @@ def safe_payload(task, payload):
     if task == "research_search":
         if not isinstance(payload.get("query"), str) or not 1 <= len(payload["query"].strip()) <= 220:
             raise ValueError("Research requires bounded query")
+    if task == "research_extract":
+        if not isinstance(payload.get("url"), str) or len(payload["url"])>800:
+            raise ValueError("Research extract requires a public URL")
     if task in ("reel_preflight", "reel_render", "reel_review"):
         batch = payload.get("batch_id")
         if not isinstance(batch, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}", batch):
@@ -165,6 +168,9 @@ def execute(task, payload):
     if task == "research_search":
         import research
         return research.search(payload["query"])
+    if task == "research_extract":
+        import research
+        return research.extract(payload["url"])
     if task == "reel_preflight":
         import reel_bridge
         return reel_bridge.preflight(payload["batch_id"])
