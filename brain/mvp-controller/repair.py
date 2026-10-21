@@ -15,7 +15,8 @@ import sandbox
 
 ROOT=Path(__file__).resolve().parent
 
-def repair(batch):
+def repair(batch,attempt=1):
+    if attempt not in (1,2):raise ValueError("No more than two bounded correction attempts")
     src,meta=sandbox.check(batch)
     old=sandbox.RECEIPTS/(batch+".json")
     if not old.is_file():raise RuntimeError("Original isolated QA receipt missing")
@@ -43,13 +44,14 @@ def repair(batch):
                      indent+"for task in tasks: task.cancel()",corrected,count=1)
     if corrected==candidate or "tg.cancel()" in corrected:
         raise RuntimeError("Correction did not safely apply")
-    base=batch+"-fixed"
+    base=batch+"-fixed"+("" if attempt==1 else str(attempt))
     batchname=base[:47]
     sandbox.check(batch)
     target=sandbox.INBOX/batchname
     if target.exists():
         raise RuntimeError("Previously staged repair; no overwrite")
     target.mkdir(mode=0o755,parents=True)
+    target.chmod(0o755)  # Explicit: umask 0077 would hide mounted test files from nobody in container.
     (target/"candidate.py").write_text(corrected)
     shutil.copy2(src/"test_candidate.py",target/"test_candidate.py")
     for p in target.iterdir():p.chmod(0o644)
@@ -63,7 +65,7 @@ def repair(batch):
            "new_source_sha256":qa.get("source_sha256")}
     evidence=ROOT/"repair-receipts"
     evidence.mkdir(mode=0o700,parents=True,exist_ok=True)
-    p=evidence/(batch+".json")
+    p=evidence/(batch+"-attempt-"+str(attempt)+".json")
     if p.exists():raise RuntimeError("Repair audit entry already exists")
     p.write_text(json.dumps(event,indent=2));p.chmod(0o600)
     return event
@@ -71,8 +73,9 @@ def repair(batch):
 if __name__=="__main__":
     a=argparse.ArgumentParser()
     a.add_argument("batch")
+    a.add_argument("--attempt",type=int,default=1)
     x=a.parse_args()
-    try:print(json.dumps(repair(x.batch),indent=2))
+    try:print(json.dumps(repair(x.batch,x.attempt),indent=2))
     except (RuntimeError,ValueError,OSError) as e:
         print("REPAIR_REQUIRES_REVIEW",type(e).__name__,str(e)[:160],file=sys.stderr)
         sys.exit(2)
