@@ -81,3 +81,14 @@ The private owned **generic-linux-ssh-mcp plugin v0.1.18** supersedes v0.1.17. R
 ## Next chat — Marketing AI pending handover (2026-10-21)
 
 **[Read the complete active Marketing AI handover](handoffs/MARKETING_AI_HANDOVER_2026-10-21.md)** before executing. Four not-yet-closed gates: (1) private persistent Mac→Dell SearXNG research, (2) bounded thermally safe Mac-produced Reel Studio preview, (3) one unattended real-asset Moksha research→creative→render→QA workflow, (4) sustained reconnect/restart/retry recovery certification. Previous checkpoint: both bridge hosts online, 30/30 tests passed, Dell SearXNG restart recovered and Mac preview guard stopped a too-hot render. No auto-publishing, no spend, no unsafe network or thermal workarounds.
+
+
+## Marketing live takeover — 2026-10-21 22:45–22:54 IST
+
+**Autonomous Marketing video MVP: NOT CERTIFIED.** [Detailed evidence and terminal job receipts](receipts/MARKETING_AI_RELEASE_GATES_2026-10-21.md).
+
+- **Gate 1 BLOCKED** — two differently named/disconnected Wi-Fi networks, overlap `192.168.0.0/24`, Mac peer health check timed out; Dell SearXNG localhost-only, gateway OFF, Mac search provider OFF. Requires explicitly authorized private transport.
+- **Gate 2 BLOCKED** — Mac **75–77°C**, above original **68°C** Reel Studio cutoff. Three real-source photos preflight PASS; Mac final preview not rendered. No thermal workaround.
+- **Gate 3 BLOCKED** — no combined unattended research→Groq→actual Mac render→QA preview until gates 1–2 close.
+- **Gate 4 PARTIAL** — Mac 30/30 tests; Dell controller and sandbox selftests PASS. Fresh Mac idempotent ping `881a4f47-646c-4565-a2eb-7bc822a3729c` completed by cron, queue count 11. Dell idempotent research `8f39e7eb-4fa7-45fa-a800-19ad7b423716` completed unattended with 5 attributed results. Dell SSH heartbeat temporarily went stale then recovered without reissuing the queued task; no 24h/reboot/forced-offline certification.
+- No router/Wi-Fi/root/SSH-privilege change, no user app killed, no auto-posting, no advertising spend, no local Mac inference and no data sync to Moksha Master.
