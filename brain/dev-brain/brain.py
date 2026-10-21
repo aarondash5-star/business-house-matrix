@@ -235,7 +235,9 @@ def run_one():
                                config={'configurable':{'thread_id':id_},'recursion_limit':12})
         write_outputs(id_,state)
         review=state.get('review','').lstrip().upper()
-        passed=review.startswith('VERDICT: PASS')
+        needs_docs=bool(state.get('research_query')) or bool(dev_mcp_context.select('', '',state.get('task','')))
+        passed=review.startswith('VERDICT: PASS') and (not needs_docs or
+                 (state.get('docs_receipt') or {}).get('available') is True)
         verdict='review_passed' if passed else 'needs_revision'
         mark(id_,status=verdict,stage='complete')
         print('REVIEW',verdict,id_,flush=True)
