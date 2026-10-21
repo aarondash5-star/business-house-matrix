@@ -40,6 +40,7 @@ def ledger():
     db=sqlite3.connect(DB,timeout=15,isolation_level=None)
     db.execute("PRAGMA busy_timeout=15000")
     db.execute("CREATE TABLE IF NOT EXISTS requests(id INTEGER PRIMARY KEY, ts INTEGER, month TEXT, outcome TEXT, endpoint TEXT)")
+    db.execute("CREATE TABLE IF NOT EXISTS cooldowns(provider TEXT PRIMARY KEY, until_epoch INTEGER, reason TEXT)")
     cols={x[1] for x in db.execute("PRAGMA table_info(requests)")}
     if "endpoint" not in cols:
         db.execute("ALTER TABLE requests ADD COLUMN endpoint TEXT")
@@ -54,8 +55,11 @@ def state():
     month=f"{now.tm_year:04}-{now.tm_mon:02}"
     used=db.execute("SELECT count(*) FROM requests WHERE month=?",(month,)).fetchone()[0]
     today=db.execute("SELECT count(*) FROM requests WHERE ts>=?",(int(time.time())//86400*86400,)).fetchone()[0]
+    cooldown=db.execute("SELECT until_epoch FROM cooldowns WHERE provider='tavily-keyless'").fetchone()
+    remaining=max(0,cooldown[0]-int(time.time())) if cooldown else 0
     db.close()
     return {"id":"tavily-search","enabled":bool(s.get("enabled",False)),
+            "keyless_cooldown_seconds_remaining":remaining,
             "access_mode":"keyless" if s.get("keyless_mode",False) else "keyed",
             "public_only":bool(s.get("public_only",False)),
             "external_proprietary_service":True,
@@ -101,6 +105,9 @@ def reserve(endpoint,s):
     month=time.strftime("%Y-%m",time.gmtime(ts))
     db.execute("BEGIN IMMEDIATE")
     try:
+        cooldown=db.execute("SELECT until_epoch FROM cooldowns WHERE provider='tavily-keyless'").fetchone()
+        if cooldown and cooldown[0]>ts:
+            raise RuntimeError("Tavily keyless temporarily rate-limited; retry after "+str(cooldown[0]-ts)+" seconds")
         total=db.execute("SELECT count(*) FROM requests WHERE month=?",(month,)).fetchone()[0]
         day=db.execute("SELECT count(*) FROM requests WHERE ts>=?",(ts//86400*86400,)).fetchone()[0]
         recent=db.execute("SELECT count(*) FROM requests WHERE ts>=?",(ts-60,)).fetchone()[0]
@@ -176,6 +183,15 @@ def execute(endpoint,value):
                 "untrusted_external_content":True,"paid_fallback":False}
     except urllib.error.HTTPError as exc:
         db.execute("UPDATE requests SET outcome=? WHERE id=?",("HTTP_"+str(exc.code),rid))
+        if exc.code==429:
+            retry=3600
+            try:
+                retry=max(300,min(3600,int(exc.headers.get("Retry-After","3600"))))
+            except (ValueError,TypeError,AttributeError):
+                pass
+            db.execute("INSERT OR REPLACE INTO cooldowns(provider,until_epoch,reason) VALUES(?,?,?)",
+                       ("tavily-keyless",int(time.time())+retry,"429"))
+            raise RuntimeError("Tavily keyless HTTP 429; cooldown "+str(retry)+" seconds") from None
         raise RuntimeError("Tavily HTTP "+str(exc.code)) from None
     except (OSError,ValueError,RuntimeError) as exc:
         db.execute("UPDATE requests SET outcome='failed' WHERE id=?",(rid,))
