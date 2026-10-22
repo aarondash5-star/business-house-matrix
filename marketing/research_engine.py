@@ -20,6 +20,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit, urlunsplit
 from urllib.robotparser import RobotFileParser
+import research_entities as entities
 
 UA = "BusinessHouseMatrixResearch/1.2 (+public-research; no-auto-publish)"
 MAX_BYTES = 512_000
@@ -256,6 +257,9 @@ def connect(dbpath):
       CREATE VIRTUAL TABLE IF NOT EXISTS source_search USING fts5(title,url,excerpt,
         tokenize='unicode61');
     """)
+    db.execute("DELETE FROM crawl_attempt WHERE observed_utc < ?",((dt.datetime.now(UTC)-dt.timedelta(days=30)).isoformat(),))
+    db.execute("DELETE FROM observation_history WHERE observed_utc < ?",((dt.datetime.now(UTC)-dt.timedelta(days=180)).isoformat(),))
+    db.commit()
     return db
 
 def last_crawl(db,host):
@@ -304,6 +308,12 @@ def save_evidence(db,item):
       title=excluded.title,last_seen=excluded.last_seen,digest=excluded.digest,status=excluded.status""",
       (url,item["source_url"],item["title"],item["observed_utc"],item["observed_utc"],item["sha256"],"needs_review"))
     sid=db.execute("SELECT id FROM source WHERE canonical_url=?",(url,)).fetchone()[0]
+    role=entities.classify(url,item["title"],item["excerpt"])
+    host=urlsplit(url).hostname
+    db.execute("INSERT INTO business_entity(canonical_domain,name,role,reviewed) VALUES(?,?,?,0) "
+               "ON CONFLICT(canonical_domain) DO UPDATE SET role=excluded.role",(host,item["title"],role["role"]))
+    eid=db.execute("SELECT id FROM business_entity WHERE canonical_domain=?",(host,)).fetchone()[0]
+    db.execute("INSERT OR IGNORE INTO source_entity_link(source_id,entity_id) VALUES(?,?)",(sid,eid))
     db.execute("INSERT INTO observation_history(source_id,observed_utc,digest,change_type) VALUES(?,?,?,?)",
                (sid,item["observed_utc"],item["sha256"],change))
     db.execute("DELETE FROM source_search WHERE rowid=?",(sid,))
@@ -321,13 +331,14 @@ def save_evidence(db,item):
           item["observed_utc"],"needs_review",item["excerpt"][:180]))
     db.commit()
     return {"stored":True,"source_id":sid,"change":change,
-            "verified":False,"requires_review":True}
+            "classification":role["role"],"verified":False,"requires_review":True}
 
 def packet(db,topic):
     rows=db.execute("""SELECT s.id,s.canonical_url,s.title,s.last_seen,s.status
       FROM source_search f JOIN source s ON s.id=f.rowid
       WHERE source_search MATCH ? LIMIT 12""",('"' + topic.replace('"',"").split()[0] + '"' if topic.strip() else '"wellness"',)).fetchall()
-    leads=[{"source_id":a,"url":b,"title":c,"last_seen":d,"status":e} for a,b,c,d,e in rows]
+    leads=[{"source_id":a,"url":b,"title":c,"last_seen":d,"status":e,
+            "entity_classification":entities.classify(b,c)["role"]} for a,b,c,d,e in rows]
     return {"type":"bhm_research_packet","version":"1.2-dev","topic":topic,
             "created_utc":now(),"market_map":{"status":"needs_review","leads":leads},
             "verified_competitors":[],"unverified_leads":leads,
