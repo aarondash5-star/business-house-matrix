@@ -75,3 +75,48 @@
 - [Read-only five-dimension GSC adapter](../../marketing/gsc_multidim.py)
 - [63 Dell regression tests](../../marketing/test_research_engine.py), [entity tests](../../marketing/test_research_entities.py), [monitor tests](../../marketing/test_research_monitor.py)
 - [11 Mac GSC tests](../../marketing/test_gsc_multidim.py)
+
+---
+
+## Additional completion attempt — 2026-10-22, ~12:16–12:30 UTC
+
+**Verdict: PARTIAL RELEASE / DO NOT MERGE OR MARK FULLY CERTIFIED.** Continued on the existing draft PR, rather than rebuilding or changing working services.
+
+### Signed extraction integration
+- Authenticated Dell and Mac SSH bridges verified online. The existing Dell user services `bhm-searxng` and `bhm-research-relay` remained active.
+- Prepared an intentionally narrow signed-transport implementation: [exact public-page grant](../../marketing/research_transport_ops.py) and [reversible transport patch with source-fingerprint preflight](../../marketing/research_transport_patch.py). Only previously reviewed Moksha and W3C public URLs are granted; search envelope v1 is preserved and a v2 extraction operation requires existing Ed25519 signatures, encrypted request/receipt, source-identity verification and strict same-page grants.
+- Dell patch preflight returned `check_only` with matching source signature, receipt `c132f3c9-a0c2-4669-ba1c-0d8f855bc993`, exit 0. **No transport patch applied.**
+- Mac patch staging was **blocked by connector safety checks**. The operation was not retried through another pathway or bypassed. Consequently **there is no successful end-to-end signed extraction receipt**. Existing signed SEARCH relay is preserved unchanged.
+- No signed-transport service restarted, no identity or permission modified.
+
+### Live Search Console data
+- Owner-linked `Wp_Manager` GSC read-only status confirmed: `https://mokshagoa.com/`, connected, OAuth scope `webmasters.readonly`, scheduled. Existing property query observation adapter remains unchanged.
+- Its `gsc_search` query returned 12 genuine first-party `[query,page,date]` rows covering 2026-09-21–2026-10-19 (Pacific calendar dates).
+- Successfully imported all **12 rows** into Mac isolated `$HOME/bhm-gsc-multidim-stage-20261022/private-gsc-3d.sqlite3` using [restricted importer](../../marketing/gsc_bridge3d.py), receipt `37be234f-65ee-4f00-b314-9fc3dc3d86c4`, exit 0. Output explicitly says country/device UNKNOWN and does not infer global search volume. Database access enforced owner-only.
+- The existing connected read-only GSC API tool caps `dimensions` at 3, and alternative GSC Wizard's subscription status blocked tool access. Five-dimensional joint query/page/country/device/date **NOT available**. Do not synthesize a five-dimensional joint distribution from separate three-dimensional aggregate queries, or spend for a paid upgrade.
+
+### Ten live representative discovery queries
+
+Actual Dell SearXNG public searches, no provider facts automatically promoted, receipts:
+- `52816c35-300e-470b-80f3-0541592a1cf9`: named Hidden Oak (missing in top 4), Satori booking (found), GoAsian pricing (found), own-brand Burraa duplicates (found), Russian-language Arambol banya (mixed historical and social leads).
+- `d3a29d33-6c78-4b6a-b109-f2b3617cdcff`: general Arambol wellness (mostly own-brand/generic directories), wellness booking UX (mixed relevant/generic), 2026 local pricing (GoAsian plus unrelated listings), adversarial irrelevant 1939 radio PDF (surfaced, MUST reject), domain-restricted Hidden Oak (official site found).
+- **Search execution: 10/10 queries, both jobs exit 0. Research quality: FAIL.** Named-target recall and strict source precision do not meet predeclared 80% threshold; off-topic historical pages can be retrieved. Prior quality guard excludes obvious irrelevant pages, but a full live reviewed quality-and-citation benchmark on extracted pages is still needed. Do not claim research facts from raw SERP results.
+- A narrow source-attributed, unresolved/conflict-aware [Moksha pilot research packet](../../marketing/research_packet_moksha_20261022.json) was committed with first-party URLs and named provider leads. **No reviewed competitor/pricing claim was promoted to final Design copy.**
+
+### Meaningful cross-source findings requiring human review
+1. Hidden Oak's own home page markets fire+ice from ₹1,000, while its [current pricing page](https://thehiddenoak.space/pricing/) labels ₹1,000 as the **without-ice** session and a ₹1,500 contrast/sound session. Treat as an explicit product/inclusions conflict, not an independently verified like-for-like price.
+2. [Satori public booking](https://satoriwellness.setmore.com/) shows a ₹800 sauna/ice menu entry and evening hours, while the local business listing states **temporarily closed**. Operating status is unverified.
+3. [GoAsian current first-party price page](https://goasianspa.com/prices-page/) lists specific massage rates, but mud/ice bath package prices are not numeric. Do not invent comparison values.
+4. Burraa, Goanearby, and LetsGoa Moksha product listings remain **Moksha reseller/channel leads, not competing providers**.
+
+### Safety and release summary
+- Preserve existing active Mac Marketing Brain v1.1 search and GSC functionality, signed Dell relay, no paid fallback, no OTP/key/root changes.
+- **No automatic competitor monitoring scheduled** because no owner-reviewed exact monitoring target list. Monitor code/dry-run only.
+- **Gate 1:** isolated local public extraction PASS; signed Mac→Dell integration BLOCKED.
+- **Gate 2:** typed claim/entity code PASS; factual competitor certification PENDING review and corroboration.
+- **Gate 3:** local private evidence memory PASS; interdepartment production retrieval PENDING.
+- **Gate 4:** actual GSC 3 dimensions ingested; required 5 dimensions BLOCKED by connected API cap; monitoring PENDING.
+- **Gate 5:** ten live query *executions* PASS, editorial-grade relevance/evidence FAIL; Design interface remains review-only.
+- No publishing, spending, production site edits or promotions; draft PR stays unmerged.
+
+**Exact next action**: security-owner-reviewed transport release and signed end-to-end smoke; settle named-source recall with original official-provider URL registry; get multi-dimension raw GSC from an authorized free route if available; approve specific monitoring URLs; rerun human-labeled 10-case threshold benchmark; then review and certify Design packet. No automatic merging or production publishing.
