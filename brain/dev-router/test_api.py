@@ -57,10 +57,10 @@ class O(unittest.TestCase):
  api=T.api
  def setUp(self):
   T.setUp(self)
-  self.s.update(id='openrouter-qwen-coder',provider='openrouter',model='qwen/qwen3-coder:free')
+  self.s.update(id='openrouter-code',provider='openrouter',model='cohere/north-mini-code:free')
   m.read_policy.return_value={'openrouter_free_only_owner_confirmed':True,'groq_free_plan_owner_confirmed':True}
  def test_paid_model_rejected_before_network_or_budget(self):
-  self.s['model']='qwen/qwen3-coder'
+  self.s['model']='cohere/north-mini-code'
   with self.api() as op,self.assertRaisesRegex(RuntimeError,'MODEL_DENIED'):m.openrouter_text(self.s,'public',False,True)
   op.assert_not_called();self.assertFalse(m.DB.exists())
  def test_private_and_tools_rejected_before_network(self):
@@ -72,7 +72,7 @@ class O(unittest.TestCase):
   with self.api() as op,contextlib.redirect_stdout(io.StringIO()):self.assertEqual(m.openrouter_text(self.s,'public',False,True),0)
   req=op.return_value.open.call_args.args[0];body=json.loads(req.data)
   self.assertEqual(req.full_url,'https://openrouter.ai/api/v1/chat/completions')
-  self.assertEqual(body['model'],'qwen/qwen3-coder:free')
+  self.assertEqual(body['model'],'cohere/north-mini-code:free')
   self.assertEqual(body['provider'],{'data_collection':'deny','max_price':{'prompt':0,'completion':0}})
   self.assertEqual(body['max_tokens'],1024);self.assertEqual(body['plugins'],[])
   for k in ('tools','models','route','reasoning_effort','max_completion_tokens'):self.assertNotIn(k,body)
@@ -86,7 +86,7 @@ class O(unittest.TestCase):
    op.return_value.open.return_value.__enter__.return_value.read.return_value=b'x'*65537
    with self.assertRaisesRegex(RuntimeError,'TOO_LARGE'):m.openrouter_text(self.s,'public',False,True)
  def test_unexpected_model_and_nonzero_cost_rejected(self):
-  for model,cost,err in [('other/model',0,'UNEXPECTED_MODEL'),('qwen/qwen3-coder',0.01,'UNEXPECTED_COST')]:
+  for model,cost,err in [('other/model',0,'UNEXPECTED_MODEL'),('cohere/north-mini-code',0.01,'UNEXPECTED_COST')]:
    data={'model':model,'choices':[{'message':{'content':'source'},'finish_reason':'stop'}],'usage':{'cost':cost}}
    with self.api(data),self.assertRaisesRegex(RuntimeError,err):m.openrouter_text(self.s,'public',False,True)
  def test_budget_is_separate_from_groq(self):
