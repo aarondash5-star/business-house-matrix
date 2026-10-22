@@ -326,7 +326,7 @@ def save_evidence(db,item):
 def packet(db,topic):
     rows=db.execute("""SELECT s.id,s.canonical_url,s.title,s.last_seen,s.status
       FROM source_search f JOIN source s ON s.id=f.rowid
-      WHERE source_search MATCH ? LIMIT 12""",(topic.replace('"',"").split()[0] if topic.strip() else "wellness",)).fetchall()
+      WHERE source_search MATCH ? LIMIT 12""",('"' + topic.replace('"',"").split()[0] + '"' if topic.strip() else '"wellness"',)).fetchall()
     leads=[{"source_id":a,"url":b,"title":c,"last_seen":d,"status":e} for a,b,c,d,e in rows]
     return {"type":"bhm_research_packet","version":"1.2-dev","topic":topic,
             "created_utc":now(),"market_map":{"status":"needs_review","leads":leads},
@@ -377,7 +377,7 @@ def main():
         elif args.cmd=="search":
             rows=db.execute("""SELECT s.canonical_url,s.title,s.status,s.last_seen
                FROM source_search f JOIN source s ON s.id=f.rowid WHERE source_search MATCH ? LIMIT 15""",
-               (args.query,)).fetchall()
+               ('"'+args.query.replace('"','').strip()[:90]+'"',)).fetchall()
             result={"results":[dict(zip(("url","title","status","last_seen"),r)) for r in rows],
                     "read_only":True}
         else:
