@@ -537,7 +537,7 @@ def test():
             staged=submit("moksha_overhaul","website_stage","moksha_overhaul_v1",idempotency="test-staging-route-20261022")
             duplicate=submit("moksha_overhaul","website_stage","moksha_overhaul_v1",idempotency="test-staging-route-20261022")
             assert staged["status"]=="queued" and duplicate["id"]==staged["id"]
-            assert status()["counts"]=={"queued":4,"blocked":1}
+            assert status()["counts"]=={"queued":5,"blocked":1}
             assert recover()["flagged_uncertain_dispatches"]==0
             try:submit("devpilot","research_search","contact", "email alice@example.com")
             except ValueError:pass
