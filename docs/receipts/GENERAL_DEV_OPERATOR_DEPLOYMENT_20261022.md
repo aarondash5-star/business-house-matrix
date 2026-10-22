@@ -53,3 +53,34 @@ The underlying trusted controller explicitly allows only the above public enroll
 Stop only after tasks are drained and any delegated outcome has a terminal receipt. Restore `~/matrix-controller/controller.py.bak-20261022-generaldev-v2` over `controller.py`, restart `bhm-autonomy-controller.service`, verify active and original SHA; leave historical receipts for audit. Do not modify root, Generic SSH bridge, or unrelated machines.
 
 **Release gate:** No auto-merge, no prod publish, no spend, no Pine private account, no TradingView writes. All project permissions remain restricted until specifically enrolled and QA-certified.
+
+
+---
+
+## Final postflight update — 22 October 2026
+
+**Final decision: PARTIAL DEPLOYMENT ONLY. Full general-purpose Dev Matrix autonomy is NOT enabled or certified.**
+
+The previously operational `bhm-autonomy-controller.service` is **active**, live SHA256 **`ce09dabcc4037a401eb8df3617c375dad0ffddc3cd32e81df056e26317db29bd`**. The saved pre-v3 backup is `controller.py.bak-20261022-generaldev-v3`, SHA256 **`d99f9ec6b70a2e0acea49604856084df8d208eee37c18e93a4e72172e3e0c656`**. Dell and Mac remained online at postflight.
+
+### Successful evidence
+
+- Initial separately staged **Granite4** task `matrix-dev-taskboard-v1`: model generated a complete scoped HTML file on attempt 1; sandbox QA PASS; unpublished local Git review SHA **`71accb97d05cc1d00c95152c9b19f941e7eed2d2`**. This proves the bounded standalone loop for one fixed public synthetic task.
+- New protocol, parser, workcell and controller v4 candidate: independent Dell **28/28** and Mac **28/28** tests passed, plus controller selftests on both.
+- Direct no-tool Granite raw-HTML diagnostic returned a valid enrolled-path proposal: **262 HTML characters in 33.1 seconds**; SSH receipt `8dab1a0d-115e-412f-bb76-9656483a70e5`. The model is OSI-compatible, with the installed model declaring Apache License Version 2.0.
+- Source-controlled candidate `brain/mvp-controller/controller-general-dev-v4-candidate-20261022.py`, commit `2f997241e7665865c40c42177c9fb246c1874953`, is available in the feature branch but **NOT deployed**.
+- Draft review PR [#8](https://github.com/aarondash5-star/business-house-matrix/pull/8) created. No PR was merged and no source published automatically by Dell.
+
+### Failed / blocked evidence
+
+- Controller-dispatched v2 `dev_general_build` task **`3ff6f0a9-8358-44de-9735-119884d130c9`**: model emitted malformed JSON in all three guarded attempts. Terminal receipt `blocked`; controller status `needs_review`. No generated files applied or review commit created.
+- Controller-dispatched v3 task **`9cc059c2-f547-4363-aa25-c9b3cccf091d`**: Qwen local model timed out on all three guarded attempts. Terminal receipt `blocked`; controller status `needs_review`. No generated files applied or review commit created.
+- v4 remedial release: platform safety checks blocked the deployment operation **before** copying release files or changing the controller. The action was **not retried by an alternative route**. Final read-only verification: `~/matrix-controller/general-dev-release-v4` **does not exist**; live controller SHA unchanged.
+- Current durable queue: **9 completed, 11 needs_review**, including the two newly failed general Dev tests. Existing historical tasks and failures remain intact; no uncertain task was blindly replayed.
+- General-purpose model tool calling, arbitrary repository enrollment, Node/runtime QA, autonomous GitHub PR/push from Dell, cross-project MCP write permissions and production delivery remain unimplemented or uncertified.
+
+### Recovery and next release gate
+
+The enabled `dev_general_build` route is **manifest-enrolled, synthetic-only and not certified for routine use** following its two failed live E2E receipts. Preserve the current working controller, the historical receipts and the source-review branch. A subsequently **authorized** deployment route must first promote a new source-pinned candidate with verified independent test results and rollback. Require at least two successful controller-dispatched end-to-end jobs with different enrolled workloads, plus fault-injection and cross-tenant tests, before promoting general Dev autonomy. Do not bypass platform security checks to accomplish that.
+
+**Do not represent the v4 candidate as deployed. Do not classify a started systemd unit as a successful autonomous development release.**
