@@ -53,5 +53,63 @@ class N(T):
  def test_license_gate(self):
   self.s.update(provider='nvidia',model='nvidia/nemotron-3-ultra-550b-a55b',license_review_required=True)
   with self.assertRaisesRegex(RuntimeError,'LICENSE_GATE'):m.nvidia_text(self.s,'public',False,True,True)
+class O(unittest.TestCase):
+ api=T.api
+ def setUp(self):
+  T.setUp(self)
+  self.s.update(id='openrouter-qwen-coder',provider='openrouter',model='qwen/qwen3-coder:free')
+  m.read_policy.return_value={'openrouter_free_only_owner_confirmed':True,'groq_free_plan_owner_confirmed':True}
+ def test_paid_model_rejected_before_network_or_budget(self):
+  self.s['model']='qwen/qwen3-coder'
+  with self.api() as op,self.assertRaisesRegex(RuntimeError,'MODEL_DENIED'):m.openrouter_text(self.s,'public',False,True)
+  op.assert_not_called();self.assertFalse(m.DB.exists())
+ def test_private_and_tools_rejected_before_network(self):
+  with self.api() as op:
+   with self.assertRaisesRegex(RuntimeError,'PUBLIC_TEXT'):m.openrouter_text(self.s,'private')
+   with self.assertRaisesRegex(RuntimeError,'NO_TOOLS'):m.openrouter_text(self.s,'public',True,True)
+  op.assert_not_called();self.assertFalse(m.DB.exists())
+ def test_free_price_privacy_and_deadline_contract(self):
+  with self.api() as op,contextlib.redirect_stdout(io.StringIO()):self.assertEqual(m.openrouter_text(self.s,'public',False,True),0)
+  req=op.return_value.open.call_args.args[0];body=json.loads(req.data)
+  self.assertEqual(req.full_url,'https://openrouter.ai/api/v1/chat/completions')
+  self.assertEqual(body['model'],'qwen/qwen3-coder:free')
+  self.assertEqual(body['provider'],{'data_collection':'deny','max_price':{'prompt':0,'completion':0}})
+  self.assertEqual(body['max_tokens'],1024);self.assertEqual(body['plugins'],[])
+  for k in ('tools','models','route','reasoning_effort','max_completion_tokens'):self.assertNotIn(k,body)
+  self.assertEqual(op.return_value.open.call_args.kwargs['timeout'],30)
+ def test_symlink_key_rejected(self):
+  p=m.secret_path('groq-qwen-primary');p.rename(p.with_suffix('.other'));p.symlink_to(p.with_suffix('.other'))
+  with self.api() as op,self.assertRaisesRegex(RuntimeError,'NO_SECURE'):m.openrouter_text(self.s,'public',False,True)
+  op.assert_not_called()
+ def test_oversized_response_rejected(self):
+  with self.api() as op:
+   op.return_value.open.return_value.__enter__.return_value.read.return_value=b'x'*65537
+   with self.assertRaisesRegex(RuntimeError,'TOO_LARGE'):m.openrouter_text(self.s,'public',False,True)
+ def test_unexpected_model_and_nonzero_cost_rejected(self):
+  for model,cost,err in [('other/model',0,'UNEXPECTED_MODEL'),('qwen/qwen3-coder',0.01,'UNEXPECTED_COST')]:
+   data={'model':model,'choices':[{'message':{'content':'source'},'finish_reason':'stop'}],'usage':{'cost':cost}}
+   with self.api(data),self.assertRaisesRegex(RuntimeError,err):m.openrouter_text(self.s,'public',False,True)
+ def test_budget_is_separate_from_groq(self):
+  c=m.conn();c.execute('CREATE TABLE token_reservations(ts INTEGER,budget INTEGER)');c.execute('INSERT INTO token_reservations VALUES(?,80000)',(m.now(),));c.close()
+  with self.api(),contextlib.redirect_stdout(io.StringIO()):self.assertEqual(m.openrouter_text(self.s,'public',False,True),0)
+  c=m.conn();self.assertEqual(c.execute('SELECT sum(budget) FROM token_reservations').fetchone()[0],80000)
+  self.assertGreater(c.execute('SELECT sum(budget) FROM openrouter_token_reservations').fetchone()[0],0);c.close()
+ def test_429_is_sanitized_without_echoing_provider_body(self):
+  error=m.urllib.error.HTTPError('https://openrouter.ai/api/v1/chat/completions',429,'synthetic-private-body',{},None)
+  out=io.StringIO()
+  with self.api(error=error),contextlib.redirect_stderr(out):self.assertEqual(m.openrouter_text(self.s,'public',False,True),1)
+  self.assertEqual(out.getvalue(),'OPENROUTER_HTTP_429\n')
+ def test_key_check_only_prints_allowlisted_metadata(self):
+  data={'data':{'label':'synthetic-sensitive-label','free_model_daily_requests':{'remaining':7,'unexpected':'synthetic-private'},'is_management_key':False}}
+  out=io.StringIO()
+  with self.api(data) as op,contextlib.redirect_stdout(out):m.verify_openrouter(self.s)
+  self.assertEqual(op.return_value.open.call_args.args[0].full_url,'https://openrouter.ai/api/v1/key')
+  self.assertNotIn('synthetic-',out.getvalue());self.assertEqual(json.loads(out.getvalue())['free_model_daily_requests'],{'remaining':7})
+ def test_cli_private_route_rejects_before_reservation(self):
+  m.read_policy.return_value={'connections':[self.s]}
+  with patch.object(m.sys,'argv',['matrix-route.py','run','--slot',self.s['id'],'private']),self.assertRaisesRegex(RuntimeError,'PUBLIC_INPUT'):
+   m.main()
+  c=m.conn();self.assertEqual(c.execute('SELECT count(*) FROM events').fetchone()[0],0);c.close()
 if __name__=='__main__':unittest.main(verbosity=1)
+
 
