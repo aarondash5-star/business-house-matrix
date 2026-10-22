@@ -3,6 +3,7 @@
 import signal, socket
 import argparse, datetime as dt, getpass, json, os, pathlib, sqlite3, subprocess, sys, time, urllib.request, urllib.error
 BASE=pathlib.Path(__file__).resolve().parent
+import openrouter_pool as pool
 POLICY=BASE/"policy.json"
 DB=BASE/"quota.sqlite3"
 VAULT=BASE/"secrets"
@@ -20,7 +21,7 @@ def read_policy():
  ids=set()
  for s in p["connections"]:
   assert s["id"] not in ids;ids.add(s["id"])
-  assert s["provider"] in ALLOWED and s["model"] in ALLOWED[s["provider"]]
+  assert s["provider"] in ALLOWED and (s["model"] in ALLOWED[s["provider"]] or (s["provider"]=="openrouter" and s["model"] in pool.registry(BASE)))
   assert s["max_daily_requests"] >= 0 and s["max_minute_requests"]>=0
   assert all(k in {"coding","reasoning","review","fast","private"} for k in s["preference"])
  for s in p["connections"]:
@@ -89,7 +90,7 @@ def _hosted_text(s,prompt,tools=False,public_input=False):
  if provider not in {"groq","nvidia","openrouter"}:raise RuntimeError("PROVIDER_DENIED")
  if provider=="nvidia" and (s["model"]!="openai/gpt-oss-20b" or s.get("license_review_required")):raise RuntimeError("NVIDIA_MODEL_LICENSE_GATE")
  if not public_input or tools:raise RuntimeError("PUBLIC_TEXT_ONLY_NO_TOOLS_REQUIRED")
- if s["model"] not in ALLOWED[provider]:raise RuntimeError("MODEL_DENIED")
+ if s["model"] not in ALLOWED[provider] and not (provider=="openrouter" and s["model"] in pool.registry(BASE)):raise RuntimeError("MODEL_DENIED")
  flag={"groq":"groq_free_plan_owner_confirmed","nvidia":"nvidia_free_development_owner_confirmed","openrouter":"openrouter_free_only_owner_confirmed"}[provider]
  if not read_policy().get(flag):raise RuntimeError("FREE_PLAN_ATTESTATION_REQUIRED")
  if not prompt or len(prompt.encode())>2048:raise RuntimeError("PUBLIC_PROMPT_MAX_2048_BYTES")
@@ -128,11 +129,17 @@ def _hosted_text(s,prompt,tools=False,public_input=False):
   if not isinstance(text,str) or not text.strip() or len(text.encode())>8192:raise RuntimeError("INVALID_OR_TRUNCATED_PROVIDER_OUTPUT")
   if d["choices"][0].get("finish_reason")!="stop":raise RuntimeError("PROVIDER_OUTPUT_INCOMPLETE")
   if provider=="openrouter":
-   if d.get("model") not in {"cohere/north-mini-code","cohere/north-mini-code:free","cohere/north-mini-code-20260617:free","cohere/north-mini-code-20260617"}:raise RuntimeError("OPENROUTER_UNEXPECTED_MODEL")
+   aliases=pool.registry(BASE).get(s['model'],{}).get('response_models',[])
+   if not aliases and s['model']=='cohere/north-mini-code:free':aliases=["cohere/north-mini-code","cohere/north-mini-code:free","cohere/north-mini-code-20260617:free","cohere/north-mini-code-20260617"]
+   if d.get("model") not in aliases:raise RuntimeError("OPENROUTER_UNEXPECTED_MODEL")
    cost=(d.get("usage") or {}).get("cost")
    if cost is not None and (isinstance(cost,bool) or not isinstance(cost,(int,float)) or cost!=0):raise RuntimeError("OPENROUTER_UNEXPECTED_COST")
   print(json.dumps({"model":d.get("model"),"usage":d.get("usage"),"text":text,"tools_enabled":False}));return 0
  except urllib.error.HTTPError as exc:
+  if provider=='openrouter' and exc.code==429:
+   try:seconds=max(60,min(86400,int(exc.headers.get('Retry-After','900'))))
+   except (ValueError,TypeError,AttributeError):seconds=900
+   with conn() as rate_db:rate_db.execute('INSERT OR REPLACE INTO cooldowns(slot,until_epoch) VALUES(?,?)',(s['id'],now()+seconds))
   print(provider.upper()+"_HTTP_"+str(exc.code),file=sys.stderr);return 1
  except (OSError,TimeoutError,ValueError,KeyError,IndexError) as exc:
   print(provider.upper()+"_REQUEST_FAILED_"+type(exc).__name__,file=sys.stderr);return 1
@@ -145,8 +152,26 @@ def nvidia_text(s,prompt,tools=False,public_input=False,development_test=False):
  return _hosted_text(s,prompt,tools,public_input)
 def openrouter_text(s,prompt,tools=False,public_input=False):
  return _hosted_text(s,prompt,tools,public_input)
-def launch(s,prompt,tools=False,public_input=False,development_test=False):
- if s["provider"]=="openrouter":return openrouter_text(s,prompt,tools,public_input)
+def launch(s,prompt,tools=False,public_input=False,development_test=False,profile='coding'):
+ if s["provider"]=="openrouter":
+  dynamic=False;model=None;started=time.monotonic()
+  try:
+   dynamic=read_policy().get('openrouter_demand_routing',False)
+   if dynamic:
+    if not public_input or tools:raise RuntimeError('PUBLIC_TEXT_ONLY_NO_TOOLS_REQUIRED')
+    probe=pool.next_probe(BASE,DB,profile)
+    if probe:
+     # One fixed public QA fixture at most; never give unqualified models the task.
+     q=subprocess.run([sys.executable,str(BASE/'qualify_openrouter.py'),'--model',probe],capture_output=True,text=True,timeout=70)
+     print('OPENROUTER_DEMAND_QUALIFICATION',probe,'exit',q.returncode,flush=True)
+    model=pool.select(BASE,DB,profile);s=dict(s,model=model)
+    print('OPENROUTER_MODEL',model,'DEMAND_PROFILE',profile,flush=True)
+   started=time.monotonic()
+   code=openrouter_text(s,prompt,tools,public_input)
+  except (OSError,ValueError,RuntimeError,KeyError,TypeError,sqlite3.Error,subprocess.TimeoutExpired) as exc:
+   print('OPENROUTER_POOL_FAILED_'+type(exc).__name__,file=sys.stderr);code=1
+  if dynamic and model:pool.record(DB,model,code==0,(time.monotonic()-started)*1000)
+  return code
  if s["provider"]=="nvidia":return nvidia_text(s,prompt,tools,public_input,development_test)
  if s["provider"]=="groq":return groq_text(s,prompt,tools,public_input)
  env=os.environ.copy()
@@ -226,14 +251,17 @@ def main():
  parser=argparse.ArgumentParser(description="Zero-paid Matrix Dev API selector")
  sub=parser.add_subparsers(dest="command",required=True)
  sub.add_parser("status");sub.add_parser("validate")
+ discovery=sub.add_parser('openrouter-pool');discovery.add_argument('--refresh',action='store_true');discovery.add_argument('--profile',choices=['coding','review','reasoning','fast'],default='coding')
  verify=sub.add_parser("verify-provider");verify.add_argument("slot")
  manage=sub.add_parser("set");manage.add_argument("slot");manage.add_argument("--enabled",choices=["yes","no"]);manage.add_argument("--profile",choices=["coding","reasoning","review","fast","private"]);manage.add_argument("--rank",type=int);manage.add_argument("--daily",type=int);manage.add_argument("--rpm",type=int);manage.add_argument("--account-id")
  choose=sub.add_parser("choose");choose.add_argument("--profile",default="coding")
- run=sub.add_parser("run");run.add_argument("--profile",default="coding");run.add_argument("--public-input",action="store_true");run.add_argument("--development-test",action="store_true");run.add_argument("--allow-tools",action="store_true");run.add_argument("--slot");run.add_argument("--no-fallback",action="store_true");run.add_argument("prompt")
+ run=sub.add_parser("run");run.add_argument("--profile",choices=['auto','coding','review','reasoning','fast','private'],default="auto");run.add_argument("--public-input",action="store_true");run.add_argument("--development-test",action="store_true");run.add_argument("--allow-tools",action="store_true");run.add_argument("--slot");run.add_argument("--no-fallback",action="store_true");run.add_argument("prompt")
  sim=sub.add_parser("simulate-429");sim.add_argument("slot");sim.add_argument("--seconds",type=int,default=3600)
  enroll=sub.add_parser("enroll");enroll.add_argument("slot");enroll.add_argument("--free-plan-confirmed",action="store_true")
  args=parser.parse_args();p=read_policy()
  c=conn()
+ if args.command=='openrouter-pool':
+  print(json.dumps({'models':pool.describe(BASE,DB,args.profile,args.refresh),'paid_routes_allowed':False,'idle_polling':False}));return
  if args.command=="set":
   s=get_slot(p,args.slot)
   if args.profile is not None:
@@ -290,6 +318,7 @@ def main():
   s=choice(p,args.profile,c)
   print("SELECT",s["id"],s["provider"]+"/"+s["model"]);return
  if args.command=="run":
+  if args.profile=='auto':args.profile=pool.classify(args.prompt)
   if not args.development_test:
    if args.slot and get_slot(p,args.slot)["provider"]=="nvidia":raise RuntimeError("NVIDIA_DEVELOPMENT_TEST_CONFIRMATION_REQUIRED")
    for item in p["connections"]:
@@ -318,13 +347,14 @@ def main():
   while True:
    attempts+=1;attempted.add(s["id"])
    print("ROUTE",s["id"],"PROFILE",args.profile,"ATTEMPT",attempts,flush=True)
-   code=launch(s,args.prompt,args.allow_tools,args.public_input,args.development_test)
+   code=launch(s,args.prompt,args.allow_tools,args.public_input,args.development_test,args.profile)
    c.execute("UPDATE events SET outcome=? WHERE id=?",("ok" if code==0 else "failed",eid))
    if code==0:return
    if args.allow_tools or args.no_fallback:
     print("FAILED; automatic replay blocked" if args.allow_tools else "SLOT_TEST_FAILED; no fallback requested",file=sys.stderr)
     sys.exit(code)
-   c.execute("INSERT OR REPLACE INTO cooldowns(slot,until_epoch) VALUES(?,?)",(s["id"],now()+900))
+   if not (s['provider']=='openrouter' and p.get('openrouter_demand_routing')):
+    c.execute("INSERT OR REPLACE INTO cooldowns(slot,until_epoch) VALUES(?,?)",(s["id"],now()+900))
    c.execute("BEGIN IMMEDIATE")
    try:
     options=[x for x,ok,why,*_ in candidates(p,args.profile,c) if ok and x["id"] not in attempted]
