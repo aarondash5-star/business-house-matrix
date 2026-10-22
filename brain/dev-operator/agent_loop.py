@@ -30,10 +30,10 @@ def git(argv,cwd):
     if p.returncode:raise RuntimeError("git_operation_failed")
     return p.stdout.strip()
 
-def inference(prompt):
+def inference(prompt, single_html_path=None):
     args=[str(MODEL),"--no-tools","--no-mcp","--no-extensions","--no-skills",
         "--no-prompt-templates","--no-context-files","--no-session",
-        "--no-approve","--offline","--model","granite4:3b","--thinking","off",
+        "--no-approve","--offline","--model","qwen3:4b-instruct","--thinking","off",
         "--system-prompt","Output only exact JSON. No markdown.","--print",prompt]
     p=subprocess.run(args,input="",capture_output=True,text=True,timeout=110,
         env={"PATH":"/usr/local/bin:/usr/bin:/bin","HOME":str(Path.home()),
@@ -42,11 +42,28 @@ def inference(prompt):
     if p.returncode or len(p.stdout)>72000:raise RuntimeError("model_output_unavailable")
     raw=p.stdout.strip();fence=chr(96)*3
     if raw.startswith(fence):raw=raw.partition("\n")[2].rsplit(fence,1)[0].strip()
+    if single_html_path is not None:
+        return parse_single_html(raw,single_html_path)
     try:return json.loads(raw)
     except ValueError:
         a,z=raw.find("{"),raw.rfind("}")
         if a>=0 and z>a:return json.loads(raw[a:z+1])
         raise ValueError("model_schema_invalid")
+
+def parse_single_html(text,allowed_path):
+    """Single-file HTML output: no fragile JSON escaping or model-selected path."""
+    if not allowed_path.endswith(".html"):
+        raise ValueError("single_file_html_scope")
+    m=re.search(r"(?is)<!doctype\\s+html.*?</html\\s*>",text)
+    if not m:
+        raise ValueError("complete_html_document_missing")
+    html=m.group(0)
+    if len(html.encode("utf-8"))>32000:
+        raise ValueError("html_output_too_large")
+    if re.search(r"(?is)<script\\b|<iframe\\b|https?://|\\b(?:fetch|xmlhttprequest)\\s*\\(",html):
+        raise ValueError("unreviewed_active_content")
+    return {"summary":"Generated offline static developer preview",
+            "files":[{"path":allowed_path,"content":html}]}
 
 def local_review(workspace,files,target):
     target.mkdir(mode=0o700)
@@ -96,17 +113,24 @@ def run(task):
         if check["passed"] is not True:raise RuntimeError("sandbox_probe_failed")
         record["sandbox"]=check["probe"]
         allowed=[x for x in scope.files if not x.startswith("tests/")]
-        prompt=("Implement this original, offline public developer prototype: "+spec["goal"]
-                +"\nReturn ONLY JSON with exactly keys summary and files, e.g. "
-                + '{"summary":"completed","files":[{"path":"'+allowed[0]
-                +'","content":"complete source"}]}.'
-                +"\nAllowed file paths: "+", ".join(allowed)
-                +'. HTML must contain <!doctype html>, <html lang="en">, viewport meta and <main>. '
-                +"Use responsive inline CSS and concise source under 3000 characters. "
-                +"No external requests, CDN links, dependencies, credentials, browser storage or scripts.")
+        single_html=(len(allowed)==1 and allowed[0].endswith(".html"))
+        if single_html:
+            prompt=("Build this original, offline public developer prototype: "+spec["goal"]
+                    +"\nReturn only one COMPLETE HTML5 document, starting with <!doctype html> "
+                    +"and ending with </html>. Do NOT use JSON, markdown or explanations. "
+                    +"Include <html lang='en'>, viewport meta and <main>. "
+                    +"Use self-contained responsive inline CSS, no JavaScript, external URLs, "
+                    +"CDNs, dependencies, credential values, accounts, browser storage or forms. "
+                    +"Keep the page under 2500 characters.")
+        else:
+            prompt=("Implement this public prototype: "+spec["goal"]
+                    +"\nReturn ONLY compact JSON with exactly summary and files; "
+                    +"files elements contain path and content strings. "
+                    +"Use approved paths only: "+", ".join(allowed)
+                    +". Keep code short and offline; no credentials or external endpoints.")
         for index in range(1,ATTEMPTS+1):
             try:
-                proposed=inference(prompt)
+                proposed=inference(prompt,allowed[0] if single_html else None)
                 checked=policy.validate_proposal(scope,proposed)
                 changed=[f["path"] for f in checked["files"]]
                 outcome=cell.isolated(ws,"apply",
@@ -127,7 +151,7 @@ def run(task):
                 record["attempts"].append({"attempt":index,"validated":False,
                                            "error_type":type(exc).__name__})
                 if index==ATTEMPTS:raise
-                prompt += "\nPrevious output failed validation. Respond with exact JSON schema and approved paths."
+                prompt += ("\nReturn one complete raw HTML document only." if single_html else "\nReturn exact JSON schema and approved paths.")
         if record["status"]!="verified_local_review":raise RuntimeError("qa_retry_exhausted")
     except Exception as exc:
         record["error"]={"type":type(exc).__name__,"message":str(exc)[:120]}
