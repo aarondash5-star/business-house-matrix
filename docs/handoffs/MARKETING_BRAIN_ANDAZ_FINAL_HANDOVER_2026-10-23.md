@@ -44,3 +44,12 @@
 
 ## Next chat runbook / rollback
 Read this handover and underlying receipts **first**, verify live Mac/Dell and original queue with `python3 brain.py status --verbose`, `systemctl --user is-active bhm-marketing-queue-worker.timer`, `.venv-supervisor/bin/python -m unittest test_marketing_supervisor_langgraph -q`, Dell unit statuses `bhm-searxng bhm-research-relay bhm-marketing-research-api bhm-autonomy-controller`, and `curl http://127.0.0.1:18890/health` via owner-scoped read-only bridge. Keep v2 marker, existing queue/relay/root and rollback copies intact. Progress only permitted source verification; log any missing permission as an explicit blocker. When approved, enqueue a **new idempotent** `research_report` task via existing Brain timer and inspect *terminal* receipt and independent QA before claiming success. Store sanitized receipts in GitHub, never private raw data. **No publish, spend, permission changes, credential moves, rate-limit bypass, unsafe browsing, merge or production modifications.**
+
+
+## 23 October live continuation (new receipt; supersedes older runtime status only)
+- [**Andaz 23 Oct competitor/pricing QA + terminal receipts**](../receipts/ANDAZ_COMPETITOR_PRICING_QA_2026-10-23.md) is the definitive record for this follow-on run. No working integration, permissions, production, publication or spending changes.
+- Both workers and all Dell services online/active; Mac v2 bridge still intact, isolated 7/7 tests pass, existing timer active.
+- New idempotent Mac Brain task `3d8d43b3-0047-4602-9037-24e1ad25fbc0` completed first attempt in 58.965s; **13 public leads**, **2 candidate named competitors**, **0 verified claims**, **0 verified prices**, `INSUFFICIENT_EVIDENCE`, schema/safety QA PASS, publish/spend FALSE.
+- Dell 10-query QA: five 8s timeouts; five bounded single retries at 18s all returned results; **10/10 eventual transport** but the Dreamcatcher Golden negative control produced wrong first-ranked result. **No independent 10-case human-scored relevance certification.**
+- Analyst cross-check identifies six relevant Arambol competitors at official/OTA URLs; **not agent-side fact certification**. Five uniform dated INR payable checkout quotes still missing.
+- PR #4 open/draft and Issue #5 open; blocked gates intact. Keep existing source-to-claim signed extraction permission boundary. No new scope was granted.
