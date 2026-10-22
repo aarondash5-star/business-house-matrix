@@ -40,6 +40,10 @@ class CollectorTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"invalid_nonce"):
             m.collect_fixed_attestation("short",self.pk.sign)
         self.mock_exec.assert_not_called()
+    def test_shell_metacharacters_are_not_allowed_as_nonce(self):
+        with self.assertRaisesRegex(ValueError,"invalid_nonce"):
+            m.collect_fixed_attestation("A" * 24 + ";echo forbidden", self.pk.sign)
+        self.mock_exec.assert_not_called()
     def test_requires_authenticated_signer(self):
         with self.assertRaisesRegex(ValueError,"authenticated_signer_required"):
             m.collect_fixed_attestation(NONCE,None)
