@@ -1,0 +1,21 @@
+[Unit]
+Description=Business House Matrix Marketing Brain autonomous queue worker
+Documentation=https://github.com/aarondash5-star/business-house-matrix
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/business-house-matrix/marketing/brain
+ExecStart=/usr/bin/flock -n -E 0 /opt/business-house-matrix/marketing/brain/worker.lock /usr/bin/timeout -k 5s 160s /bin/sh /opt/business-house-matrix/marketing/brain/worker.sh
+TimeoutStartSec=170
+NoNewPrivileges=true
+UMask=0077
+PrivateTmp=true
+MemoryMax=640M
+TasksMax=64
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
