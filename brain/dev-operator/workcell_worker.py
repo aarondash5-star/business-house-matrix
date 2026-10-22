@@ -4,6 +4,7 @@ This is executed as /worker.py after the caller has unshared all namespaces and
 exposed only /workspace as writable. No LLM, remote Git or host tools run here.
 """
 from html.parser import HTMLParser
+from static_html_policy import validate_static_html, StaticHTMLViolation
 import ast
 import json
 import os
@@ -90,8 +91,12 @@ def independent_qa(data):
             checks.append({"type":"python_syntax","file":str(file.relative_to(ROOT)),"passed":True})
         if suffix==".html":
             parser=SemanticHTML();parser.feed(src)
-            ok="html" in parser.tags and "main" in parser.tags and parser.viewport
-            checks.append({"type":"html_semantics","file":str(file.relative_to(ROOT)),"passed":ok})
+            try:
+                validate_static_html(src)
+                ok=True
+            except StaticHTMLViolation:
+                ok=False
+            checks.append({"type":"html_semantics_and_active_content","file":str(file.relative_to(ROOT)),"passed":ok})
     if profile=="python-unittest":
         tests=ROOT/"tests"
         if not tests.is_dir():
@@ -102,7 +107,7 @@ def independent_qa(data):
         checks.append({"type":"unittest","passed":result.returncode==0,
                        "result":result.stderr[-600:]})
     elif profile=="static-html":
-        if not any(c["type"]=="html_semantics" for c in checks):
+        if not any(c["type"]=="html_semantics_and_active_content" for c in checks):
             raise ValueError("html_source_missing")
     else:
         # Node runtime is not pre-certified in this capsule; never claim QA success.

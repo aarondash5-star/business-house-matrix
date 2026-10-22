@@ -11,6 +11,7 @@ import subprocess
 import sys
 
 WORKER=Path(__file__).with_name("workcell_worker.py")
+STATIC_POLICY=WORKER.with_name("static_html_policy.py")
 BWRAP=Path("/usr/bin/bwrap")
 MAX_INPUT=70000
 
@@ -29,7 +30,9 @@ def isolated(workspace,action,request=None):
     ws=Path(workspace)
     if ws.is_symlink() or not ws.is_dir() or not ws.is_absolute():
         raise IsolationError("workspace_not_trusted")
-    if not WORKER.is_file() or WORKER.is_symlink() or not BWRAP.is_file():
+    if (not WORKER.is_file() or WORKER.is_symlink() or
+            not STATIC_POLICY.is_file() or STATIC_POLICY.is_symlink() or
+            not BWRAP.is_file()):
         raise IsolationError("runner_dependency_missing")
     blob=json.dumps(request or {},separators=(",",":"))
     if len(blob.encode("utf-8"))>MAX_INPUT:
@@ -40,6 +43,7 @@ def isolated(workspace,action,request=None):
          "--dev","/dev","--proc","/proc","--tmpfs","/tmp",
          "--bind",str(ws),"/workspace",
          "--ro-bind",str(WORKER),"/worker.py",
+         "--ro-bind",str(STATIC_POLICY),"/static_html_policy.py",
          "--dir","/empty","--chdir","/workspace",
          "/usr/bin/python3","/worker.py",action]
     p=subprocess.run(cmd,input=blob,capture_output=True,text=True,

@@ -1,0 +1,13 @@
+{
+  "manifest": {
+    "project": "matrix_dev",
+    "repository": "aarondash5-star/business-house-matrix",
+    "base_sha": "f4ad954ef19f9791a042d9f95d737c528c655334",
+    "files": [
+      "frontend/dev-release-security-v6.html"
+    ],
+    "test_profile": "static-html",
+    "write_enabled": true
+  },
+  "goal": "Build a minimal, mobile-first static release security status page for the independent Business House Matrix. Use only a heading and three short informational sections: code policy, isolated QA and review. Clearly label all status entries as synthetic examples."
+}
