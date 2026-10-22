@@ -16,6 +16,15 @@ class AgentParserTests(unittest.TestCase):
     def test_mixed_preamble_exact_extract(self):
         d=m.parse_single_html("Here is the UI: "+GOOD+" End.","frontend/sample.html")
         self.assertEqual(d["files"][0]["content"],GOOD)
+    def test_legacy_json_html_wrapper(self):
+        import json
+        d=m.parse_single_html(json.dumps({"html":GOOD}),"frontend/sample.html")
+        self.assertEqual(d["files"][0]["content"],GOOD)
+    def test_legacy_files_wrapper_ignores_untrusted_path(self):
+        import json
+        x=json.dumps({"files":[{"path":"other/foreign.html","content":GOOD}]})
+        d=m.parse_single_html(x,"frontend/sample.html")
+        self.assertEqual(d["files"][0]["path"],"frontend/sample.html")
     def test_reject_non_html(self):
         with self.assertRaises(ValueError):m.parse_single_html('{"files":[]}',"frontend/sample.html")
     def test_reject_model_suggested_wrong_file_type(self):
