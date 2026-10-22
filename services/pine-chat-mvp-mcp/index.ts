@@ -35,7 +35,7 @@ function challenge(){
 }
 class AuthUnavailable extends Error{}
 async function authorizedOwner(req:Request):Promise<boolean|null>{
- const token=(req.headers.get("authorization")||"").match(/^Bearer\\s+(\\S+)$/i)?.[1];
+ const token=(req.headers.get("authorization")||"").match(/^Bearer\s+(\S+)$/i)?.[1];
  if(!token)return null;
  let resp:Response;
  try {resp=await fetch(AUTH+"/user",{headers:{apikey:ANON,authorization:"Bearer "+token},redirect:"manual",signal:AbortSignal.timeout(6000)});}
@@ -70,7 +70,7 @@ const WORKFLOWS = {
 Deno.serve(async (req:Request)=>{
  try{
   const parsed=new URL(req.url);
-  const route=parsed.pathname.replace(/^\\/(?:functions\\/v1\\/)?pine-chat-mvp-mcp/,"") || "/";
+  const route=parsed.pathname.replace(/^\/(?:functions\/v1\/)?pine-chat-mvp-mcp/,"") || "/";
   if(req.method==="GET"&&route==="/health")
     return json({ok:true,service:"pine-chat-mvp-mcp",version:"0.1.0",auth:"owner_oauth_required",tools:3,data:"synthetic_only"});
   if(req.method==="GET"&&paths.includes(route))return json(meta());
