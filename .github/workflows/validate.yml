@@ -54,16 +54,4 @@ jobs:
             --security-opt seccomp=unconfined \
             --security-opt apparmor=unconfined \
             --security-opt systempaths=unconfined \
-            gate-e-sandbox-ci:local bash -ec '
-              /usr/bin/python3 -B - <<'"'"'PY'"'"'
-import sys, tempfile
-from pathlib import Path
-sys.path.insert(0, "brain/dev-operator")
-import workcell_runner
-with tempfile.TemporaryDirectory(prefix="gate-e-ci-") as work:
-    result = workcell_runner.doctor(Path(work))
-    assert result["passed"], result
-print("NESTED_BUBBLEWRAP_ISOLATION_PASS", result)
-PY
-              python -m pytest -q
-            '
+            gate-e-sandbox-ci:local sh -ec 'python ci/verify_gate_e_ci.py && python -m pytest -q'
