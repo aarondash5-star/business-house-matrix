@@ -9,7 +9,7 @@ import sys
 import urllib.request
 
 URL="http://127.0.0.1:11434/api/generate"
-MODEL="qwen3:4b-instruct"
+MODEL="granite4:3b"
 MAX_PROMPT=22000
 MAX_RESPONSE=60000
 
@@ -29,8 +29,8 @@ def request_payload(prompt):
     return {"model":MODEL,"stream":False,"format":schema,
             "system":"Return ONLY correct JSON. You are a bounded offline coding proposer. Never write tests, shell commands or credentials.",
             "prompt":prompt,
-            "options":{"temperature":0.1,"num_ctx":4096,"num_predict":2100,
-                       "num_thread":2,"seed":2319},
+            "options":{"temperature":0.1,"num_ctx":3072,"num_predict":750,
+                       "num_thread":4,"seed":2319},
             "keep_alive":"0"}
 
 def propose(prompt, opener=None):
@@ -40,7 +40,7 @@ def propose(prompt, opener=None):
         method="POST")
     if opener is None:
         opener=urllib.request.build_opener(urllib.request.ProxyHandler({}),NoRedirect())
-    with opener.open(req,timeout=95) as response:
+    with opener.open(req,timeout=125) as response:
         if response.status!=200:
             raise ValueError("local_model_status")
         raw=response.read(MAX_RESPONSE+1)
