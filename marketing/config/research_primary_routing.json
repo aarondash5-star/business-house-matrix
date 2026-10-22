@@ -6,31 +6,41 @@
     "scope": "research_engine_and_evidence_only"
   },
   "observed_active": {
-    "research_engine": "dell-linux",
+    "research_engine": "mac-linux",
     "marketing_brain": "mac-linux",
     "verified_at": "2026-10-23",
-    "basis": "live worker heartbeat and prior deployment receipts"
+    "basis": "Mac fixed probe 893e24cb; 80/80 QA 613851f7; snapshot 2096c353 verified on Mac; live switch 546da83b; signed Dell discovery smoke 6a91ff1a; Mac health 24f7680c",
+    "search_backend": "dell-linux (signed subordinate discovery)"
   },
   "activation": {
-    "status": "pending_mac_platform_security_clearance",
-    "enabled": false,
+    "status": "ACTIVE_MAC_LOCAL_EVIDENCE_ONLY",
+    "enabled": true,
     "automatic_cutover": false,
-    "mac_primary_certified": false,
+    "mac_primary_certified": true,
     "stage_b_certified": false,
     "requires": [
-      "normal_connector_platform_approval_for_mac",
-      "mac_fixed_function_attestation_pass",
-      "mac_research_venv_and_source_hashes_verified",
-      "consistent_encrypted_sqlite_backup_and_mac_snapshot_verified",
-      "mac_isolated_unit_negative_and_performance_qa_pass",
-      "signed_existing_relay_preserved_and_dell_failback_proven",
-      "separate_exact_page_source_policy_and_reviewer_approval_for_stage_b"
+      "independent_robots_and_terms_clearance_for_stage_b_exact_sites",
+      "trusted_source_and_human_reviewer_enrollment_for_stage_b",
+      "mac_fixed_attestation_action_review_if_stage_b_resumed",
+      "separate_stage_b_signed_extraction_negative_smoke"
     ],
     "rollback": {
       "host": "dell-linux",
       "keep_existing_services": true,
-      "keep_private_evidence_original": true
-    }
+      "keep_private_evidence_original": true,
+      "mac_backup": "/opt/business-house-matrix/marketing/brain/research_market_bridge.py.pre-mac-primary-20261023"
+    },
+    "verified_scope": "research_market local evidence aggregation and packet generation; Dell retained as signed discovery worker",
+    "host_receipts": {
+      "mac_preflight": "893e24cb-9e36-4b61-b3a0-a6f50dbef475",
+      "mac_suite_80": "613851f7-eda1-4a1d-8d71-631691017f93",
+      "mac_evidence_copy": "9eade7da-7cf0-4c0f-aa7e-790209b31a62",
+      "mac_live_switch": "546da83b-14ee-4eeb-b3d9-f0545a26763d",
+      "mac_signed_dell_smoke": "6a91ff1a-19d2-4ce8-9783-ebf7c8818af1",
+      "mac_post_cutover_health": "24f7680c-fb18-4f54-bb04-7c7cf5c8bed3"
+    },
+    "evidence_sha256": "2096c353c0b0e10f0659b23b14719ce679b4a90b068406e7c14fe98552ff7711",
+    "live_bridge_sha256": "93580f6b17344fb8a73c2b5e50709f9b6be75c929fcc049ed9d65f5c34f1f081"
   },
   "policy": {
     "arbitrary_mac_shell": false,
