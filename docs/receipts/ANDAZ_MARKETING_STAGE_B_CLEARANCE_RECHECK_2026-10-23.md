@@ -39,3 +39,13 @@ No other website, booking session, credential access, production service changes
 - Only after **all** conditions succeed should a reviewed fingerprint/backups check and strictly bounded source extraction/negative controls be reconsidered; preserve signed search transport and return unverified evidence only.
 
 **Final: USER CLEARANCE NOTED; PLATFORM CONNECTOR CLEARANCE NOT CONFIRMED. STAGE B REMAINS BLOCKED.**
+
+## Plugin-permission diagnostic — 2026-10-23 IST
+- Inspected ChatGPT plugin permission metadata for the **specific installed Generic SSH Linux** app using the non-mutating Plugin Management permission inspection tool.
+- Returned structured app permission: **Allow all actions**, custom plugin-specific override.
+- Returned global default: **Allow low-risk actions**. Since an explicit plugin override applies, ordinary ChatGPT app permission consent is **not established as the cause** of the Mac denial.
+- The exact earlier Mac preflight invocation was `linux_development_run(host_id="mac-linux", ...)`, attempting read-only Marketing Brain timer, LangGraph v2 marker, `searxng_research.py` extract adapter and existing transport file inspection. The safety denial occurred **before queue admission**. No host-side task UUID, exit code, stdout or stderr exists for the rejected attempt.
+- Failure text: `This tool call was blocked by OpenAI's safety checks. Please double check what you are sending.`
+- The available connector tools include host heartbeat, fixed probe, owner-scoped shell lanes and task receipts but **no platform-denial audit / policy-rule introspection endpoint**. Plugin permission inspection provides consent settings, not internal safety-match category, event ID or policy rule. Those details remain **not exposed**, and any interpretation that a path or command token caused it is **a hypothesis**, not a verified specific diagnosis.
+- **Troubleshooting request for provider/security support:** locate the denied tool invocation for Mac `linux_development_run` near **2026-10-22 20:04 UTC**, compare authorized Dell invocation receipt `3d58e1b6-df42-4513-a4c1-043ea3513178`, and disclose the policy category, trigger, trace/request ID and remediation supported by the normal connector. Do not change app permissions or bypass the safety check to test a guess.
+- Status unchanged: the user-approved Stage B remains blocked; no signed page extraction or source scope changes.
