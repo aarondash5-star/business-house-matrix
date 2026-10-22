@@ -76,7 +76,14 @@ class PoolTests(unittest.TestCase):
         probe.assert_not_called();api.assert_not_called()
     def test_unqualified_model_never_receives_task(self):
         spec=importlib.util.spec_from_file_location('route_test',pathlib.Path(__file__).with_name('matrix-route.py'));m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+        m.DB=self.db
         with patch.object(m,'read_policy',return_value={'openrouter_demand_routing':True}),patch.object(p,'next_probe',return_value=X),patch.object(p,'select',side_effect=RuntimeError('not qualified')),patch.object(m.subprocess,'run',return_value=MagicMock(returncode=1)) as run,patch.object(m,'openrouter_text') as api,contextlib.redirect_stderr(io.StringIO()),contextlib.redirect_stdout(io.StringIO()):
-            self.assertEqual(m.launch({'provider':'openrouter'},'public task',public_input=True),1)
+            self.assertEqual(m.launch({'provider':'openrouter','id':'openrouter-code'},'public task',public_input=True),1)
         self.assertEqual(run.call_count,1);self.assertNotIn('public task',str(run.call_args));api.assert_not_called()
+    def test_account_cooldown_after_probe_blocks_task(self):
+        spec=importlib.util.spec_from_file_location('route_test',pathlib.Path(__file__).with_name('matrix-route.py'));m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.DB=self.db
+        c=m.conn();c.execute('INSERT INTO cooldowns VALUES(?,?)',('openrouter-code',int(time.time())+900));c.close()
+        with patch.object(m,'read_policy',return_value={'openrouter_demand_routing':True}),patch.object(p,'next_probe',return_value=X),patch.object(m.subprocess,'run',return_value=MagicMock(returncode=1)),patch.object(p,'select') as select,patch.object(m,'openrouter_text') as api,contextlib.redirect_stderr(io.StringIO()),contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(m.launch({'provider':'openrouter','id':'openrouter-code'},'public task',public_input=True),1)
+        select.assert_not_called();api.assert_not_called()
 if __name__=='__main__':unittest.main()
