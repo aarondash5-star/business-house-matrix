@@ -55,3 +55,33 @@ Append implementation commits, SHA, host receipts, CI IDs, rollback result, gate
 - Develop and certify independently evaluated, approved, non-sensitive real Node and multi-file Python model benchmarks; no automatic private source mounts or credential exposure.
 - After gate signoff, run a Dell-only time-bounded candidate canary, collect monitoring and actual rollback proof, then produce versioned release evidence before production routing to Gate E. All deployment must preserve v6 hash/backup and historical receipts.
 
+## 23 October 2026 IST — Remaining-blockers execution, security CI and real model evidence
+
+**Overall: CI gate green; production gate remains CLOSED.** Owner approved all phases subject to gates; do not merge or install production services without valid model, canary, identity and rollback evidence.
+
+### Protected hosted CI: RESOLVED
+- Ordinary GitHub-hosted Bubblewrap failed `RTM_NEWADDR` because AppArmor blocked loopback capabilities, while `--unshare-all` must remain mandatory.
+- Introduced `ci/gate_e_sandbox.Dockerfile` and `ci/verify_gate_e_ci.py`. A disposable hosted CI container runs without network or host mounts, with a read-only root filesystem, bounded `/tmp` and `/root` in-memory filesystems, and capped CPU/memory/PIDs. Only the ephemeral container receives targeted SYS_ADMIN/NET_ADMIN capabilities, a reduced Docker seccomp/AppArmor profile for **nested** Bubblewrap; no Docker `--privileged`, no Dell/Mac/root/SSH changes. The complete Bubblewrap doctor remains a mandatory gate **before** the full pytest suite.
+- First nested-CI run `39849055148` passed 143 tests but 6 secure-coding tests failed because the read-only OCI home lacked a transient writable directory. Adding bounded `--tmpfs /root` fixed environment parity without changing the test or permitting network.
+- GitHub workflow run **`39849777474` PASS** (public-repository-safety + starter-tests), subsequent `39850957119` **PASS** and `39851785193` **PASS** on the progressively updated branch. Exact source is the current branch history; green on any historical SHA is not a claim about untested future commits.
+
+### Live hard-kill and no-replay tests: PASS
+- Independent disposable-child test forcibly SIGKILLed a worker **after it atomically claimed** a job, then reconciled SQLite WAL state. The interrupted job became `orphaned_needs_review`; a second queued job remained blocked; neither was automatically replayed.
+- Dell terminal receipt `2d3c414a-7d1d-48d5-91ce-ef1cf1becbc9` exit 0. Mac receipt `30d5ac51-7f42-41bf-ad7b-f0076c0479f9` exit 0.
+- This proves fail-closed crash quarantine, **not transparent successful resume of an interrupted inference**. Fully unattended safe recovery remains a design/release question.
+
+### Model-driven benchmarks — partial and negative evidence
+- Public immutable trusted benchmark baseline SHA `fbcea95fd22218aabc5a03be48811b23aa15cc66`; added model-independent Node `normalizeTag` test and two-file Python `money.py` + `invoice.py` tests. Their trusted tests were committed before model tasks were enrolled.
+- Source identity on Dell confirmed base commit and expected GitHub origin; manifest policy/sandbox approved both new targets, with exact paths and no private mounts. Stage/source preflight receipt `ec489dd8-6ddb-4d52-99d8-6b51013f46fe`.
+- First real model Node `gate-e-rc1-node` bounded service exited code 2, terminal `needs_review`, three `bounded_output_limit` rejections. Local review was NOT produced, and no code was pushed or published. Do not replay this task ID.
+- Two-file Python `gate-e-rc1-python` with fixed localhost JSON/Ollama/Qwen proposer also terminated `needs_review` (two local structured-model failure rejections and one global timeout). No accepted QA, no local review, no push/publish; do not replay this task ID.
+- Diagnosed the transport independently without re-running benchmark: fixed Qwen loopback structured JSON probe PASS (receipt `703397b8-750e-4669-8c8f-ff744aec3544`); same schema on Granite 3b PASS in ~25 sec (receipt `12034317-acba-47a9-bd3a-c9650c9339ff`). Added fixed local endpoint, no-proxy/no-redirect, strict JSON schema, token/CPU budget, cancellation and immutable owner enrollment; offline policy tests pass. Initial revised Qwen policy code Dell/Mac **65/65 PASS**, receipts `f9511358-9c28-4180-814b-8909d818bef6` and `a6c23611-b590-4d67-9c54-b1730a8b3d2d`. After switching to Granite bounded JSON, Dell/Mac again **65/65 PASS**, receipts `ca465cb6-b80f-4e64-bdda-2f94f8e0a5f2` and `b7db1f25-9227-45cb-8038-4a7e131aeaec`.
+- A **distinct manual owner-reviewed Node remediation** task `gate-e-rc1-node-json` was enrolled at the same immutable baseline and uses a newly bounded Granite proposer, *without replaying* the failed original task ID. Its separate transient Dell user unit `bhm-gate-e-rc1-node-json-20261023.service` was dispatched (receipt `fa856f80-a689-4c8a-b17d-b832842713e4`) with `MemoryMax=1200M`, `RuntimeMaxSec=285`, `CPUQuota=100%`, `NoNewPrivileges=yes`, `Restart=no`. **Final model QA pending at time of this ledger entry; must inspect terminal receipt before reporting success/failure.**
+- The historical finished Granite `gate-e-public-python-parse` pilot was not replayed.
+
+### Unresolved production gates
+1. The reviewed Node remediation requires **terminal QA receipt**, plus a **successful real two-file Python model run**; current Python attempt is terminal `needs_review`. Synthetic unit tests and short local JSON probes cannot substitute for real benchmark pass.
+2. A second genuinely independent public repo/source identity, trusted in-repo tests, and end-to-end model-generated multi-project benchmark receipt are not certified.
+3. A scoped PR write identity, independent security review/signoff, actual restricted Dell canary and rollback drill remain pending. No private keys/tokens or root/SSH permission changes were made.
+4. Current certified v6 is intentionally untouched. There is **no user-service production Gate E canary** and no model-controlled external publishing/spending. Gate E PR #13 must remain DRAFT/unmerged pending all exit gates.
+
