@@ -33,9 +33,12 @@ class Cancelled(GateError):
     pass
 
 def load(name):
-    spec=importlib.util.spec_from_file_location("gate_e_"+name,HERE/(name+".py"))
+    key="gate_e_"+name
+    if key in sys.modules:
+        return sys.modules[key]
+    spec=importlib.util.spec_from_file_location(key,HERE/(name+".py"))
     module=importlib.util.module_from_spec(spec)
-    sys.modules[spec.name]=module
+    sys.modules[key]=module
     spec.loader.exec_module(module)
     return module
 
@@ -47,9 +50,14 @@ def bounded(cmd, *, cwd, timeout=30, input_text=None, cancel_file=None, isolated
     """Fixed-argv subprocess with process-group termination on timeout/cancel."""
     env=isolated_env or {"PATH":"/usr/bin:/bin","HOME":"/empty",
                          "LANG":"C.UTF-8","PYTHONDONTWRITEBYTECODE":"1"}
+    def caps():
+        resource.setrlimit(resource.RLIMIT_CPU,(45,45))
+        resource.setrlimit(resource.RLIMIT_FSIZE,(2097152,2097152))
+        resource.setrlimit(resource.RLIMIT_CORE,(0,0))
+        resource.setrlimit(resource.RLIMIT_NOFILE,(64,64))
     proc=subprocess.Popen(cmd,cwd=str(cwd),stdin=subprocess.PIPE if input_text is not None else subprocess.DEVNULL,
                           stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,
-                          start_new_session=True,env=env)
+                          start_new_session=True,env=env,preexec_fn=caps)
     payload=input_text
     start=time.monotonic()
     try:
