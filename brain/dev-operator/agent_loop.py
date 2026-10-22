@@ -67,6 +67,8 @@ def parse_single_html(text,allowed_path):
     if not m:
         raise ValueError("complete_html_document_missing")
     html=m.group(0)
+    # Independently executed again inside the sandboxed QA worker.
+    load("static_html_policy").validate_static_html(html)
     if len(html.encode("utf-8"))>32000:
         raise ValueError("html_output_too_large")
     if re.search(r"(?is)<script\b|<iframe\b|https?://|\b(?:fetch|xmlhttprequest)\s*\(",html):
