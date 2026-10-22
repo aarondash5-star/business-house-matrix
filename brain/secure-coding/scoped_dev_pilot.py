@@ -15,6 +15,11 @@ import uuid
 HERE=Path(__file__).resolve().parent
 WORKSPACE_KEY="pine_mcp_chat"
 WORK_IDS={
+ "pine_ui_accessibility_node_retest_v1":(
+  "Build a small standalone accessible mobile-first Pine Engineer CHAT DEMO "
+  "with clear user and assistant messages, keyboard send and new-chat reset, "
+  "and independent Python unittest checks. Synthetic only; no network or real MCP/trading."
+ ),
  "pine_ui_accessibility_v1":(
   "Build a small standalone accessible mobile-first Pine Engineer CHAT DEMO "
   "with clear user and assistant messages, keyboard send and new-chat reset, "
@@ -81,7 +86,7 @@ def isolated(action,patch=None):
 def propose(prompt,seconds=130):
     cmd=[str(MODEL),"--no-tools","--no-mcp","--no-extensions",
         "--no-skills","--no-context-files","--no-session","--offline","--print",prompt]
-    env={"HOME":str(Path.home()),"PATH":"/usr/bin:/bin:"+str(Path.home()/".local/bin"),
+    env={"HOME":str(Path.home()),"PATH":"/usr/local/bin:/usr/bin:/bin",
          "PI_TELEMETRY":"0","PI_SKIP_VERSION_CHECK":"1",
          "OLLAMA_HOST":"http://127.0.0.1:11434"}
     p=subprocess.run(cmd,capture_output=True,text=True,stdin=subprocess.DEVNULL,
