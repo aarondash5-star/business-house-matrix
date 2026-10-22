@@ -77,3 +77,20 @@ Check/correct (with owner review before editing any platforms):
 | Publication/spend | DENIED / PRESERVED | Internal document only |
 
 **Disposition:** Useful internal cited market baseline, not a fully price-certified, publish-ready report. Human approval required. The Mac autonomous job must have its own terminal receipt; operator-assisted source validation is intentionally not presented as agent autonomy.
+
+
+## Addendum: Andaz Lifestyle Stay project reference + Goibibo room display (22 October 2026)
+**Owner-origin context** (project alias **Andaz Lifestyle Stay**; canonical guest-facing identity **Andaz Vibe Stay - Arambol, Goa**) was cross-checked against the Andaz MASTER Canonical Entity tab and the [official website repository README](https://github.com/karanzing1992/andaz-vibe-stay/blob/main/README.md). Owner-confirmed public contact: Temple Road, Arambol, Pernem, Goa 403524, +91 89995 41081. Standard check-in 1 PM, checkout 11 AM. Positioning: social/coliving with swimming pool, party room, karaoke and bar, with Moksha Wellness as a separate wellness partner and sauna located on **ground floor**. **The café/kitchen is pending; do not advertise as operating.** Neither yoga, sauna nor other wellness services should be advertised as automatically included in accommodation prices.
+
+[Goibibo's Andaz accommodation listing](https://www.goibibo.com/hotels/andaz-arambol-artist-party-hostel-hotel-in-goa-3479076370619624886/) publicly displayed these **illustrative, unnormalized offers**, as accessed on October 22, 2026; the cached page content may predate that access. The travel dates, cancellation terms and room availability were not fixed or confirmed in final checkout, so **these are not current guaranteed tariffs**:
+
+| Andaz Goibibo accommodation reference | Promotional displayed INR | Displayed tax/fees INR | Crossed-out or higher shown INR | Pricing unit |
+|---|---:|---:|---:|---|
+| Bed in 6 Bed Mixed Dorm | 205 | 22 | 900 | One dorm bed, one night |
+| AC 6 Bed Dorm - Permium (Goibibo spelling) | 340 | 38 | 1,500 | One dorm bed, one night (site calls unit a room) |
+| AC Room Deluxe | 1,584 | 178 | 7,000 | One private room, one night |
+| Two mixed-dorm beds combo | 409 | 46 | 1,800 | Two beds, one night (not one bed) |
+
+**Metadata conflict:** Goibibo's overview at the same source has generic text saying check-in 2 PM/check-out noon while the owner project confirms 1 PM/11 AM. The site's cancellations also show inconsistent older dates. Record as an OTA data-quality discrepancy; no OTA edits made. Another earlier crawl of Goibibo showed different discounted rates, demonstrating that advertised prices are variable. Compare future dates and conditions before any rate recommendation or claimed promotion.
+
+**Independent Business House Matrix use:** The existing LangGraph Marketing Brain has this public, provenance-labeled packet as `marketing/andaz_marketing_reference_20261022.json` and emits it as an **owner/OTA reference** in private Andaz reports. It must never count the same property's Goibibo page as an independent competitor nor interpret these shown offers as independently verified competitor prices. The autonomous report's `independent_claims_verified` and `contains_verified_prices` gates remain unchanged.
