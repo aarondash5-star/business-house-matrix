@@ -164,6 +164,10 @@ def launch(s,prompt,tools=False,public_input=False,development_test=False,profil
      # One fixed public QA fixture at most; never give unqualified models the task.
      q=subprocess.run([sys.executable,str(BASE/'qualify_openrouter.py'),'--model',probe],capture_output=True,text=True,timeout=70)
      print('OPENROUTER_DEMAND_QUALIFICATION',probe,'exit',q.returncode,flush=True)
+    rate_db=conn()
+    try:account_cd=rate_db.execute('SELECT until_epoch FROM cooldowns WHERE slot=?',(s['id'],)).fetchone()
+    finally:rate_db.close()
+    if account_cd and account_cd[0]>now():raise RuntimeError('OPENROUTER_ACCOUNT_COOLDOWN')
     model=pool.select(BASE,DB,profile);s=dict(s,model=model)
     print('OPENROUTER_MODEL',model,'DEMAND_PROFILE',profile,flush=True)
    started=time.monotonic()
