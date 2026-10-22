@@ -33,6 +33,22 @@ function normalOrigin(s) {
     return u.origin;
   } catch { return null; }
 }
+function canonicalFixture(s) {
+  try {
+    const u = new URL(s);
+    if (u.protocol !== 'file:' || u.host || u.search || u.hash || !u.pathname ||
+        u.href !== s || u.pathname.split('/').includes('..'))
+      return null;
+    return u.href;
+  } catch { return null; }
+}
+function allowedDestination(lease, url) {
+  return (typeof lease.offlineFixtureUrl === 'string' &&
+          lease.offlineFixtureUrl === url) ||
+         (typeof url === 'string' &&
+          url.startsWith('https://') &&
+          lease.allowedOrigins.includes(normalOrigin(url)));
+}
 export function validateLease(lease) {
   if (!lease || typeof lease !== 'object' || Array.isArray(lease))
     throw new AutomationWindowBlocked('MISSING_LEASE');
@@ -44,12 +60,16 @@ export function validateLease(lease) {
     throw new AutomationWindowBlocked('INVALID_STATE');
   if (!Number.isSafeInteger(lease.expiresAt) || lease.expiresAt <= Date.now())
     throw new AutomationWindowBlocked('STALE_LEASE');
-  if (!Array.isArray(lease.allowedOrigins) || lease.allowedOrigins.length === 0 ||
+  const fixture = lease.offlineFixtureUrl === undefined ? null : canonicalFixture(lease.offlineFixtureUrl);
+  if ((lease.offlineFixtureUrl !== undefined && !fixture) ||
+      !Array.isArray(lease.allowedOrigins) ||
+      (!lease.allowedOrigins.length && !fixture) ||
       !lease.allowedOrigins.every((x) => typeof x === 'string' && normalOrigin(x) === x))
     throw new AutomationWindowBlocked('INVALID_ORIGIN_ALLOWLIST');
   return Object.freeze({
     project, worker, taskId, mode: lease.mode, state: lease.state,
-    expiresAt: lease.expiresAt, allowedOrigins: Object.freeze([...lease.allowedOrigins])
+    expiresAt: lease.expiresAt, offlineFixtureUrl: fixture,
+    allowedOrigins: Object.freeze([...lease.allowedOrigins])
   });
 }
 export function tagText(data) {
@@ -142,7 +162,7 @@ export function createVisibleWindowGuard(browserContext) {
 
   async function open(leaseSpec, url) {
     const lease = validateLease(leaseSpec);
-    if (!lease.allowedOrigins.includes(normalOrigin(url)))
+    if (!allowedDestination(lease, url))
       throw new AutomationWindowBlocked('DESTINATION_NOT_ALLOWED');
     const page = await browserContext.newPage();
     const record = { lease, finished: false };
@@ -184,7 +204,7 @@ export function createVisibleWindowGuard(browserContext) {
 
   async function navigate(page, lease, url) {
     const record = owned.get(page);
-    if (!record || !record.lease.allowedOrigins.includes(normalOrigin(url)))
+    if (!record || !allowedDestination(record.lease, url))
       throw new AutomationWindowBlocked('DESTINATION_NOT_ALLOWED');
     await inspect(page, lease);
     if (writers.has(page)) throw new AutomationWindowBlocked('SINGLE_WRITER_CONFLICT');
