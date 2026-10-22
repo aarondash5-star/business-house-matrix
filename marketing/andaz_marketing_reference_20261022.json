@@ -1,0 +1,111 @@
+{
+  "schema": "business_house_matrix.marketing.client_reference.v1",
+  "business": "andaz_arambol",
+  "created_utc": "2026-10-22",
+  "purposes": [
+    "internal_marketing_planning",
+    "non_public_evidence_packet"
+  ],
+  "provenance": {
+    "owner_source": "Andaz Lifestyle Stay / ANDAZ — MASTER — Brand & Listing Control, Canonical Entity and Listing Migration, read 2026-10-22",
+    "project_readme": "https://github.com/karanzing1992/andaz-vibe-stay/blob/main/README.md",
+    "goibibo_url": "https://www.goibibo.com/hotels/andaz-arambol-artist-party-hostel-hotel-in-goa-3479076370619624886/"
+  },
+  "property": {
+    "public_name": "Andaz Vibe Stay - Arambol, Goa",
+    "internal_alias": "Andaz Lifestyle Stay",
+    "location": "Temple Road, Arambol, Pernem, Goa 403524, India",
+    "public_phone": "+91 89995 41081",
+    "check_in": "13:00",
+    "check_out": "11:00",
+    "primary_positioning": "Social experiential hostel/coliving stay, pool, music, community, bar and wellness partner.",
+    "owner_confirmed_public_amenities": [
+      "swimming pool",
+      "party room",
+      "karaoke",
+      "bar",
+      "social spaces"
+    ],
+    "wellness_partner": {
+      "name": "Moksha Wellness",
+      "relationship": "independent partner experience; do not imply all treatments included in lodging rate",
+      "sauna_location": "ground floor"
+    },
+    "accommodation_classes": [
+      {
+        "name": "Mixed 6-bed dorm bed",
+        "status": "public_ota_category; owner room inventory requires final live check"
+      },
+      {
+        "name": "Premium AC 6-bed dorm bed",
+        "status": "public_ota_category; owner room inventory requires final live check"
+      },
+      {
+        "name": "Deluxe private AC room",
+        "status": "public_ota_category; guest count/availability requires final live check"
+      }
+    ],
+    "exclusions": [
+      "Do not advertise café/kitchen as operating until the owner confirms it is live.",
+      "No automatic assertion that sauna, ice bath or other Moksha services are free/included.",
+      "Do not disclose PMS room IDs, customer data, occupancy, confidential tariff sheets or internal accounts.",
+      "Do not use Goibibo discounted prices as owner-set base tariffs."
+    ]
+  },
+  "ota_goibibo": {
+    "public_listing_name_observed": "Andaz Vibe Stay - Arambol, Goa; historical slug and images may show Andaz Arambol - Artist Party Hostel",
+    "link": "https://www.goibibo.com/hotels/andaz-arambol-artist-party-hostel-hotel-in-goa-3479076370619624886/",
+    "observed_page_reference_date": "2026-10-22",
+    "offer_status": "non_normalized_dynamic_public_display_only",
+    "stay_dates_verified": false,
+    "live_checkout_verified": false,
+    "owner_tariff_verified": false,
+    "prices_in_inr": [
+      {
+        "category": "Mixed 6-bed dorm bed",
+        "displayed_room_rate": 205,
+        "displayed_tax_fee": 22,
+        "displayed_struck_price": 900,
+        "unit": "per bed per night, displayed reference",
+        "snapshot_only": true
+      },
+      {
+        "category": "Premium AC 6-bed dorm bed",
+        "displayed_room_rate": 340,
+        "displayed_tax_fee": 38,
+        "displayed_struck_price": 1500,
+        "unit": "per bed per night, displayed reference",
+        "snapshot_only": true
+      },
+      {
+        "category": "Deluxe AC private room",
+        "displayed_room_rate": 1584,
+        "displayed_tax_fee": 178,
+        "displayed_struck_price": 7000,
+        "unit": "per room per night, displayed reference",
+        "snapshot_only": true
+      }
+    ],
+    "package_note": "A separately displayed two-bed 6-bed-dorm combo showed INR 409 + INR 46 fees per night; do not compare combo as one bed.",
+    "conflicts": [
+      "The OTA overview mentions 2 PM/12 PM but owner's canonical policy is 1 PM/11 AM.",
+      "Cached listing sections show cancellation dates inconsistent with future stays and other cached price versions.",
+      "Displayed room rate, fees and struck rates change with dates/guests/promotions; no current quote for fixed future dates was verified."
+    ]
+  },
+  "research_constraints": {
+    "no_publish": true,
+    "no_spend": true,
+    "manual_review_required": true,
+    "quote_rules": [
+      "source each offer to Goibibo URL, date of retrieval and accommodation unit",
+      "never treat advertised discount or struck rate as customer-confirmed paid rate",
+      "compare five competitors on a consistent future stay window before recommending owner pricing",
+      "keep claimed guest-facing amenities separate from unverified OTA attributes"
+    ],
+    "evaluation": [
+      "Use owner canonical identity to prevent own property being counted as a competitor.",
+      "Stay pricing research may use Goibibo as a channel reference, not independent corroboration."
+    ]
+  }
+}
