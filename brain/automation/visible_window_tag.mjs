@@ -125,8 +125,10 @@ export function createVisibleWindowGuard(browserContext) {
 
   async function inspect(page, lease) {
     const record = owned.get(page);
-    if (!record || record.lease.taskId !== lease.taskId ||
-        record.lease.worker !== lease.worker || record.lease.project !== lease.project)
+    if (!record || record.lease.taskId !== lease?.taskId ||
+        record.lease.worker !== lease?.worker || record.lease.project !== lease?.project ||
+        record.lease.mode !== lease?.mode || record.lease.state !== lease?.state ||
+        record.lease.expiresAt !== lease?.expiresAt)
       throw new AutomationWindowBlocked('UNOWNED_OR_MISMATCHED_WINDOW');
     if (record.finished || lease.expiresAt <= Date.now() || record.lease.expiresAt <= Date.now())
       throw new AutomationWindowBlocked('STALE_OR_FINISHED_LEASE');
@@ -163,7 +165,7 @@ export function createVisibleWindowGuard(browserContext) {
   async function run(page, lease, action, fn) {
     if (typeof fn !== 'function') throw new AutomationWindowBlocked('MISSING_ACTION');
     if (DENIED_ACTIONS.has(action)) throw new AutomationWindowBlocked('ACTION_FORBIDDEN');
-    if (lease.mode === 'READ-ONLY' && MUTATING_ACTIONS.has(action))
+    if (owned.get(page)?.lease.mode === 'READ-ONLY' && MUTATING_ACTIONS.has(action))
       throw new AutomationWindowBlocked('READ_ONLY_ACTION');
     await inspect(page, lease);
     if (writers.has(page)) throw new AutomationWindowBlocked('SINGLE_WRITER_CONFLICT');
