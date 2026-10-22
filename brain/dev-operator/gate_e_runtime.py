@@ -6,6 +6,7 @@ test workcells, dependency installs, or model-chosen shell operations.
 from dataclasses import dataclass
 from pathlib import Path
 import hashlib
+import fcntl
 import importlib.util
 import json
 import os
@@ -68,9 +69,12 @@ def bounded(cmd, *, cwd, timeout=30, input_text=None, cancel_file=None, isolated
                 if len(out.encode("utf-8"))>max_output:
                     raise GateError("bounded_output_limit")
                 return {"code":proc.returncode,"stdout":out,"stderr":err[-2000:]}
-            except subprocess.TimeoutExpired:
-                # communicate may retain internal input state after timeout.
+            except subprocess.TimeoutExpired as partial:
+                # Output is polled while the child is running; reject huge
+                # buffers before communicate() can complete.
                 payload=None
+                if len(partial.stdout or b"")>max_output or len(partial.stderr or b"")>max_output:
+                    raise GateError("bounded_output_limit")
                 if time.monotonic()-start>timeout:
                     raise GateError("execution_timeout")
     except (Cancelled,GateError,BaseException):
@@ -169,7 +173,7 @@ def seed_workspace(src,scope,ws):
         target.write_bytes(raw)
     return contents
 
-def node_qa(ws,tests,writable,cancel_file=None):
+def node_qa(ws,tests,writable,cancel_file=None,deadline=None):
     if not BWRAP.is_file() or not NODE.is_file():
         raise GateError("node_runtime_missing")
     if not tests or not all(t.endswith((".test.js",".test.mjs")) for t in tests):
@@ -183,12 +187,16 @@ def node_qa(ws,tests,writable,cancel_file=None):
     checks=[]
     for name in writable:
         if name.endswith((".js",".mjs")) and (ws/name).is_file():
+            remaining=20 if deadline is None else min(20,deadline-time.monotonic())
+            if remaining<=0:raise GateError("job_time_budget_exceeded")
             r=bounded([str(BWRAP),*flags,str(NODE),"--check",name],
-                      cwd=ws,timeout=20,cancel_file=cancel_file)
+                      cwd=ws,timeout=remaining,cancel_file=cancel_file)
             checks.append({"type":"node_syntax","file":name,"passed":r["code"]==0,
                            "diagnostic":r["stderr"][-300:]})
+    remaining=30 if deadline is None else min(30,deadline-time.monotonic())
+    if remaining<=0:raise GateError("job_time_budget_exceeded")
     r=bounded([str(BWRAP),*flags,str(NODE),"--test","--test-concurrency=1",*tests],
-              cwd=ws,timeout=30,cancel_file=cancel_file)
+              cwd=ws,timeout=remaining,cancel_file=cancel_file)
     checks.append({"type":"node_test","passed":r["code"]==0,
                    "diagnostic":(r["stdout"]+r["stderr"])[-600:]})
     return {"qa_passed":all(c["passed"] for c in checks),
@@ -216,6 +224,15 @@ def exact_run(record,source,stage,task,proposer,*,cancel_file=None):
             "published":False,"pushed":False,"status":"needs_review",
             "attempts":[]}
     start=time.monotonic()
+    deadline=start+TIME_BUDGET
+    # Trusted offline proposers use this to cap *every model call* against
+    # the same job deadline, never their independent attempt timer.
+    setattr(proposer,"gate_e_deadline",deadline)
+    def remaining():
+        check_cancel(cancel_file)
+        left=deadline-time.monotonic()
+        if left<=0:raise GateError("job_time_budget_exceeded")
+        return left
     try:
         seed_workspace(source,scope,ws)
         sandbox=load("workcell_runner")
@@ -234,8 +251,7 @@ def exact_run(record,source,stage,task,proposer,*,cancel_file=None):
                 "Trusted immutable baseline context: "+json.dumps(context,ensure_ascii=False)[:18000])
         policy=load("protocol")
         for index in range(1,MAX_ATTEMPTS+1):
-            check_cancel(cancel_file)
-            if time.monotonic()-start>TIME_BUDGET:raise GateError("job_time_budget_exceeded")
+            remaining()
             # Fresh immutable baseline on every attempt; prevents stale Python
             # bytecode, poisoned tests or edited dependencies contaminating QA.
             attempt_ws=root/("attempt-"+str(index))
@@ -243,26 +259,38 @@ def exact_run(record,source,stage,task,proposer,*,cancel_file=None):
             seed_workspace(source,scope,attempt_ws)
             try:
                 raw=proposer(prompt,index)
+                remaining()
                 if isinstance(raw,str):raw=json.loads(raw)
                 checked=policy.validate_proposal(scope.scope,raw)
                 changed=[f["path"] for f in checked["files"]]
                 if not set(changed).issubset(scope.writable):raise GateError("writable_scope_violation")
                 applied=sandbox.isolated(attempt_ws,"apply",
-                                         {"paths":list(scope.scope.files),"files":raw["files"]})
+                                         {"paths":list(scope.scope.files),"files":raw["files"]},
+                                         cancel_file=cancel_file,timeout=min(40,remaining()),
+                                         deadline=deadline)
                 if set(applied["written"])!=set(changed):raise GateError("sandbox_patch_mismatch")
                 if scope.scope.test_profile=="python-unittest":
                     qa=sandbox.isolated(attempt_ws,"qa",
-                                        {"paths":list(scope.scope.files),"test_profile":"python-unittest"})
-                else:qa=node_qa(attempt_ws,scope.tests,scope.writable,cancel_file=cancel_file)
+                                        {"paths":list(scope.scope.files),"test_profile":"python-unittest"},
+                                        cancel_file=cancel_file,timeout=min(40,remaining()),
+                                        deadline=deadline)
+                else:qa=node_qa(attempt_ws,scope.tests,scope.writable,
+                                cancel_file=cancel_file,deadline=deadline)
                 result["attempts"].append({"attempt":index,"qa_passed":qa["qa_passed"]})
                 if qa["qa_passed"]:
-                    check_cancel(cancel_file)
+                    remaining()
                     review=load("agent_loop").local_review(attempt_ws,changed,root/"local-review")
+                    remaining()
                     result.update(status="verified_local_review",qa=qa,review=review,
                                   proposal_hash=checked["review_sha256"])
                     break
                 prompt+="\nIndependent QA failed (repair in approved files only): "+json.dumps(qa)[-650:]
             except Cancelled:raise
+            except sandbox.IsolationError as exc:
+                if str(exc)=="worker_cancelled":raise Cancelled("owner_cancellation_requested") from exc
+                result["attempts"].append({"attempt":index,"error_type":type(exc).__name__,
+                                           "reason":str(exc)[:120]})
+                prompt+="\nIsolated worker rejected proposal. Retry within enrolled paths only."
             except Exception as exc:
                 result["attempts"].append({"attempt":index,"error_type":type(exc).__name__, "reason":str(exc)[:120]})
                 prompt+="\nProposal rejected. Retry with exact JSON and enrolled paths only."
@@ -275,6 +303,12 @@ def exact_run(record,source,stage,task,proposer,*,cancel_file=None):
         result["finished_utc"]=time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
         # Stable, atomic receipt. Incomplete runs remain needs_review.
         temp=root/"receipt.json.tmp"
-        temp.write_text(json.dumps(result,indent=2))
+        with temp.open("w",encoding="utf-8") as receipt_stream:
+            json.dump(result,receipt_stream,indent=2)
+            receipt_stream.flush()
+            os.fsync(receipt_stream.fileno())
         temp.replace(root/"receipt.json")
+        root_fd=os.open(root,os.O_RDONLY | os.O_DIRECTORY)
+        try:os.fsync(root_fd)
+        finally:os.close(root_fd)
     return result
