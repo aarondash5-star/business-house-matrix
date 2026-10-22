@@ -16,7 +16,7 @@ import gate_e_runtime as gate
 MATRIX=Path.home()/"matrix-gate-e-rc1-model-20261023"
 SOURCE=MATRIX/"repo"
 RUNS=MATRIX/"runs"
-ALLOWED={"gate-e-rc1-node","gate-e-rc1-python","gate-e-rc1-node-json"}
+ALLOWED={"gate-e-rc1-node","gate-e-rc1-python","gate-e-rc1-node-json","gate-e-rc1-python-json"}
 
 def main(name):
     if name not in ALLOWED:
