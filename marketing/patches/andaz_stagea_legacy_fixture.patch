@@ -1,0 +1,11 @@
+--- a/test_unified_research.py
++++ b/test_unified_research.py
+@@ -44,7 +44,7 @@
+     def test_no_gsc_is_explicit_missing_not_zero_demand(self):
+         with patch.object(searxng_research, "search", side_effect=self.web):
+             report = unified_research.collect("sauna wellness Goa")
+-        self.assertEqual(report["web_research"]["status"], "observed")
++        self.assertEqual(report["web_research"]["status"], "insufficient_evidence")
+         self.assertEqual(report["verified_property_performance"]["status"], "property_not_selected")
+         self.assertFalse(report["gsc_connection"]["connected_evidence"])
+         self.assertTrue(report["research_policy"]["gsc_no_data_means_unknown"])
