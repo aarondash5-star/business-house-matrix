@@ -233,9 +233,17 @@ def extract_html(body,url,grants):
     if len(text)<45:
         return {"status":"unavailable","reason":"insufficient_page_body","source_url":url}
     title=str(data.get("title") or parsed.title or "").strip()[:200]
+    # The HTML response frequently includes ephemeral script IDs, nonces and
+    # tracking markup. Alerting on raw HTML makes no meaningful content claim.
+    # Fingerprint normalized reader-visible content; keep raw digest separately
+    # for exact-source audit without using it as a change trigger.
+    normalized=re.sub(r"\\s+"," ",text).strip()
+    meaningful=hashlib.sha256((title+"\\n"+normalized).encode("utf-8")).hexdigest()
     return {"status":"needs_review","source_url":url,"canonical_url":canonical,
             "title":title,"text":text,"excerpt":text[:220],
-            "sha256":hashlib.sha256(body).hexdigest(),
+            "sha256":meaningful,
+            "raw_html_sha256":hashlib.sha256(body).hexdigest(),
+            "digest_basis":"normalized_reader_content_v2",
             "observed_utc":now(),"content_bytes":len(body),
             "schema":safe_schema(parsed.scripts),"untrusted_external_text":True,
             "facts_verified":False}
