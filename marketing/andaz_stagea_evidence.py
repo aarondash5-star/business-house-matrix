@@ -74,6 +74,8 @@ def source_receipt(envelope, registry, now=None):
 def verified_claim(claim, receipts, approval, registry, now=None):
     if claim.get("kind") not in KINDS or not claim.get("entity_id"):
         raise ValueError("invalid_claim")
+    if claim["kind"] == "checkout_rate":
+        raise ValueError("checkout_prices_require_separate_ota_review")
     if not isinstance(claim.get("quote_by_receipt"), dict):
         raise ValueError("direct_source_quotes_required")
     timestamp(claim.get("observed_utc"), now, 7)
@@ -93,6 +95,9 @@ def verified_claim(claim, receipts, approval, registry, now=None):
                 not isinstance(quote, str) or len(quote) < 6 or
                 quote.casefold() not in src["excerpt"].casefold()):
             raise ValueError("claim_not_supported_by_source")
+    if not isinstance(claim.get("value"), str) or not claim["value"].strip() or \
+            claim["value"].casefold() not in " ".join(claim["quote_by_receipt"].values()).casefold():
+        raise ValueError("claim_value_not_in_evidence")
     reviewer = approval.get("payload", {}).get("reviewer_id")
     person = registry.get("reviewers", {}).get(reviewer)
     if not person or person.get("role") != "human_qa" or not person.get("active"):
