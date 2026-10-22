@@ -46,7 +46,7 @@ def check_cancel(cancel_file):
     if cancel_file and Path(cancel_file).is_file():
         raise Cancelled("owner_cancellation_requested")
 
-def bounded(cmd, *, cwd, timeout=30, input_text=None, cancel_file=None, isolated_env=None):
+def bounded(cmd, *, cwd, timeout=30, input_text=None, cancel_file=None, isolated_env=None, max_output=2000):
     """Fixed-argv subprocess with process-group termination on timeout/cancel."""
     env=isolated_env or {"PATH":"/usr/bin:/bin","HOME":"/empty",
                          "LANG":"C.UTF-8","PYTHONDONTWRITEBYTECODE":"1"}
@@ -65,7 +65,9 @@ def bounded(cmd, *, cwd, timeout=30, input_text=None, cancel_file=None, isolated
             check_cancel(cancel_file)
             try:
                 out,err=proc.communicate(input=payload,timeout=0.35)
-                return {"code":proc.returncode,"stdout":out[-2000:],"stderr":err[-2000:]}
+                if len(out.encode("utf-8"))>max_output:
+                    raise GateError("bounded_output_limit")
+                return {"code":proc.returncode,"stdout":out,"stderr":err[-2000:]}
             except subprocess.TimeoutExpired:
                 # communicate may retain internal input state after timeout.
                 payload=None
@@ -254,6 +256,7 @@ def exact_run(record,source,stage,task,proposer,*,cancel_file=None):
                 else:qa=node_qa(attempt_ws,scope.tests,scope.writable,cancel_file=cancel_file)
                 result["attempts"].append({"attempt":index,"qa_passed":qa["qa_passed"]})
                 if qa["qa_passed"]:
+                    check_cancel(cancel_file)
                     review=load("agent_loop").local_review(attempt_ws,changed,root/"local-review")
                     result.update(status="verified_local_review",qa=qa,review=review,
                                   proposal_hash=checked["review_sha256"])
