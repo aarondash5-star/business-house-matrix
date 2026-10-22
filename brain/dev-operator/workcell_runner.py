@@ -30,7 +30,9 @@ def isolated(workspace,action,request=None):
     ws=Path(workspace)
     if ws.is_symlink() or not ws.is_dir() or not ws.is_absolute():
         raise IsolationError("workspace_not_trusted")
-    if not WORKER.is_file() or WORKER.is_symlink() or not BWRAP.is_file():
+    if (not WORKER.is_file() or WORKER.is_symlink() or
+            not STATIC_POLICY.is_file() or STATIC_POLICY.is_symlink() or
+            not BWRAP.is_file()):
         raise IsolationError("runner_dependency_missing")
     blob=json.dumps(request or {},separators=(",",":"))
     if len(blob.encode("utf-8"))>MAX_INPUT:
