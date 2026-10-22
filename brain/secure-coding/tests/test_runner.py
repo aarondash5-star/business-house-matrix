@@ -12,6 +12,12 @@ spec=importlib.util.spec_from_file_location("reviewed_patch_runner",SRC)
 mod=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
 
+# The GitHub-hosted runner denies the network namespace used by our actual
+# rootless Bubblewrap acceptance tests. Do not simulate a sandbox or report
+# these tests as passed on that host: mark as SKIPPED and require the separate
+# enrolled Dell 5/5 host receipts before any sandbox certification.
+@unittest.skipIf(os.environ.get("GITHUB_ACTIONS") == "true",
+                 "Requires enrolled Dell rootless Bubblewrap namespace; GitHub runner prohibits RTM_NEWADDR")
 class SecuredExecutorTest(unittest.TestCase):
     def test_negative_host_and_network(self):
         result=mod.check("pine_mcp_chat")

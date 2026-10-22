@@ -51,6 +51,20 @@ textarea::placeholder{color:#8fa6b2}.send{min-width:44px;min-height:44px;border-
 @media(max-width:800px){.app{grid-template-columns:minmax(0,1fr)}.sidebar{position:fixed;inset:0 auto 0 0;width:min(85vw,300px);transform:translateX(-105%);transition:transform .2s}.sidebar.open{transform:translateX(0)}.overlay.show{display:block;position:fixed;inset:0;background:#050d12b8;z-index:5}.hamburger{display:inline-grid;place-items:center}.topbar{height:64px;min-height:64px;padding:0 16px}.topactions .desktop{display:none}.center{padding:24px 17px 30px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.intro{padding-top:18px}.composerzone{padding:12px 12px max(12px,env(safe-area-inset-bottom))}}
 @media(max-width:470px){.cards{grid-template-columns:1fr}.card{min-height:104px;display:grid;grid-template-columns:40px 1fr;grid-template-rows:auto auto;column-gap:11px;padding:15px}.cardicon{grid-row:1/3}.card strong{margin:2px 0 5px}.card small{grid-column:2}.topactions .pill{font-size:10px;padding:7px}.intro h1{font-size:34px}.center{padding-top:12px}.msg{padding:14px 15px}.sidebutton{min-height:44px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+
+.threadsearch{width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--text)}
+.threadsearch::placeholder{color:var(--muted)}
+.thread:focus-visible,.intentbtn:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.sidebutton,.thread,.ghost,.intentbtn{min-height:44px}
+.thread.empty{color:var(--muted);cursor:default}
+.intent{border:1px solid var(--line);border-radius:14px;padding:15px;margin-top:16px}
+.intent h3{font-size:14px;margin:0}
+.intentbtn{border:1px solid var(--line);background:var(--surface2);color:var(--text);padding:10px 14px;border-radius:11px}
+#intentStatus{font-size:12px;color:var(--muted)}
+#threadSearch:focus-visible{outline:3px solid var(--focus)}
+.msg{min-width:0}
+@media (max-width:800px){.sidebar.open{max-width:min(300px,calc(100vw - 42px))}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
@@ -60,10 +74,10 @@ textarea::placeholder{color:#8fa6b2}.send{min-width:44px;min-height:44px;border-
   <button class="sidebutton new" id="newchat">＋ &nbsp; New conversation</button>
   <div class="sidehead">Workspace</div>
   <button class="sidebutton active" id="ws">◇ &nbsp; Pine Engineer</button>
-  <div class="sidehead">Conversations</div>
-  <nav class="threads" aria-label="Conversation history" id="history">
-    <button class="thread active"><span aria-hidden="true">◷</span><span>Welcome to Pine Engineer</span></button>
-  </nav>
+  <div class="sidehead">Conversations · this tab only</div>
+  <label class="sr-only" for="threadSearch">Find a demo conversation</label>
+  <input id="threadSearch" class="threadsearch" type="search" maxlength="80" placeholder="Search demo threads" autocomplete="off">
+  <nav class="threads" aria-label="Conversation history" id="history"></nav>
   <div class="foot"><span class="dot" aria-hidden="true"></span><span>Mock environment · No live MCP connection</span></div>
 </aside>
 <div class="overlay" id="overlay"></div>
@@ -89,9 +103,10 @@ textarea::placeholder{color:#8fa6b2}.send{min-width:44px;min-height:44px;border-
       <div class="sectionlabel">Engineering pipeline</div>
       <div class="pipeline" aria-label="Engineering stages"><span class="stage">01 · Specification</span><span class="stage">02 · Pine v6</span><span class="stage">03 · Oracle parity</span><span class="stage">04 · Native compile <span>pending</span></span><span class="stage">05 · Replay <span>pending</span></span></div>
     </div>
-    <div class="log" id="messages" aria-live="polite" aria-label="Conversation messages"></div>
+    <div class="log" id="messages" role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversation messages"></div><p id="status" class="sr-only" role="status" aria-live="polite"></p>
   </div></section>
-  <section class="inspector" id="inspector" aria-label="Tool permission inspector"><h2>Connection & permissions</h2><p>Prototype mode: the MCP adapter is a local mock. Real project tool schemas must be allowlisted and authenticated server-side. Source writes, Windows actions, alerts, publishing and trading are all disabled.</p><p><code>project: pine_mcp_chat · adapter: mock · tool grants: read_only · remote actions: disabled</code></p></section>
+  <section class="inspector" id="inspector" aria-label="Tool permission inspector"><h2>Connection & permissions</h2><p>Prototype mode: the MCP adapter is a local mock. Real project tool schemas must be allowlisted and authenticated server-side. Source writes, Windows actions, alerts, publishing and trading are all disabled.</p><p><code>project: pine_mcp_chat · adapter: mock · grants: none · remote actions: disabled</code></p>
+    <section class="intent" aria-labelledby="intentLabel"><h3 id="intentLabel">Example tool intent · denied</h3><p>Mock Pine v6 compilation · External chart access would be required. No real MCP server or authenticated target is connected.</p><button type="button" id="inspectIntent" class="intentbtn">Inspect blocked action</button><p id="intentStatus" role="status" aria-live="polite">No approval can be granted in this preview.</p></section></section>
   <form id="form" class="composerzone" autocomplete="off">
     <label for="input" class="sr-only">Message Pine Engineer</label>
     <div class="compose"><textarea id="input" placeholder="Ask Pine Engineer anything…" maxlength="5000" rows="1" aria-describedby="privacy"></textarea><button class="send" id="send" type="submit" aria-label="Send message" disabled>↑</button></div>
@@ -100,36 +115,140 @@ textarea::placeholder{color:#8fa6b2}.send{min-width:44px;min-height:44px;border-
 </main></div>
 <script>
 "use strict";
-const $=id=>document.getElementById(id);
-const input=$("input"),area=$("scrollArea"),messages=$("messages"),send=$("send");
-const safe=(s)=>String(s).slice(0,5000);
-function addMessage(role,content){
- const item=document.createElement("article");
- item.className="msg "+(role==="user"?"user":"assistant");
- const meta=document.createElement("div");meta.className="meta";meta.textContent=role==="user"?"YOU":"PINE ENGINEER · SYNTHETIC RESPONSE";
- const text=document.createElement("div");text.textContent=safe(content);
- item.append(meta,text);messages.append(item);area.scrollTop=area.scrollHeight;
-}
-function reply(text){
- const lower=text.toLowerCase();
- if(lower.includes("compil")||lower.includes("pine v6")) return "Pine v6 engineering checklist (illustrative):\n\n1. Define inputs, series semantics and close-bar timing.\n2. Preserve immutable source versions and strategy rules.\n3. Compile inside an authorized TradingView QA chart.\n4. Capture diagnostics and explicit compiler evidence.\n\nStatus: NO LIVE COMPILATION PERFORMED. This mock cannot control TradingView.";
- if(lower.includes("parity")||lower.includes("valid")||lower.includes("replay"))return "Independent validation workflow (illustrative):\n\n• Compare identical candles against an independent signal oracle.\n• Report zero unexplained bar-by-bar differences.\n• Verify save/reload, Replay playback and new realtime closes.\n• Require explicit owner approval before release.\n\nCurrent status: NOT CERTIFIED. No tests ran on TradingView.";
- return "I can help structure this as a Pine Engineer task.\n\nDraft workflow:\n1. Extract precise entry, exit and risk rules.\n2. Convert the logic into a reviewable specification.\n3. Build a versioned Pine v6 candidate.\n4. Evaluate it with independent and native QA.\n\nThis is a synthetic preview. No code has been submitted or executed.";
-}
-function sendMessage(s){
- const text=safe(s).trim();if(!text)return;
- $("intro").hidden=true;addMessage("user",text);input.value="";send.disabled=true;
- addMessage("assistant",reply(text));input.focus();
-}
-$("form").addEventListener("submit",event=>{event.preventDefault();sendMessage(input.value)});
-input.addEventListener("input",()=>{send.disabled=!input.value.trim()});
-input.addEventListener("keydown",event=>{if(event.key==="Enter"&&!event.shiftKey){event.preventDefault();sendMessage(input.value)}});
-document.querySelectorAll(".card").forEach(el=>el.addEventListener("click",()=>sendMessage(el.dataset.template)));
-$("newchat").addEventListener("click",()=>{messages.replaceChildren();$("intro").hidden=false;input.value="";send.disabled=true;closeNav();input.focus()});
-$("theme").addEventListener("click",()=>document.documentElement.classList.toggle("light"));
-function closeNav(){$("sidebar").classList.remove("open");$("overlay").classList.remove("show");$("toggleNav").setAttribute("aria-expanded","false")}
-$("toggleNav").addEventListener("click",()=>{const state=$("sidebar").classList.toggle("open");$("overlay").classList.toggle("show",state);$("toggleNav").setAttribute("aria-expanded",String(state))});
-$("overlay").addEventListener("click",closeNav);
-$("details").addEventListener("click",()=>{const expanded=$("inspector").classList.toggle("open");$("details").setAttribute("aria-expanded",String(expanded))});
+// B1 components: the public preview is intentionally offline and ephemeral.
+const $ = id => document.getElementById(id);
+const input=$("input"), area=$("scrollArea"), messages=$("messages"), send=$("send");
+const safe = text => String(text).slice(0,5000);
+const MockAdapter = Object.freeze({
+  mode: "synthetic_only", toolGrants: [],
+  reply(text) {
+    const lower=text.toLowerCase();
+    if(lower.includes("compil")||lower.includes("pine v6")) return "Pine v6 engineering checklist (illustrative):\n\n1. Define inputs, series semantics and close-bar timing.\n2. Preserve immutable source versions and strategy rules.\n3. Compile inside an authorized TradingView QA chart.\n4. Capture diagnostics and explicit compiler evidence.\n\nStatus: NO LIVE COMPILATION PERFORMED. This mock cannot control TradingView.";
+    if(lower.includes("parity")||lower.includes("valid")||lower.includes("replay")) return "Independent validation workflow (illustrative):\n\n• Compare identical candles against an independent signal oracle.\n• Report zero unexplained bar-by-bar differences.\n• Verify save/reload, Replay playback and new realtime closes.\n• Require explicit owner approval before release.\n\nCurrent status: NOT CERTIFIED. No tests ran on TradingView.";
+    return "I can help structure this as a Pine Engineer task.\n\nDraft workflow:\n1. Extract precise entry, exit and risk rules.\n2. Convert logic into a reviewable specification.\n3. Build a versioned Pine v6 candidate.\n4. Evaluate it with independent and native QA.\n\nSynthetic-only. No code was submitted or executed.";
+  },
+  reviewDenied() { return "Denied: no authenticated MCP endpoint, target or approved scope exists. No tool was called."; }
+});
+const ThreadStore = (() => {
+  let next=1, active=1;
+  const threads=new Map([[1,{title:"Welcome to Pine Engineer",items:[]}]]);
+  return Object.freeze({
+    current(){return threads.get(active);},
+    entries(){return [...threads.entries()].reverse();},
+    select(id){if(!threads.has(id))return false;active=id;return true;},
+    active(){return active;},
+    create(){active=++next;threads.set(active,{title:"New conversation",items:[]});return active;},
+    append(role,content){
+      const item=threads.get(active);
+      if(item.items.length===0 && role==="user")item.title=safe(content).slice(0,42);
+      item.items.push({role,content:safe(content)});
+    }
+  });
+})();
+const Navigation = (() => {
+  const sidebar=$("sidebar"), overlay=$("overlay"), toggle=$("toggleNav");
+  const mobile=window.matchMedia("(max-width:800px)");
+  let previouslyFocused=null;
+  function sync() {
+    const open=sidebar.classList.contains("open");
+    toggle.setAttribute("aria-expanded",String(open));
+    toggle.setAttribute("aria-label",open?"Close navigation":"Open navigation");
+    overlay.classList.toggle("show",open);
+    if(mobile.matches)sidebar.setAttribute("aria-hidden",String(!open));
+    else sidebar.removeAttribute("aria-hidden");
+  }
+  function close(restore=false) {
+    sidebar.classList.remove("open");sync();
+    if(restore) (previouslyFocused||toggle).focus();
+  }
+  function open() {
+    previouslyFocused=document.activeElement;
+    sidebar.classList.add("open");sync();$("newchat").focus();
+  }
+  toggle.addEventListener("click",()=>sidebar.classList.contains("open")?close(true):open());
+  overlay.addEventListener("click",()=>close(true));
+  window.addEventListener("resize",sync);
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"&&sidebar.classList.contains("open")){e.preventDefault();close(true);}
+    if(e.key==="Tab"&&mobile.matches&&sidebar.classList.contains("open")){
+      const candidates=[...sidebar.querySelectorAll("button:not([disabled]),input:not([disabled])")].filter(el=>el.getClientRects().length);
+      const first=candidates[0],last=candidates[candidates.length-1];
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+    }
+  });
+  sync();
+  return Object.freeze({close,open});
+})();
+const ChatShell = (() => {
+  function messageNode(role,content) {
+    const item=document.createElement("article");item.className="msg "+(role==="user"?"user":"assistant");
+    const meta=document.createElement("div");meta.className="meta";
+    meta.textContent=role==="user"?"YOU":"PINE ENGINEER · SYNTHETIC RESPONSE";
+    const body=document.createElement("div");body.textContent=safe(content);
+    item.append(meta,body);return item;
+  }
+  function render() {
+    messages.replaceChildren();
+    for(const item of ThreadStore.current().items)messages.append(messageNode(item.role,item.content));
+    $("intro").hidden=ThreadStore.current().items.length>0;
+    area.scrollTop=area.scrollHeight;
+    $("status").textContent="Showing "+ThreadStore.current().title;
+  }
+  function renderHistory() {
+    const nav=$("history"),query=$("threadSearch").value.toLowerCase().trim();
+    nav.replaceChildren();
+    let count=0;
+    for(const [id,thread] of ThreadStore.entries()){
+      if(!thread.title.toLowerCase().includes(query))continue;
+      const button=document.createElement("button");
+      button.type="button";button.className="thread"+(id===ThreadStore.active()?" active":"");
+      button.setAttribute("aria-current",id===ThreadStore.active()?"page":"false");
+      const text=document.createElement("span");text.textContent=thread.title;
+      button.append(text);
+      button.addEventListener("click",()=>{ThreadStore.select(id);render();renderHistory();Navigation.close();input.focus();});
+      nav.append(button);count++;
+    }
+    if(!count){const empty=document.createElement("p");empty.className="thread empty";empty.textContent="No matching demo threads";nav.append(empty);}
+  }
+  function sendMessage(value) {
+    const text=safe(value).trim();if(!text)return;
+    ThreadStore.append("user",text);
+    ThreadStore.append("assistant",MockAdapter.reply(text));
+    input.value="";send.disabled=true;
+    render();renderHistory();input.focus();
+  }
+  function newChat() {
+    ThreadStore.create();input.value="";send.disabled=true;
+    $("threadSearch").value="";render();renderHistory();Navigation.close();input.focus();
+  }
+  $("form").addEventListener("submit",e=>{e.preventDefault();sendMessage(input.value);});
+  input.addEventListener("input",()=>{send.disabled=!input.value.trim();});
+  input.addEventListener("keydown",e=>{
+    if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();sendMessage(input.value);}
+  });
+  $("newchat").addEventListener("click",newChat);
+  $("threadSearch").addEventListener("input",renderHistory);
+  document.querySelectorAll(".card").forEach(el=>el.addEventListener("click",()=>sendMessage(el.dataset.template)));
+  render();renderHistory();
+  return Object.freeze({newChat,sendMessage});
+})();
+const Inspector = (() => {
+  const details=$("details"),panel=$("inspector");
+  function toggle(open=!panel.classList.contains("open")) {
+    panel.classList.toggle("open",open);details.setAttribute("aria-expanded",String(open));
+    if(open)panel.scrollIntoView({block:"nearest",behavior:"instant"});
+  }
+  details.addEventListener("click",()=>toggle());
+  $("inspectIntent").addEventListener("click",()=>{$("intentStatus").textContent=MockAdapter.reviewDenied();});
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"&&panel.classList.contains("open")){toggle(false);details.focus();}
+  });
+  return Object.freeze({toggle});
+})();
+$("theme").addEventListener("click",()=>{
+  const light=document.documentElement.classList.toggle("light");
+  $("theme").setAttribute("aria-label",light?"Switch to dark theme":"Switch to light theme");
+});
 </script>
 </body></html>
