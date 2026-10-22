@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101720">
+<title>Pine Engineer — MCP Workspace Preview</title>
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark;--bg:#0e141b;--surface:#151d26;--surface2:#1c2631;--line:#2a3844;--text:#e9f1f4;--muted:#a0b1bc;--aqua:#74e3cd;--aqua2:#123b3b;--accent:#b7e9c6;--focus:#f1d6a3}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}
+button,input,textarea{font:inherit}button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+button{border:0}.app{display:grid;grid-template-columns:265px minmax(0,1fr);min-height:100dvh;max-height:100dvh}
+.sidebar{display:flex;flex-direction:column;background:#101a23;border-right:1px solid var(--line);padding:20px 14px;gap:16px;z-index:6}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px;font-weight:700;letter-spacing:-.025em}.mark{display:grid;place-items:center;color:#123532;background:var(--aqua);width:36px;height:36px;border-radius:12px;font-weight:900}
+.sidehead{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#758f9c;margin:8px 10px 0}
+.sidebutton,.thread{width:100%;display:flex;text-align:left;align-items:center;gap:10px;border-radius:12px;padding:12px 13px;color:var(--text);background:transparent}.sidebutton:hover,.thread:hover{background:#202d37}
+.sidebutton.active,.thread.active{background:#20353a;color:#bdfff0}
+.sidebutton span:last-child,.thread span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.new{border:1px solid #466e6d;background:#183330}.threads{overflow:auto;flex:1}.foot{border-top:1px solid var(--line);padding-top:12px;display:flex;align-items:center;gap:9px;color:var(--muted);font-size:12px}.dot{width:7px;height:7px;background:#f3c486;border-radius:50%}
+.main{display:flex;flex-direction:column;min-width:0;min-height:0;background:radial-gradient(circle at 48% 0%,#192a2c 0%,#0e141b 41%);position:relative}
+.topbar{height:72px;min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 27px;border-bottom:1px solid #22303b;background:#121c25d9;backdrop-filter:blur(12px)}
+.top-title{display:flex;align-items:center;gap:11px;min-width:0}.titlewrap{min-width:0}.titlewrap strong{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.subtitle{font-size:11px;color:var(--muted);margin-top:3px}.topactions{display:flex;gap:9px;align-items:center}
+.pill{border:1px solid #3a545a;background:#1a3036;padding:8px 11px;border-radius:999px;color:var(--aqua);font-size:12px;white-space:nowrap}.ghost{background:none;color:var(--muted);padding:8px 10px;border-radius:10px}
+.hamburger{display:none}.workspace{flex:1;overflow-y:auto;scrollbar-color:#344650 transparent}
+.center{width:min(820px,100%);padding:38px 26px 40px;margin:auto}
+.intro{padding:24px 0 12px}.kicker{color:var(--aqua);font-weight:750;font-size:11px;letter-spacing:.2em}.intro h1{font-size:clamp(30px,4vw,45px);line-height:1.11;letter-spacing:-.05em;font-weight:730;margin:15px 0 12px;max-width:650px}.intro h1 em{color:var(--aqua);font-style:normal}.lead{color:#b1c1c9;line-height:1.7;max-width:620px;font-size:14px}
+.sectionlabel{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#a7bfca;font-weight:800;margin:20px 0 13px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.card{min-width:0;text-align:left;display:flex;flex-direction:column;align-items:flex-start;min-height:154px;border:1px solid #33454d;border-radius:16px;padding:18px;background:linear-gradient(145deg,#202e36,#162128);color:var(--text);transition:transform .2s,border-color .2s}.card:hover{transform:translateY(-2px);border-color:#6aada9}.cardicon{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#244143;color:var(--aqua);font-size:18px}.card strong{font-size:14px;margin:17px 0 7px}.card small{color:#9eb3bb;line-height:1.55;font-size:12px}
+.pipeline{display:flex;flex-wrap:wrap;gap:8px}.stage{font-size:12px;border:1px solid #334550;padding:8px 10px;color:#b6c7ce;border-radius:9px;background:#16232b}.stage span{color:#e3c692}
+.log{display:flex;flex-direction:column;gap:15px}.msg{padding:18px 20px;border-radius:16px;border:1px solid #30414b;line-height:1.62;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}.msg.user{align-self:flex-end;max-width:86%;background:#224139;border-color:#376459}.msg.assistant{background:#18242d;max-width:100%}.msg .meta{font-size:11px;color:var(--aqua);margin-bottom:9px;font-weight:700;letter-spacing:.05em}
+.composerzone{padding:14px max(20px,calc((100% - 820px)/2));border-top:1px solid #263843;background:linear-gradient(to bottom,#111b24,#101720);padding-bottom:max(16px,env(safe-area-inset-bottom))}
+.compose{display:flex;align-items:flex-end;gap:11px;border:1px solid #47606a;background:#1b2933;border-radius:18px;padding:11px}.compose:focus-within{border-color:#80c4bd}
+textarea{background:transparent;color:var(--text);border:0;outline:none!important;resize:none;width:100%;font-size:14px;min-height:46px;max-height:140px;padding:10px 2px;line-height:1.5}
+textarea::placeholder{color:#8fa6b2}.send{min-width:44px;min-height:44px;border-radius:13px;background:var(--aqua);color:#0c302c;font-size:22px;font-weight:750}.send:disabled{opacity:.35;cursor:not-allowed}
+.disclaimer{font-size:11px;text-align:center;color:#8298a3;margin:8px 0 0}
+.inspector{display:none;padding:24px;border-top:1px solid var(--line);background:#14212b}
+.inspector.open{display:block}.inspector h2{margin:0 0 10px;font-size:17px}.inspector p{font-size:13px;line-height:1.65;color:var(--muted)}.inspector code{font-size:12px;color:var(--aqua)}
+.overlay{display:none}
+.sr-only{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+:root.light{color-scheme:light;--bg:#f5f8f7;--surface:#fff;--surface2:#f2f5f3;--line:#d5dfe0;--text:#172c34;--muted:#526770;--aqua:#096b63;--aqua2:#d8eeea}
+:root.light body,:root.light .main{background:#f5f8f7;color:var(--text)}
+:root.light .sidebar,:root.light .topbar,:root.light .composerzone{background:#edf3f3}
+:root.light .card,:root.light .msg.assistant,:root.light .compose{background:#fff;color:var(--text);border-color:#bfcdce}
+:root.light .card small,:root.light .lead,:root.light .subtitle,:root.light .sectionlabel{color:#49616b}
+:root.light .msg.user{background:#deeee8;border-color:#bdd7cc;color:var(--text)}
+:root.light .pill,:root.light .new{background:#d7eae7;color:#095e58}
+:root.light .send{background:#096b63;color:white}
+:root.light .stage{color:#275862;background:#ecf6f4;border-color:#c2d9d5}
+:root.light textarea{color:var(--text)}
+@media(max-width:800px){.app{grid-template-columns:minmax(0,1fr)}.sidebar{position:fixed;inset:0 auto 0 0;width:min(85vw,300px);transform:translateX(-105%);transition:transform .2s}.sidebar.open{transform:translateX(0)}.overlay.show{display:block;position:fixed;inset:0;background:#050d12b8;z-index:5}.hamburger{display:inline-grid;place-items:center}.topbar{height:64px;min-height:64px;padding:0 16px}.topactions .desktop{display:none}.center{padding:24px 17px 30px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.intro{padding-top:18px}.composerzone{padding:12px 12px max(12px,env(safe-area-inset-bottom))}}
+@media(max-width:470px){.cards{grid-template-columns:1fr}.card{min-height:104px;display:grid;grid-template-columns:40px 1fr;grid-template-rows:auto auto;column-gap:11px;padding:15px}.cardicon{grid-row:1/3}.card strong{margin:2px 0 5px}.card small{grid-column:2}.topactions .pill{font-size:10px;padding:7px}.intro h1{font-size:34px}.center{padding-top:12px}.msg{padding:14px 15px}.sidebutton{min-height:44px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar" aria-label="Workspace navigation">
+  <div class="brand"><span class="mark" aria-hidden="true">P</span> Pine Engineer <span style="color:var(--aqua)">/</span> MCP</div>
+  <button class="sidebutton new" id="newchat">＋ &nbsp; New conversation</button>
+  <div class="sidehead">Workspace</div>
+  <button class="sidebutton active" id="ws">◇ &nbsp; Pine Engineer</button>
+  <div class="sidehead">Conversations</div>
+  <nav class="threads" aria-label="Conversation history" id="history">
+    <button class="thread active"><span aria-hidden="true">◷</span><span>Welcome to Pine Engineer</span></button>
+  </nav>
+  <div class="foot"><span class="dot" aria-hidden="true"></span><span>Mock environment · No live MCP connection</span></div>
+</aside>
+<div class="overlay" id="overlay"></div>
+<main class="main">
+  <header class="topbar">
+    <div class="top-title">
+      <button class="ghost hamburger" id="toggleNav" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <div class="titlewrap"><strong>Pine Engineer</strong><div class="subtitle">Intelligent Pine v6 development workspace</div></div>
+    </div>
+    <div class="topactions"><span class="pill" aria-label="Demo mode">● Demo · Read-only</span><button class="ghost desktop" id="theme" aria-label="Toggle light and dark mode">◐ Theme</button><button class="ghost" id="details" aria-controls="inspector" aria-expanded="false">ⓘ</button></div>
+  </header>
+  <section class="workspace" id="scrollArea" aria-label="Chat workspace"><div class="center">
+    <div id="intro" class="intro">
+      <div class="kicker">ENGINEER · VALIDATE · EVOLVE</div>
+      <h1>From an idea to<br><em>verified Pine Script.</em></h1>
+      <p class="lead">A focused workspace for strategy logic, Pine v6 development, independent validation and recorded QA. This preview uses synthetic examples and cannot access TradingView or your accounts.</p>
+      <div class="sectionlabel">Start with a workflow</div>
+      <div class="cards">
+        <button class="card" data-template="Help me convert my trading idea into a testable Pine Script specification."><span class="cardicon">◇</span><strong>Design a strategy</strong><small>Turn trading logic into a precise, testable specification.</small></button>
+        <button class="card" data-template="Explain the Pine v6 development and native compilation checklist."><span class="cardicon">⌘</span><strong>Review Pine v6</strong><small>Source, compilation diagnostics and version control.</small></button>
+        <button class="card" data-template="Show me the independent signal parity and replay validation workflow."><span class="cardicon">✓</span><strong>Validation & QA</strong><small>Same-feed checks, replay, repainting and final gates.</small></button>
+      </div>
+      <div class="sectionlabel">Engineering pipeline</div>
+      <div class="pipeline" aria-label="Engineering stages"><span class="stage">01 · Specification</span><span class="stage">02 · Pine v6</span><span class="stage">03 · Oracle parity</span><span class="stage">04 · Native compile <span>pending</span></span><span class="stage">05 · Replay <span>pending</span></span></div>
+    </div>
+    <div class="log" id="messages" aria-live="polite" aria-label="Conversation messages"></div>
+  </div></section>
+  <section class="inspector" id="inspector" aria-label="Tool permission inspector"><h2>Connection & permissions</h2><p>Prototype mode: the MCP adapter is a local mock. Real project tool schemas must be allowlisted and authenticated server-side. Source writes, Windows actions, alerts, publishing and trading are all disabled.</p><p><code>project: pine_mcp_chat · adapter: mock · tool grants: read_only · remote actions: disabled</code></p></section>
+  <form id="form" class="composerzone" autocomplete="off">
+    <label for="input" class="sr-only">Message Pine Engineer</label>
+    <div class="compose"><textarea id="input" placeholder="Ask Pine Engineer anything…" maxlength="5000" rows="1" aria-describedby="privacy"></textarea><button class="send" id="send" type="submit" aria-label="Send message" disabled>↑</button></div>
+    <p class="disclaimer" id="privacy">Private preview · Synthetic data only · No remote commands or trades</p>
+  </form>
+</main></div>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const input=$("input"),area=$("scrollArea"),messages=$("messages"),send=$("send");
+const safe=(s)=>String(s).slice(0,5000);
+function addMessage(role,content){
+ const item=document.createElement("article");
+ item.className="msg "+(role==="user"?"user":"assistant");
+ const meta=document.createElement("div");meta.className="meta";meta.textContent=role==="user"?"YOU":"PINE ENGINEER · SYNTHETIC RESPONSE";
+ const text=document.createElement("div");text.textContent=safe(content);
+ item.append(meta,text);messages.append(item);area.scrollTop=area.scrollHeight;
+}
+function reply(text){
+ const lower=text.toLowerCase();
+ if(lower.includes("compil")||lower.includes("pine v6")) return "Pine v6 engineering checklist (illustrative):\n\n1. Define inputs, series semantics and close-bar timing.\n2. Preserve immutable source versions and strategy rules.\n3. Compile inside an authorized TradingView QA chart.\n4. Capture diagnostics and explicit compiler evidence.\n\nStatus: NO LIVE COMPILATION PERFORMED. This mock cannot control TradingView.";
+ if(lower.includes("parity")||lower.includes("valid")||lower.includes("replay"))return "Independent validation workflow (illustrative):\n\n• Compare identical candles against an independent signal oracle.\n• Report zero unexplained bar-by-bar differences.\n• Verify save/reload, Replay playback and new realtime closes.\n• Require explicit owner approval before release.\n\nCurrent status: NOT CERTIFIED. No tests ran on TradingView.";
+ return "I can help structure this as a Pine Engineer task.\n\nDraft workflow:\n1. Extract precise entry, exit and risk rules.\n2. Convert the logic into a reviewable specification.\n3. Build a versioned Pine v6 candidate.\n4. Evaluate it with independent and native QA.\n\nThis is a synthetic preview. No code has been submitted or executed.";
+}
+function sendMessage(s){
+ const text=safe(s).trim();if(!text)return;
+ $("intro").hidden=true;addMessage("user",text);input.value="";send.disabled=true;
+ addMessage("assistant",reply(text));input.focus();
+}
+$("form").addEventListener("submit",event=>{event.preventDefault();sendMessage(input.value)});
+input.addEventListener("input",()=>{send.disabled=!input.value.trim()});
+input.addEventListener("keydown",event=>{if(event.key==="Enter"&&!event.shiftKey){event.preventDefault();sendMessage(input.value)}});
+document.querySelectorAll(".card").forEach(el=>el.addEventListener("click",()=>sendMessage(el.dataset.template)));
+$("newchat").addEventListener("click",()=>{messages.replaceChildren();$("intro").hidden=false;input.value="";send.disabled=true;closeNav();input.focus()});
+$("theme").addEventListener("click",()=>document.documentElement.classList.toggle("light"));
+function closeNav(){$("sidebar").classList.remove("open");$("overlay").classList.remove("show");$("toggleNav").setAttribute("aria-expanded","false")}
+$("toggleNav").addEventListener("click",()=>{const state=$("sidebar").classList.toggle("open");$("overlay").classList.toggle("show",state);$("toggleNav").setAttribute("aria-expanded",String(state))});
+$("overlay").addEventListener("click",closeNav);
+$("details").addEventListener("click",()=>{const expanded=$("inspector").classList.toggle("open");$("details").setAttribute("aria-expanded",String(expanded))});
+</script>
+</body></html>
