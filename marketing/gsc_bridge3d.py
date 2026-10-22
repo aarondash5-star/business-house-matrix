@@ -6,6 +6,7 @@ No OAuth, publishing, or API calls; separate from active gsc_metrics.py.
 import datetime as dt
 import hashlib
 import json
+import os
 import re
 import sqlite3
 from pathlib import Path
@@ -53,6 +54,7 @@ def import_report(payload,path):
     p=Path(path);p.parent.mkdir(parents=True,exist_ok=True,mode=0o700)
     digest=hashlib.sha256(json.dumps(payload,sort_keys=True,ensure_ascii=False).encode()).hexdigest()
     db=sqlite3.connect(p)
+    os.chmod(p,0o600)
     try:
         db.executescript("""CREATE TABLE IF NOT EXISTS batches(digest TEXT PRIMARY KEY, imported_utc TEXT,
             start_date TEXT,end_date TEXT,row_count INTEGER);
