@@ -15,6 +15,7 @@ def result(url,title):
 URLS=[
  result("https://www.hostelworld.com/hostels/p/269088/happy-panda-hostel-arambol","Happy Panda Hostel in Arambol Reviews"),
  result("https://www.booking.com/hotel/in/dream-catcher-arambol.html","Dreamcatcher House Hostel Arambol"),
+ result("https://www.hostelworld.com/hostels/p/322686/travo-tales-goa","Travo Tales Goa hostel Arambol"),
  result("https://www.tripadvisor.com/Hotel_Review-g2307943-d10546152-Reviews-Happy_Panda_Hostel.html","Happy Panda Hostel Tripadvisor"),
  result("https://www.booking.com/hostels/city/in/arambol.html","Arambol Hostel Listings Booking.com"),
  result("https://www.goibibo.com/hotels/andaz-arambol-artist-party-hostel/","Andaz Vibe Stay Arambol Hostel Booking"),
@@ -54,6 +55,14 @@ class SupervisorTests(unittest.TestCase):
             self.assertEqual(saved["quality_gate"]["independent_claims_verified"],0)
             self.assertFalse(saved["quality_gate"]["approved_for_customer_facing_use"])
             self.assertTrue(all(x["unverified"] for x in saved["sources"]))
+    def test_directory_duplicates_not_competitor_entities(self):
+        many=[result("https://hostel"+str(i)+".example/happy-panda",
+           "Happy Panda Hostel Arambol listing "+str(i)) for i in range(8)]
+        s=sup.critic({"business":BUSINESS,"research_groups":[
+           {"status":"observed","results":many},
+           {"status":"observed","results":many}]})["score"]
+        self.assertFalse(s["passed"])
+        self.assertEqual(s["distinct_competitors"],1)
     def test_no_verified_relay_fails_closed_and_replans_once(self):
         bad={"mode":"wrong_peer","device_peer_verified":False,"results":URLS}
         with tempfile.TemporaryDirectory() as td,patch.object(sup.basic,"OUTPUT",Path(td)),\
