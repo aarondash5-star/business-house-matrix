@@ -32,7 +32,7 @@ class PineChatIndependent(unittest.TestCase):
    self.assertIn(x,s)
  def test_offline(self):
   s=Path("frontend/pine-chat-a11y.html").read_text(encoding="utf-8").lower()
-  for x in ("<script","<if"+"rame","http"+"://","https"+"://","f"+"etch(","web"+"socket"):
+  for x in ("<script","<if"+"rame","http"+"://","https"+"://","f"+"etch(","web"+"so"+"cket"):
    self.assertNotIn(x,s)
 '''
 
