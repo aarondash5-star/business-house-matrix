@@ -14,7 +14,7 @@
 - Mac isolated GSC adapter regression **11/11 PASS**, exit 0. SSH receipt `3260b4db-944f-4f95-8875-1b83eada4f87`. This certifies adapter tests only, **NOT** property-authorized Andaz GSC or full five-dimensional real data.
 - Legacy Mac `test_unified_research`: **11/12 passed**, one known failure in `test_no_gsc_is_explicit_missing_not_zero_demand`. Its test expects `observed`, while the live strict classifier returns `insufficient_evidence`. Caller shell exited 0 because it explicitly captured the test exit; **test suite itself exited 1**. SSH receipt `4b47c01d-e871-47cc-8ba6-22698cee7e9f`. **Do not weaken the evidence classifier**; update the stale fixture in a separately reviewed code change.
 - Dell existing user units `bhm-searxng`, `bhm-research-relay`, `bhm-marketing-research-api`, `bhm-autonomy-controller` all **active**; local API `127.0.0.1:18890/health` v1.3.0 `ready`, `bind=loopback`, `manual_review_required=true`, `no_external_publish=true`. SSH receipt `26b36aa9-10dc-42cd-a34d-5fc28c1ca3c9`, exit 0.
-- Dell isolated 63-test security regression **was re-queued** as `79f89375-b28c-44a4-bed2-de8649651812`. At review cutoff it was `running/stale_running=true` with no terminal exit. **Outcome unknown; do not replay automatically, do not count as a new pass.** Previous independent dated 22 Oct receipts asserted 63/63, but that is historical, not re-certified here.
+- Dell isolated security regression: receipt `79f89375-b28c-44a4-bed2-de8649651812` initially appeared stale/running, so it was **not replayed**; later same authenticated receipt reached **terminal completed, exit code 0, 63/63 tests PASS**. Test runtime 54.320s, no live signed-extraction activation. This certifies isolated offline regression only.
 
 ## Gate 1: Static security review — existing strengths
 1. Exact-page grant code currently permits **only** `https://mokshagoa.com/` and `https://www.w3.org/WAI/fundamentals/accessibility-intro/`; Andaz/OTA pages are not granted.
@@ -32,7 +32,7 @@
 | SEC-05 | First-party room descriptions and marketplace snippets may reflect different or duplicate properties (especially Dreamcatcher unrelated to Arambol and multiple 12 Monks identities). | HIGH | Human-reviewed canonical entity/source registry before promotion |
 | SEC-06 | No verified person-labeled ten-case benchmark; previous query execution and keyword checks are not human-certified precision. | RELEASE | 10+ independently labeled topics and >=80% precision, plus negative/disambiguation controls |
 | SEC-07 | No owner-approved exact competitor monitor targets/robots review; neither Andaz property GSC authorization nor 5D live distribution verified. | RELEASE | Keep monitor disabled and demand unknown |
-| SEC-08 | Mac legacy regression known 1/12 fail; Dell new security-suite receipt stale/unknown. | QA | Preserve historical receipts, require fresh terminal exits |
+| SEC-08 | Mac legacy regression known 1/12 fail; Dell offline 63/63 PASS but signed live extraction remains untested/unactivated. | QA | Fix stale Mac fixture via reviewed code, then certify transport separately |
 
 ## Competitor evidence: useful leads but no false certification
 Public candidate URLs discovered earlier by existing Dell signed search / operator analysis, **NOT extraction allowlist additions**:
@@ -62,4 +62,4 @@ The full six are **analyst-level leads**; autonomous Mac Brain still has only tw
 4. Independently verify three named local active competitors, five genuinely comparable INR checkout totals on the same date, ten human-labeled cases >=80%, fresh source citations and contradictions with human sign-off.
 5. Then run GSC/seasonality tests with Andaz-authorized data, review release readiness and Design/Dev handoff. Public publishing remains separately denied.
 
-**Final classification:** infrastructure healthy; isolated security *design reviewed*; Mac supervisor/GSC regressions pass; **extraction NOT authorized or activated, autonomous claim/pricing QA NOT certified**. Preserve all working systems and protections.
+**Final classification:** infrastructure healthy; **Dell offline 63/63, Mac Supervisor 7/7 and isolated GSC 11/11 PASS**; Mac legacy 11/12 FAIL (known stale fixture). Isolated security *design reviewed*; **extraction NOT authorized or activated, autonomous claim/pricing QA NOT certified**. Preserve all working systems and protections.
