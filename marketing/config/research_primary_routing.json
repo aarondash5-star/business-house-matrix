@@ -1,0 +1,43 @@
+{
+  "schema": "business_house_matrix.marketing.research_primary_routing.v1",
+  "intent": {
+    "preferred_primary": "mac-linux",
+    "existing_fallback": "dell-linux",
+    "scope": "research_engine_and_evidence_only"
+  },
+  "observed_active": {
+    "research_engine": "dell-linux",
+    "marketing_brain": "mac-linux",
+    "verified_at": "2026-10-23",
+    "basis": "live worker heartbeat and prior deployment receipts"
+  },
+  "activation": {
+    "status": "pending_mac_platform_security_clearance",
+    "enabled": false,
+    "automatic_cutover": false,
+    "mac_primary_certified": false,
+    "stage_b_certified": false,
+    "requires": [
+      "normal_connector_platform_approval_for_mac",
+      "mac_fixed_function_attestation_pass",
+      "mac_research_venv_and_source_hashes_verified",
+      "consistent_encrypted_sqlite_backup_and_mac_snapshot_verified",
+      "mac_isolated_unit_negative_and_performance_qa_pass",
+      "signed_existing_relay_preserved_and_dell_failback_proven",
+      "separate_exact_page_source_policy_and_reviewer_approval_for_stage_b"
+    ],
+    "rollback": {
+      "host": "dell-linux",
+      "keep_existing_services": true,
+      "keep_private_evidence_original": true
+    }
+  },
+  "policy": {
+    "arbitrary_mac_shell": false,
+    "mac_direct_supabase_job_injection": false,
+    "unreviewed_network_grants": false,
+    "auto_publish": false,
+    "spend": false,
+    "root_change": false
+  }
+}
