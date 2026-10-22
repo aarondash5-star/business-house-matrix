@@ -93,6 +93,15 @@ class StageAEvidenceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"missing_or_stale_timestamp"):
             a.source_receipt(sign(p,self.e,"BHM-SOURCE-v1"),self.policy,NOW)
 
+    def test_checkout_rate_cannot_bypass_review_via_generic_claim(self):
+        c={**self.claim,"kind":"checkout_rate","value":"395.00"}
+        with self.assertRaisesRegex(ValueError,"checkout_prices_require_separate_ota_review"):
+            a.verified_claim(c,self.receipts(),self.approval(c),self.policy,NOW)
+    def test_signed_false_value_without_quote_is_rejected(self):
+        c={**self.claim,"value":"Invented property never stated"}
+        with self.assertRaisesRegex(ValueError,"claim_value_not_in_evidence"):
+            a.verified_claim(c,self.receipts(),self.approval(c),self.policy,NOW)
+
 class CheckoutSchemaTests(unittest.TestCase):
     def quote(self,**updates):
         q={"property_id":"happy-panda","source_receipt_id":"src-11",
