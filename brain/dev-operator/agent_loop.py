@@ -54,13 +54,13 @@ def parse_single_html(text,allowed_path):
     """Single-file HTML output: no fragile JSON escaping or model-selected path."""
     if not allowed_path.endswith(".html"):
         raise ValueError("single_file_html_scope")
-    m=re.search(r"(?is)<!doctype\\s+html.*?</html\\s*>",text)
+    m=re.search(r"(?is)<!doctype\s+html.*?</html\s*>",text)
     if not m:
         raise ValueError("complete_html_document_missing")
     html=m.group(0)
     if len(html.encode("utf-8"))>32000:
         raise ValueError("html_output_too_large")
-    if re.search(r"(?is)<script\\b|<iframe\\b|https?://|\\b(?:fetch|xmlhttprequest)\\s*\\(",html):
+    if re.search(r"(?is)<script\b|<iframe\b|https?://|\b(?:fetch|xmlhttprequest)\s*\(",html):
         raise ValueError("unreviewed_active_content")
     return {"summary":"Generated offline static developer preview",
             "files":[{"path":allowed_path,"content":html}]}
