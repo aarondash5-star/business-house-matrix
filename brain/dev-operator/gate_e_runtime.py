@@ -248,7 +248,7 @@ def exact_run(record,source,stage,task,proposer,*,cancel_file=None):
                 prompt+="\nIndependent QA failed (repair in approved files only): "+json.dumps(qa)[-650:]
             except Cancelled:raise
             except Exception as exc:
-                result["attempts"].append({"attempt":index,"error_type":type(exc).__name__})
+                result["attempts"].append({"attempt":index,"error_type":type(exc).__name__, "reason":str(exc)[:120]})
                 prompt+="\nProposal rejected. Retry with exact JSON and enrolled paths only."
         if result["status"]!="verified_local_review":result["error"]="attempt_budget_exhausted"
     except Cancelled:
