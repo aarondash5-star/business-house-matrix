@@ -1,0 +1,20 @@
+{
+  "manifest": {
+    "project": "matrix_gate_e",
+    "repository": "aarondash5-star/business-house-matrix",
+    "base_sha": "265c3aab7931e1f67bcea9dbe27d5f602d600cd3",
+    "files": [
+      "benchmarks/gate_e/parse_pairs.py",
+      "tests/test_gate_e_parse_pairs.py"
+    ],
+    "test_profile": "python-unittest",
+    "write_enabled": true
+  },
+  "goal": "Implement the public parse_pairs(text) Python function exactly as documented in the immutable benchmark README. Return one complete offline Python source file only, in the approved JSON files format. Correctly handle whitespace, comments, duplicates, equals signs, and malformed input.",
+  "context": [
+    "benchmarks/gate_e/README.md"
+  ],
+  "tests": [
+    "tests/test_gate_e_parse_pairs.py"
+  ]
+}
