@@ -43,6 +43,7 @@ def isolated(workspace,action,request=None):
          "--dev","/dev","--proc","/proc","--tmpfs","/tmp",
          "--bind",str(ws),"/workspace",
          "--ro-bind",str(WORKER),"/worker.py",
+         "--ro-bind",str(STATIC_POLICY),"/static_html_policy.py",
          "--dir","/empty","--chdir","/workspace",
          "/usr/bin/python3","/worker.py",action]
     p=subprocess.run(cmd,input=blob,capture_output=True,text=True,
