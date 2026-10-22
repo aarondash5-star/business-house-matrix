@@ -170,10 +170,10 @@ class GateETests(unittest.TestCase):
         # exercise cancellation after the sandboxed test subprocess starts.
         record=self.python_case()
         (self.repo/"tests"/"test_arithmetic.py").write_text(
-            "import time\\ntime.sleep(5)\\nimport unittest\\n"
-            "from src.arithmetic import add\\n"
-            "class Tests(unittest.TestCase):\\n"
-            " def test_sum(self): self.assertEqual(add(2,3),5)\\n".replace("\\\\n","\\n")
+            "import time\ntime.sleep(5)\nimport unittest\n"
+            "from src.arithmetic import add\n"
+            "class Tests(unittest.TestCase):\n"
+            " def test_sum(self): self.assertEqual(add(2,3),5)\n".replace("\\\n","\n")
         )
         # Pin the modified trusted test baseline, not a model-generated test.
         sha=self.commit()
@@ -186,7 +186,7 @@ class GateETests(unittest.TestCase):
         started=time.monotonic()
         result=gate.exact_run(record,self.repo,self.stage,"qa_cancel_live_worker",
             lambda prompt,attempt:{"summary":"fix","files":[
-                {"path":"src/arithmetic.py","content":"def add(a,b): return a+b\\n"}]},
+                {"path":"src/arithmetic.py","content":"def add(a,b): return a+b\n"}]},
             cancel_file=flag)
         self.assertEqual(result["status"],"cancelled_verified",result)
         self.assertLess(time.monotonic()-started,5)
@@ -198,7 +198,7 @@ class GateETests(unittest.TestCase):
         with patch.object(gate,"TIME_BUDGET",.15):
             result=gate.exact_run(record,self.repo,self.stage,"qa_time_budget",
                 lambda prompt,attempt:(time.sleep(.3) or {"summary":"late","files":[
-                    {"path":"src/arithmetic.py","content":"def add(a,b):return a+b\\n"}]}))
+                    {"path":"src/arithmetic.py","content":"def add(a,b):return a+b\n"}]}))
         self.assertEqual(result["status"],"needs_review",result)
         self.assertEqual(result["error"],"GateError")
         self.assertFalse((self.stage/"qa_time_budget"/"local-review").exists())
