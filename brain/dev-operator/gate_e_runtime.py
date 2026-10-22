@@ -234,22 +234,27 @@ def exact_run(record,source,stage,task,proposer,*,cancel_file=None):
         for index in range(1,MAX_ATTEMPTS+1):
             check_cancel(cancel_file)
             if time.monotonic()-start>TIME_BUDGET:raise GateError("job_time_budget_exceeded")
+            # Fresh immutable baseline on every attempt; prevents stale Python
+            # bytecode, poisoned tests or edited dependencies contaminating QA.
+            attempt_ws=root/("attempt-"+str(index))
+            attempt_ws.mkdir(mode=0o700)
+            seed_workspace(source,scope,attempt_ws)
             try:
                 raw=proposer(prompt,index)
                 if isinstance(raw,str):raw=json.loads(raw)
                 checked=policy.validate_proposal(scope.scope,raw)
                 changed=[f["path"] for f in checked["files"]]
                 if not set(changed).issubset(scope.writable):raise GateError("writable_scope_violation")
-                applied=sandbox.isolated(ws,"apply",
+                applied=sandbox.isolated(attempt_ws,"apply",
                                          {"paths":list(scope.scope.files),"files":raw["files"]})
                 if set(applied["written"])!=set(changed):raise GateError("sandbox_patch_mismatch")
                 if scope.scope.test_profile=="python-unittest":
-                    qa=sandbox.isolated(ws,"qa",
+                    qa=sandbox.isolated(attempt_ws,"qa",
                                         {"paths":list(scope.scope.files),"test_profile":"python-unittest"})
-                else:qa=node_qa(ws,scope.tests,scope.writable,cancel_file=cancel_file)
+                else:qa=node_qa(attempt_ws,scope.tests,scope.writable,cancel_file=cancel_file)
                 result["attempts"].append({"attempt":index,"qa_passed":qa["qa_passed"]})
                 if qa["qa_passed"]:
-                    review=load("agent_loop").local_review(ws,changed,root/"local-review")
+                    review=load("agent_loop").local_review(attempt_ws,changed,root/"local-review")
                     result.update(status="verified_local_review",qa=qa,review=review,
                                   proposal_hash=checked["review_sha256"])
                     break
