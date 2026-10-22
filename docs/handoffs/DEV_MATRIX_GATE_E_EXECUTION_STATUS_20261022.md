@@ -3,7 +3,7 @@
 **Started:** 22 Oct 2026 IST; continuation of certified scoped v6.  
 **Branch:** `feat/dev-matrix-gate-e-general-runtime-20261022`  
 **Review:** [Draft PR #13](https://github.com/aarondash5-star/business-house-matrix/pull/13), base `release/dev-operator-scoped-v6-security-20261022`.  
-**Decision:** **DEVELOPMENT CANDIDATE / NOT RELEASE-CERTIFIED.** Successful real Granite Python pilot and Dell 52/52 regression run confirmed; Mac final QA and wider autonomy gates remain open. Do not merge into v6.
+**Decision (updated 23 Oct 2026 IST):** **DEVELOPMENT CANDIDATE / NOT RELEASE-CERTIFIED.** Real Granite Python pilot and full Dell/Mac 52/52 regression runs passed, including active subprocess cancellation. Hosted CI and broader durable autonomy gates remain open. Do not merge into v6.
 
 ## What was implemented on isolated branch
 
@@ -45,12 +45,30 @@
 ## Remaining Gate E release gates
 
 - [x] Dell pilot receipt and local commit verified. [ ] Investigate intermittent Dell bridge heartbeats separately. Never replay completed task.
-- [x] Dell final 52/52 v6+Gate E suite passed. [ ] Mac final peer rerun still pending; do not bypass prior security checks.
+- [x] Dell final 52/52 v6+Gate E suite passed. [x] Mac independently passed 52/52 in an isolated public checkout on 23 Oct; prior platform block was respected and its old checkout preserved.
 - [ ] Run real model-driven Python and Node benchmarks on externally approved, non-sensitive repositories beyond the committed fixture; independent evaluator/QA required.
-- [ ] Independently prove bounded per-job cancel while a model or QA subprocess is actually active, workload concurrency cap, crash and hard-kill recovery.
+- [x] Proved cancellation while a bounded child process was running, including process-group reaping, on Dell and Mac. [ ] Active full model/QA-run receipt cancellation, workload concurrency cap, crash/hard-kill recovery still OPEN.
 - [ ] Add independent multi-repository enrollment registry, secret-free source transport and nontrivial multi-file patch benchmark. No private Pine/Moksha mounts.
 - [ ] Verify GitHub-hosted/self-hosted CI with explicit resource budget, project-scoped PR identity and review gates; do not allow automatic merge/publish.
 - [ ] Integrate staged operator with existing durable v6 controller **only after** successful Gate E certification, documented migration plan and independently verified rollback.
 - [ ] Perform release signoff with hashes, read-only Mac/Dell parity, negative scope tests and a versioned Gate E source release.
 
-**Next-chat starting instruction:** Read this handover and draft PR #13. Resume Gate E with Mac final QA and remaining certification gates; preserve certified v6 and do not replay the completed Granite pilot. No merge, publishing, spending or permission changes without explicit authorization.
+## 23 October 2026 — Independent continuation evidence
+
+**Status:** Draft Gate E development candidate, **not release certified**. No merge, deployment, model push, publishing, spending, permission changes or changes to v6 controller.
+
+**Peer QA / exact receipts:**
+- Mac independently checked out original PR head f2d1f9d670c9eb40fffb6a723048822ff8a62aa8, 52/52 tests PASS, exit 0 (receipt 4a3e5e5e-8ff0-4eaf-9d47-933a345e9df7). Mac's preexisting stage at 0559f27... was not replaced.
+- Dell live child cancellation: receipt e809728a-3f79-4578-8897-58a97660419f, exit 0. Mac live child cancellation: receipt b1d9e98d-4b3d-4e16-b6e9-045ca53ea951, exit 0. Both started a real child, observed its PID marker before requesting cancellation, received Cancelled, and verified the process was reaped. This is narrower than durable model/QA job cancellation.
+- After narrowly scoped CI corrections, both hosts tested code commit 2829f9fcf3c9631adba9f14402b4642324df09e0 from separate isolated public clones. Dell receipt 12361710-3507-48b9-a024-1f373a621d09: 52/52 tests and 145-file public source safety PASS, exit 0. Mac receipt 088b7daf-3901-4118-8fe3-1a5d1feedc6c: same 52/52 and 145-file safety PASS, exit 0. No v6 files, permissions or existing stages were modified to achieve these results.
+- Dell control receipt 37fde806-bee0-4a9f-acfd-251ebf333c43: certified v6 controller ACTIVE; controller.py SHA256 unchanged at b1ed132245b1bac5fb0cd66b16f1632e457bdeffaea9ac3b300b5cb7b1b9209e. Existing backup directory matrix-controller/release-backup-dev-mcp-20261022 present. Temporary original Gate E pilot service is inactive with Result=success and Restart=no. No rollback drill attempted.
+
+**Hosted CI blockers and corrections:**
+- PR #13 initial Actions run 39834880471 failed public-repository-safety because the scanner matched a private-key *pattern inside the policy module's own security regex*, not an actual disclosed secret. Gate E branch scanner now suppresses only that exact regex token if the **entire audited policy Git blob** is unchanged (blob a45de0dfdbfb86313e0c15bf272cadf647a78f98); any change restores full scanning, fail-closed. Certified v6 policy source is unchanged.
+- General pytest discovery previously failed importing the benchmark output, intentionally absent until model generation. The branch test wrapper now skips the six benchmark tests only in checkouts without the generated source. Inside the enrolled workcell generated source exists and the tests run. The immutable enrolled source baseline 265c3aab7931e1f67bcea9dbe27d5f602d600cd3 and original independent benchmark test fixture at that pinned base remain unchanged.
+- Actions run 39836254364: **public-repository-safety PASS**. Hosted **starter-tests FAIL**, summary 22 failed, 118 passed, 6 skipped, 66 passing subtests. The hosted runner lacks /usr/bin/bwrap, causing the security sandbox suites to fail closed; a separate marketing resource guard is also environment-sensitive. Do not mark full hosted CI green, weaken isolation tests or bypass runner security.
+- These code changes are confined to the **draft feature branch**, not v6. The present handover commit only updates documentation.
+
+**Open release gates:** (1) independently secure and certify Bubblewrap-capable CI; (2) real Node and nontrivial model benchmarks in separately approved non-sensitive repositories, without replaying completed Granite task or bypassing rejected JS write; (3) concurrency limits, durable receipts and restart/crash recovery including full model/QA cancellation; (4) multi-project enrollment and transport, controlled PR identity and verified rollback drill; (5) explicit release signoff. GitHub PR #13 remains DRAFT; v6 remains frozen and working. All prior receipts and historical needs_review jobs must be retained.
+
+**Next-chat starting instruction:** Read this handover and draft PR #13. Dell/Mac 52/52 peer QA, active child cancellation and source safety PASS. Resume only remaining CI, multi-project/model benchmarks, durable recovery, scoped PR identity and release signoff. Preserve v6 and completed Granite receipt. No merge, publish, spending or permission changes without explicit authorization.
