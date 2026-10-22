@@ -169,3 +169,35 @@ def run(business):
             "research_queries":len(groups),"full_report_generated":True,
             "human_review_required":True,"publish":False,"spend":False,
             "escalations":report["escalations"][:3]}
+
+
+# BHM_LANGGRAPH_SUPERVISOR_V2_20261022
+# The original v1 report builder remains available as _legacy_report_run
+# for independent rollback; Brain sends only allowlisted business slugs.
+_legacy_report_run = run
+def run(business):
+    import json
+    import subprocess
+    from pathlib import Path
+    if business not in BUSINESSES:
+        raise ValueError("business_not_registered")
+    py = BASE / ".venv-supervisor" / "bin" / "python"
+    script = BASE / "marketing_supervisor_langgraph.py"
+    if not py.is_file() or not script.is_file():
+        raise RuntimeError("reviewed_supervisor_runtime_unavailable")
+    result = subprocess.run([str(py), str(script), "--business", business],
+        capture_output=True, text=True, stdin=subprocess.DEVNULL, timeout=135,
+        check=True, cwd=str(BASE))
+    if len(result.stdout)>12000:
+        raise RuntimeError("oversized_supervisor_receipt")
+    data = json.loads(result.stdout.strip())
+    if (data.get("mode")!="brain_owned_langgraph_supervisor_v2"
+        or data.get("business")!=business
+        or data.get("state") not in ("REVIEW_REQUIRED","INSUFFICIENT_EVIDENCE")
+        or data.get("qa_passed") is not True
+        or data.get("publish") is not False or data.get("spend") is not False):
+        raise RuntimeError("unsafe_supervisor_receipt")
+    expected = (OUTPUT / (business+"-supervisor-report.md")).resolve()
+    if str(expected)!=str(Path(data.get("report_path","")).resolve()) or not expected.is_file():
+        raise RuntimeError("invalid_supervisor_report_path")
+    return data
