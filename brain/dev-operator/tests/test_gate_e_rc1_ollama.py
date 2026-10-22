@@ -12,8 +12,8 @@ class ModelTransportPolicy(unittest.TestCase):
         obj=model.request_payload("Build an enrolled public benchmark")
         self.assertEqual(model.URL,"http://127.0.0.1:11434/api/generate")
         self.assertFalse(obj["stream"])
-        self.assertEqual(obj["model"],"qwen3:4b-instruct")
-        self.assertLessEqual(obj["options"]["num_predict"],2100)
+        self.assertEqual(obj["model"],"granite4:3b")
+        self.assertLessEqual(obj["options"]["num_predict"],750)
         self.assertEqual(obj["keep_alive"],"0")
 
     def test_large_untrusted_prompt_denied(self):
