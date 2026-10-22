@@ -68,3 +68,16 @@ Read this document and linked files from the **connected GitHub app first**; ver
 
 ## Minimal takeover prompt
 > Continue the approved Matrix Marketing research-engine upgrade. Read `docs/handoffs/MARKETING_RESEARCH_ENGINE_EXPANSION_2026-10-22.md` in `aarondash5-star/business-house-matrix`; execute and certify its gates via Dell/Mac, preserve all safety boundaries, and update GitHub receipts.
+
+---
+
+## Execution addendum — 2026-10-22, after this original planning handover
+
+The research-engine implementation was executed in **isolated Dell/Mac development staging** and tracked in **[draft PR #4](https://github.com/aarondash5-star/business-house-matrix/pull/4)**. This addendum is a **documentation update only**, not a live activation or approval to merge.
+
+- **Pass:** Gate 0 live baseline. New isolated Dell extractor/entity/evidence/monitor suite **63/63**, Mac existing relevance suite **17/17**, Mac new five-dimension GSC adapter **11/11** — 91 passing tests total. Real guarded page extraction succeeded for Moksha and W3C, without promoting unverified claims.
+- **Still gated:** signed Mac↔Dell *extraction* route (search relay unchanged), live independently verified competitor facts and owner-reviewed monitor target list, running automated monitoring, real five-dimension GSC ingestion, and Gate 5 scored 10-query benchmark / human-approved Design packet.
+- No active Marketing Brain or website production files replaced, no active timer, no publishing, spending, root/secret changes.
+- [Complete evidence report, terminal receipts and rollback](https://github.com/aarondash5-star/business-house-matrix/blob/feat/marketing-research-engine-20261022/docs/receipts/MARKETING_RESEARCH_ENGINE_PROTECTED_ROLLOUT_2026-10-22.md) (in unmerged PR branch).
+
+**Next takeover:** use this addendum and PR #4; complete the still-gated live integration and independent verification before merging or declaring all gates certified. Do not restart existing SearXNG/paired relay or bypass the missing evidence.
