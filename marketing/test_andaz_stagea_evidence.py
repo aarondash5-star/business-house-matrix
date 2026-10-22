@@ -73,7 +73,7 @@ class StageAEvidenceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"claim_not_supported_by_source"):
             a.verified_claim(c,self.receipts(),self.approval(c),self.policy,NOW)
     def test_review_not_bound_to_other_claim(self):
-        c={**self.claim,"value":"Fake hostel"}
+        c={**self.claim,"value":"Panda Hostel"}
         with self.assertRaisesRegex(ValueError,"review_not_bound"):
             a.verified_claim(c,self.receipts(),self.approval(),self.policy,NOW)
     def test_review_not_bound_to_other_receipts(self):
