@@ -34,7 +34,7 @@
 - 3 bounded queries: `Arambol Goa sauna ice bath wellness services`, `Goa sauna ice bath mud bath wellness booking prices`, `spa wellness mobile booking website user experience`.
 - **15 candidate hits**, **11 relevant unique sources**, **4 rejected** (duplicates, off-target location, off-topic UX).
 - Category splits: **5 local service leads**, **2 local pricing leads**, **4 general UX references**; each hit carries `evidence_class`, `verified_facts=false` and URL.
-- Representative leads: official Moksha site (own brand), Burraa own-brand listing, TripAdvisor local wellness index, Agoda-area spa benchmark (outside Arambol scope), general spa UX design references. **None are verified competitor identities or independently verified prices.**
+- Representative leads: official Moksha site (own brand), Burraa own-brand listing, TripAdvisor local wellness index, Goa-wide spa benchmark (outside the immediate Arambol area), general spa UX design references. **None are verified competitor identities or independently verified prices.**
 - Correct Google Trends outcome: `no_relevant_observation` for cached IN national news; no spurious 2026 headline match.
 - GSC: `observed`, Moksha property only, settled `2026-09-21`–`2026-10-19` date-window, top-limited query rows. Never sum these rows to site-level totals or infer booking conversions.
 - Mac Brain remains `publish_enabled=false`, `spend_enabled=false`.
