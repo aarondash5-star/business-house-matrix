@@ -37,8 +37,10 @@ class UnifiedResearchTests(unittest.TestCase):
     def web(self, query):
         return {"provider": "searxng", "mode": "self_hosted_encrypted_paired_relay",
                 "device_peer_verified": True, "request_id": "signed-probe",
-                "results": [{"title": "Sauna destination", "url": "https://example.org/sauna",
-                             "snippet": "Untrusted content", "engine": "brave"}],
+                "results": [{"title": "Sauna and ice bath wellness in Arambol Goa",
+                             "url": "https://wellness-goa.example.org/arambol-sauna",
+                             "snippet": "Arambol Goa sauna and ice bath wellness listing; source unverified",
+                             "engine": "brave"}],
                 "citations_required": True}
 
     def test_no_gsc_is_explicit_missing_not_zero_demand(self):
