@@ -164,10 +164,11 @@ export function createVisibleWindowGuard(browserContext) {
 
   async function run(page, lease, action, fn) {
     if (typeof fn !== 'function') throw new AutomationWindowBlocked('MISSING_ACTION');
+    // Authenticate exact owned page and lease BEFORE evaluating the proposed action.
+    await inspect(page, lease);
     if (DENIED_ACTIONS.has(action)) throw new AutomationWindowBlocked('ACTION_FORBIDDEN');
     if (owned.get(page)?.lease.mode === 'READ-ONLY' && MUTATING_ACTIONS.has(action))
       throw new AutomationWindowBlocked('READ_ONLY_ACTION');
-    await inspect(page, lease);
     if (writers.has(page)) throw new AutomationWindowBlocked('SINGLE_WRITER_CONFLICT');
     writers.add(page);
     try {
