@@ -131,7 +131,7 @@ def inspect(envelope, baseline=None):
         raise PolicyDenied("manifest_artifacts_mismatch")
     payload = {"files": sorted(prepared, key=lambda item: item["path"])}
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-    return {"status": "needs_independent_review", "project": PROJECT, "work_id": WORK_ID,
+    return {"status": "needs_independent_review", "project": PROJECT, "work_id": envelope["work_id"],
             "repository": REPOSITORY, "branch": BASE_BRANCH, "review_sha256": _sha(encoded),
             "files": [{"path": item["path"], "sha256": _sha(item["content"].encode("utf-8"))}
                       for item in payload["files"]], "payload": payload,
