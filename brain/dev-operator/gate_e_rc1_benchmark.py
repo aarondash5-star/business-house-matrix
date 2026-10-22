@@ -38,7 +38,7 @@ def main(name):
             raise gate.GateError("job_time_budget_exceeded")
         outcome=gate.bounded([sys.executable,"-B",str(Path(__file__).with_name("gate_e_rc1_ollama.py"))],
                              cwd=Path(__file__).resolve().parent,
-                             input_text=prompt,timeout=min(105,remaining),
+                             input_text=prompt,timeout=min(135,remaining),
                              cancel_file=cancel,max_output=35000,
                              isolated_env={"PATH":"/usr/bin:/bin","HOME":"/empty",
                                            "PYTHONDONTWRITEBYTECODE":"1"})
