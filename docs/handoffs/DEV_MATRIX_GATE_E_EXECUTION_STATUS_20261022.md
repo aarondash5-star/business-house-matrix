@@ -3,7 +3,7 @@
 **Started:** 22 Oct 2026 IST; continuation of certified scoped v6.  
 **Branch:** `feat/dev-matrix-gate-e-general-runtime-20261022`  
 **Review:** [Draft PR #13](https://github.com/aarondash5-star/business-house-matrix/pull/13), base `release/dev-operator-scoped-v6-security-20261022`.  
-**Decision:** **DEVELOPMENT CANDIDATE / NOT RELEASE-CERTIFIED.** Do not merge into v6 or claim full autonomous Dev release.
+**Decision:** **DEVELOPMENT CANDIDATE / NOT RELEASE-CERTIFIED.** Successful real Granite Python pilot and Dell 52/52 regression run confirmed; Mac final QA and wider autonomy gates remain open. Do not merge into v6.
 
 ## What was implemented on isolated branch
 
@@ -22,16 +22,16 @@
 2. Mac follow-up **51/52**; Dell found the same one remaining failure. First QA attempt left timestamp/size-equivalent Python bytecode; second changed source but inherited cached result. Fixed by generating a pristine immutable workspace on **each** repair attempt.
 3. Dell full v6+Gate E suite **52/52 PASS**, exit 0, read-only development-lane terminal receipt `2e1f2907-4655-43de-b6e9-9dc38050e3bd`, against code commit `c386324db88cfe1129c63f91d36fc151ebd139db`. Includes independent real Python and Node JS local-only review end-to-end tests, repeated repair case, malicious path rejection, and worker cancellation/timeout tests.
 4. The subsequent Mac final rerun was **blocked by platform safety checks**. Do not bypass; Mac peer certification remains OPEN.
-5. Code evolved after the 52/52 pass: output limits, operator CLI, enrolled public pilot, offline CI entrypoint. Therefore **fresh full-suite QA is required on the final branch HEAD** before any release. No claim that GitHub-hosted CI ran.
+5. After new operator/pilot/CI changes, Dell reran full branch tests at `b7ede29f33fd9ec812f5b686e6d58dad191f4218`: **52/52 PASS**, exit 0, terminal receipt `97cad3bc-23d1-4569-9b21-e3aa422a7bea`. v6 controller unchanged and active. Mac final peer QA remains OPEN. No hosted GitHub CI pass claimed.
 
-## Bounded real offline-model pilot and live status caution
+## Bounded real offline-model pilot — independently verified PASS
 
 - Dell stage: `~/matrix-gate-e-stage-20261022/repo`, distinct from certified v6.
 - Dell preflight verified enrolled base SHA, trusted tests, model binary, service active and unchanged v6 controller checksum `b1ed132245b1bac5fb0cd66b16f1632e457bdeffaea9ac3b300b5cb7b1b9209e`.
 - Owner-scope transient `systemd-run --user` launch of `gate_e_operator.py gate-e-public-python-parse run` succeeded, terminal receipt `0f66c1e2-b81b-420d-80e0-17e0dcbf0d26`, exit 0. Temporary unit `matrix-gate-e-public-python-20261022.service` is capped to `RuntimeMaxSec=390`, `MemoryMax=1G`, `CPUQuota=100%`, `NoNewPrivileges=yes`.
-- First read-only inspection saw service active and task directory present but **no terminal task receipt yet** (reported `needs_review`, which can mean in-progress/unknown, not definitive task failure).
-- At 2026-10-22 18:41 UTC, Dell bridge heartbeat became **offline/stale** (~74 seconds), although Mac remained online. Do not infer pilot success or failure; its final result is **UNKNOWN** until Dell reconnects and terminal receipt + service status can be read. Do not replay the same task.
-- Dell briefly returned online at 18:43 UTC, then heartbeat again became stale by 18:44 UTC (~63 seconds). A read-only status command was queued and had not produced a terminal receipt. This is **intermittent bridge availability**, with root cause unverified. The approved temporary systemd unit retains its automatic RuntimeMaxSec safety cap; do not dispatch a duplicate job or modify bridge settings merely to obtain a status.
+- Initial inspection found the task in progress. Later read-only check **verified terminal success**: status receipt `8ac24391-1cea-4bed-b436-69af31831ef3`, completed `2026-10-22T18:40:58Z`, `status=verified_local_review`, 1 Granite attempt, independent Python QA **6/6 PASS**, Bubblewrap probe PASS, `published=false`, `pushed=false`. Exact local review commit `13cdd560f19e3e9031e0f2ead2dc81958005f85c`. Temporary unit finished with `Result=success`, exit 0, inactive.
+- At 2026-10-22 18:41 UTC, Dell bridge heartbeat became **offline/stale** (~74 seconds), although Mac remained online. This was transient bridge instability, **not** pilot failure; subsequent terminal receipt confirms the pilot succeeded. Do not replay the completed task.
+- Dell briefly returned online at 18:43 UTC, then heartbeat again became stale by 18:44 UTC (~63 seconds). That status command subsequently completed and confirmed the task's success. This is **intermittent bridge availability**, with root cause unverified. The approved temporary systemd unit retains its automatic RuntimeMaxSec safety cap; do not dispatch a duplicate job or modify bridge settings merely to obtain a status.
 - The temporary unit has a maximum runtime and no restart/autostart policy was configured by this Gate E workflow.
 - A proposed separate JavaScript public benchmark file was blocked during connector write by platform safety checks; **not added**. The existing isolated Node test suite still covers Node capability.
 
@@ -44,8 +44,8 @@
 
 ## Remaining Gate E release gates
 
-- [ ] Read Dell host state; assess SSH stale heartbeat without destructive recovery. Locate transient unit terminal code and `~/matrix-gate-e-stage-20261022/runs/gate-e-public-python-parse/receipt.json`; check local commit if successful. **No blind replay**.
-- [ ] Rerun current full branch HEAD Python/Node + v6 tests on Dell and Mac; Mac prior security check cannot be bypassed.
+- [x] Dell pilot receipt and local commit verified. [ ] Investigate intermittent Dell bridge heartbeats separately. Never replay completed task.
+- [x] Dell final 52/52 v6+Gate E suite passed. [ ] Mac final peer rerun still pending; do not bypass prior security checks.
 - [ ] Run real model-driven Python and Node benchmarks on externally approved, non-sensitive repositories beyond the committed fixture; independent evaluator/QA required.
 - [ ] Independently prove bounded per-job cancel while a model or QA subprocess is actually active, workload concurrency cap, crash and hard-kill recovery.
 - [ ] Add independent multi-repository enrollment registry, secret-free source transport and nontrivial multi-file patch benchmark. No private Pine/Moksha mounts.
@@ -53,4 +53,4 @@
 - [ ] Integrate staged operator with existing durable v6 controller **only after** successful Gate E certification, documented migration plan and independently verified rollback.
 - [ ] Perform release signoff with hashes, read-only Mac/Dell parity, negative scope tests and a versioned Gate E source release.
 
-**Next-chat starting instruction:** Read this document and draft PR #13; inspect Dell only if reachable, do not replay running/ambiguous tasks, preserve certified v6. Gate E remains a candidate until all outstanding items are proven.
+**Next-chat starting instruction:** Read this handover and draft PR #13. Resume Gate E with Mac final QA and remaining certification gates; preserve certified v6 and do not replay the completed Granite pilot. No merge, publishing, spending or permission changes without explicit authorization.
