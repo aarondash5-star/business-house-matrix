@@ -99,3 +99,15 @@
 - **Not certified:** hosted/self-hosted green CI, ongoing source transport stability, general multi-project model work, whole-job cancellation and resource hard caps, concurrency/crash recovery, controller integration, PR write approvals, rollback drill and release signoff.
 - **Action:** retain PR #13 as draft. First fix hosted runner environment and runtime hard caps/cancellation, then certify independent real Node/Python multi-project benchmarks and durable recovery. Do not merge, publish, spend or change permissions as part of verification.
 
+## 23 October 2026 IST — Owner-approved RC1 rollout work
+
+Owner authorization for all five **conditional** production phases is recorded in `docs/handoffs/DEV_MATRIX_GATE_E_RC1_PRODUCTION_APPROVAL_20261023.md`, including exact SHA/receipts, failed hosted CI and mandatory progression gates.
+
+**Live tested RC1 candidate:** Dell and Mac each **61/61** Gate E tests PASS on pinned source and new queue module; new active Python QA cancellation, time-budget, output-bounds, single-worker admission and fail-closed crash-reconciliation tests included. Marketing resource guard 4/4 PASS on both peers after deterministic hardware sensor fixture. See approval file for the exact receipts.
+
+**CI hard blocker:** hosted Actions `39845526017` source safety PASS but mandatory sandbox doctor FAIL with `bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted` even after installing Bubblewrap. Never disable isolated network namespaces just to green CI; qualify a secure dedicated runner before canary.
+
+**Dell live control preflight:** receipt `969eb624-2fdc-4451-a17e-fa5dbc3c32ee`, exit 0: v6 service ACTIVE, protected controller SHA-256 `b1ed132245b1bac5fb0cd66b16f1632e457bdeffaea9ac3b300b5cb7b1b9209e`, backup present; candidate RC1 durable queue CLI reports `{"jobs":[]}` and `bhm-gate-e-rc1.service` is INACTIVE. Historical pilot service inactive with `Result=success`, `Restart=no`. This confirms no production canary/service activation.
+
+**Release disposition:** RC1 development hardening substantially implemented and peer QA PASS, but **Gate E full production NO-GO** until secure CI, independent real model-driven non-sensitive Node/multi-file benchmarks, hard-kill recovery/rollback drills and release identity/signoff pass. Preserve existing v6 and all receipts. PR #13 remains draft and unmerged.
+
