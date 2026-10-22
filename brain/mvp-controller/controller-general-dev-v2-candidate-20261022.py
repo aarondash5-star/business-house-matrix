@@ -372,7 +372,7 @@ def tick():
                  "sha256":data["sha256"],"path":data["local_path"]}
         elif t["action"]=="dev_general_build":
             unit="matrix-general-dev-dispatch-v2-20261022"
-            script=HOME/"release-stage-general-dev-20261022"/"repo"/"brain"/"dev-operator"/"agent_loop.py"
+            script=HOME/"general-dev-release-v2"/"agent_loop.py"
             target=HOME/"release-stage-general-dev-20261022"/"runs"/"matrix-dev-dashboard-v2"
             if not script.is_file() or target.exists():
                 raise RuntimeError("General Dev task source missing or already attempted")
