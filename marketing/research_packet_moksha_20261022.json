@@ -1,0 +1,176 @@
+{
+  "schema": "business_house_matrix.research_packet.v1.3",
+  "project": "Business House Matrix",
+  "pilot": "Moksha Wellness Arambol website rehaul",
+  "observed_utc": "2026-10-22T12:27:00Z",
+  "status": "review_required",
+  "publish_approval": false,
+  "spend_approval": false,
+  "design_fact_approval": false,
+  "quality": {
+    "automated_tests": {
+      "dell": 63,
+      "mac_quality": 17,
+      "mac_gsc_adapter": 11
+    },
+    "raw_live_queries": 10,
+    "raw_relevance_gate": "FAILED: named-source recall/precision below 80%; targeted provider search required",
+    "live_gsc": {
+      "read_only": true,
+      "imported_query_page_date_rows": 12,
+      "country_device": "unavailable",
+      "five_dimension_report": "not certified"
+    }
+  },
+  "market_map": {
+    "scope": "Arambol and adjacent North Goa; first-party services with sauna, ice, mud or wellness",
+    "own_brand_excluded": true,
+    "entities": [
+      {
+        "name": "Moksha Wellness Goa",
+        "role": "owner_brand_not_competitor",
+        "sources": [
+          "https://mokshagoa.com/",
+          "https://www.burraa.com/activities/sauna-ice-bath-session-at-moksha-wellness-arambol/"
+        ],
+        "status": "excluded_from_competitor_count"
+      },
+      {
+        "name": "The Hidden Oak",
+        "role": "provider_candidate",
+        "location": "Madhalawada, Arambol",
+        "sources": [
+          "https://thehiddenoak.space/",
+          "https://thehiddenoak.space/pricing/"
+        ],
+        "identity_status": "first_party_supported; independent review pending",
+        "pricing_status": "conflicted_within_official_site"
+      },
+      {
+        "name": "GoAsian Wellness Spa",
+        "role": "provider_candidate",
+        "location": "Deulwada Pernem, Arambol",
+        "sources": [
+          "https://goasianspa.com/our-services/",
+          "https://goasianspa.com/prices-page/",
+          "https://www.tripadvisor.com/Attraction_Review-g2307943-d33972207-Reviews-GoAsian_Wellness_Spa_Family_Oriented-Arambol_North_Goa_District_Goa.html"
+        ],
+        "identity_status": "cross_source_supported; owner review pending",
+        "pricing_status": "first_party_unverified"
+      },
+      {
+        "name": "Satori Wellness",
+        "role": "provider_candidate",
+        "location": "Arambol, North Goa",
+        "sources": [
+          "https://satoriwellness.setmore.com/",
+          "https://www.tripaneer.com/o/satori-wellness-centre"
+        ],
+        "identity_status": "cross_source_supported; owner review pending",
+        "operational_status": "CONFLICT: booking platform publishes daily hours; business listing temporarily closed; recheck live before use"
+      }
+    ]
+  },
+  "pricing_table": [
+    {
+      "provider": "The Hidden Oak",
+      "service": "Sauna and steam without ice bath",
+      "displayed_price": 1000,
+      "currency": "INR",
+      "unit": "per session",
+      "duration": "3 hours stated on pricing page",
+      "source_url": "https://thehiddenoak.space/pricing/",
+      "observed_utc": "2026-10-22T12:27:00Z",
+      "status": "needs_review",
+      "conflict": "homepage describes fire+ice from ₹1000 whereas pricing page labels ₹1000 without ice"
+    },
+    {
+      "provider": "The Hidden Oak",
+      "service": "Contrast therapy and sound healing",
+      "displayed_price": 1500,
+      "currency": "INR",
+      "unit": "per session",
+      "duration": "3 hours stated on pricing page",
+      "source_url": "https://thehiddenoak.space/pricing/",
+      "observed_utc": "2026-10-22T12:27:00Z",
+      "status": "needs_review",
+      "conflict": "Homepage messaging differs on included ice"
+    },
+    {
+      "provider": "Satori Wellness",
+      "service": "Sauna & Ice Contrast Therapy & Lymphatic Drainage",
+      "displayed_price": 800,
+      "currency": "INR",
+      "unit": "per booking",
+      "duration": "3 hours 20 minutes (as displayed)",
+      "source_url": "https://satoriwellness.setmore.com/",
+      "observed_utc": "2026-10-22T12:27:00Z",
+      "status": "needs_review",
+      "conflict": "provider operating status unresolved"
+    },
+    {
+      "provider": "GoAsian Wellness Spa",
+      "service": "Abhyangam Therapy",
+      "displayed_price": 2500,
+      "currency": "INR",
+      "unit": "60 minute session",
+      "source_url": "https://goasianspa.com/prices-page/",
+      "observed_utc": "2026-10-22T12:27:00Z",
+      "status": "needs_review",
+      "not_like_for_like_with_sauna": true
+    }
+  ],
+  "source_backed_ux_references": [
+    {
+      "url": "https://www.w3.org/WAI/fundamentals/accessibility-intro/",
+      "role": "accessibility guidance"
+    },
+    {
+      "url": "https://thehiddenoak.space/",
+      "role": "local brand positioning reference, not conversion proof"
+    },
+    {
+      "url": "https://satoriwellness.setmore.com/",
+      "role": "booking UI reference, not business conversion proof"
+    }
+  ],
+  "gsc_opportunities": {
+    "scope": "owned_property_only",
+    "source": "read-only engagement_core",
+    "sample_rows": 12,
+    "dimensions": [
+      "query",
+      "page",
+      "date"
+    ],
+    "date_basis": "America/Los_Angeles",
+    "limitations": [
+      "country and device unavailable in exported rows",
+      "no global search-volume inference",
+      "cannot sum top-limited rows to site totals"
+    ]
+  },
+  "trend_signal": {
+    "national_rss_only": true,
+    "historical_index_points": 0,
+    "local_demand": "unknown"
+  },
+  "unverified_leads": [
+    "Primus in Morjim",
+    "DR MudBath",
+    "Shiva Yoga Goa"
+  ],
+  "unresolved_questions": [
+    "Obtain independent confirmation of current Hidden Oak sauna/ice pricing and inclusions",
+    "Confirm whether Satori Arambol location is accepting bookings",
+    "Get 5-dimensional GSC dataset through a scoped owner-approved route",
+    "Make signed Mac–Dell extraction extension pass safe install and live handshake",
+    "Manual evidence review before any critical copy reaches Design"
+  ],
+  "visual_brand_constraints": [
+    "Moksha first-party real photos only, AI people only if approved",
+    "ground floor sauna and ice bath",
+    "mobile-first private staging",
+    "October 24 retreat checkout and PMS out of scope"
+  ]
+}
