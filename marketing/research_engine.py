@@ -237,8 +237,8 @@ def extract_html(body,url,grants):
     # tracking markup. Alerting on raw HTML makes no meaningful content claim.
     # Fingerprint normalized reader-visible content; keep raw digest separately
     # for exact-source audit without using it as a change trigger.
-    normalized=re.sub(r"\\s+"," ",text).strip()
-    meaningful=hashlib.sha256((title+"\\n"+normalized).encode("utf-8")).hexdigest()
+    normalized=re.sub(r"\s+"," ",text).strip()
+    meaningful=hashlib.sha256((title+"\n"+normalized).encode("utf-8")).hexdigest()
     return {"status":"needs_review","source_url":url,"canonical_url":canonical,
             "title":title,"text":text,"excerpt":text[:220],
             "sha256":meaningful,
