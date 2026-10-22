@@ -1,7 +1,7 @@
 # Dev Matrix NVIDIA integration — 23 October 2026 IST
 
 ## Current decision
-KEY_ENROLLED / ADAPTER_TESTED / LIVE_INFERENCE_NOT_VERIFIED. Two public development GPT-OSS20 requests timed out (first 15-second socket bound, second 45-second socket bound with a 60-second total deadline). No successful authenticated NVIDIA completion or model-generated QA is claimed. NVIDIA routes are disabled; preserve Groq and local fallback. No automatic retry or production activation.
+KEY_ENROLLED / ADAPTER_TESTED / LIVE_INFERENCE_NOT_VERIFIED. Three public development GPT-OSS20 requests timed out (first 15-second socket bound; second and owner-requested third at the unchanged 45-second socket bound with a 60-second total deadline). No successful authenticated NVIDIA completion or model-generated QA is claimed. NVIDIA routes are disabled; preserve Groq and local fallback. No automatic retry or production activation.
 
 ## Verified credential and transport
 Owner completed existing secure browser entry. Receipt d5376c6f-fa31-46fb-b260-43e868d09e21 completed exit0: nvidia-oss20 credential exists, private permissions, not symlink. No secret printed, copied to another host, stored in repo, or used in shell arguments. No new gateway created.
@@ -40,3 +40,15 @@ Reuse existing stdlib/SQLite router and vault, secure relay and Bubblewrap evalu
 ## Final paused-state readback
 
 Receipt2585a75a-b2ca-4e2e-ac40-7719fd10fec2 completed exit0: both NVIDIA slots disabled, Groq OSS120/OSS20 enabled, NVIDIA key still private, final router hash matches. Enrollment unit LoadState=not-found/ActiveState=inactive after prior successful closure. Earlier pause task d46de865-fcbd-4565-a1f8-e154ffa2e29a did apply disable/cooldown and print status, then exited5 only because its redundant stop command found the enrollment unit already unloaded. This later independent readback verifies the desired paused state; do not relabel the earlier job exit as0.
+
+## Owner-requested retry — 2026-10-22 21:18–21:20 UTC
+
+Owner explicitly requested “retry nvidia”. Preflight receipt f1d63113-980c-4778-9271-cbed37e0a960 completed exit0: two NVIDIA day reservations, zero in the prior minute, unchanged router SHA, evaluator present. Removed only the recognized local timeout backoff marker (until1792704466) for this single owner-authorized retry; no provider429 was bypassed, no quota counts or caps reset, and no key re-entry required.
+
+Retry receipt ed48ddb1-b710-4e8d-adb8-dd78f1801758 started21:18:48.977Z, finished21:19:39.936Z, failed exit1. Reused installed smoke_nvidia.py with public/development flags, explicit GPT-OSS20 and no fallback. NVIDIA_REQUEST_FAILED_TimeoutError again; API_FAIL, evaluator exit1, model QA never ran. No successful authenticated NVIDIA completion is claimed. No repeated retry or deadline expansion.
+
+The wrapper disabled nvidia-oss20 and committed a fresh900-second local timeout backoff before its final reporting line raised KeyError('slots'); the policy uses 'connections'. That reporting error did not undo the pause and was corrected in a separate read-only postflight, without another API call. Do not describe the retry wrapper as exit0.
+
+Independent postflight f6d1e1d5-292f-42a3-a49e-2e49c9a4c6a8 completed exit0 at21:20:09.6Z: both NVIDIA routes disabled, local cooldown until1792704879, three NVIDIA day reservations out of cap5, cap1/minute unchanged, Nemotron license gate true. Groq OSS120/OSS20 remain enabled and Groq policy equals pre-NVIDIA snapshot. Router SHA90cf35dd3dc3d8da48efdba62aa487f62feabcde47b4938beb2ebf64e4fa388c unchanged. v6 controller active and checksum b1ed132245b1bac5fb0cd66b16f1632e457bdeffaea9ac3b300b5cb7b1b9209e unchanged.
+
+Current decision remains LIVE_INFERENCE_NOT_VERIFIED / NVIDIA_PAUSED. Credential validity and the cause of inference timeout remain unproven; existing Groq/local fallback preserved. No source change, production enrollment, merge, paid service, or master-stack federation performed.
