@@ -85,6 +85,10 @@ def get_slot(policy,id):
  s=next((s for s in policy["connections"] if s["id"]==id),None)
  if not s:raise RuntimeError("unknown connection slot")
  return s
+def openrouter_backoff(slot,retry_after=None):
+ try:seconds=max(60,min(86400,int(retry_after)))
+ except (ValueError,TypeError):seconds=900
+ with conn() as rate_db:rate_db.execute('INSERT OR REPLACE INTO cooldowns(slot,until_epoch) VALUES(?,?)',(slot,now()+seconds))
 def _hosted_text(s,prompt,tools=False,public_input=False):
  provider=s["provider"]
  if provider not in {"groq","nvidia","openrouter"}:raise RuntimeError("PROVIDER_DENIED")
@@ -125,6 +129,13 @@ def _hosted_text(s,prompt,tools=False,public_input=False):
    raw=response.read(65537)
    if len(raw)>65536:raise RuntimeError("PROVIDER_RESPONSE_TOO_LARGE")
    d=json.loads(raw)
+  if isinstance(d,dict) and 'error' in d:
+   error=d['error'];error_code=error.get('code') if isinstance(error,dict) else None
+   if type(error_code) is not int or not 100<=error_code<=599:error_code='UNKNOWN'
+   if provider=='openrouter' and error_code==429:openrouter_backoff(s['id'])
+   print(provider.upper()+'_API_ERROR_'+str(error_code),file=sys.stderr);return 1
+  if not isinstance(d,dict) or not isinstance(d.get('choices'),list) or not d['choices'] or not isinstance(d['choices'][0],dict) or not isinstance(d['choices'][0].get('message'),dict):
+   print(provider.upper()+'_INVALID_COMPLETION_ENVELOPE',file=sys.stderr);return 1
   text=d["choices"][0]["message"].get("content")
   if not isinstance(text,str) or not text.strip() or len(text.encode())>8192:raise RuntimeError("INVALID_OR_TRUNCATED_PROVIDER_OUTPUT")
   if d["choices"][0].get("finish_reason")!="stop":raise RuntimeError("PROVIDER_OUTPUT_INCOMPLETE")
@@ -137,9 +148,7 @@ def _hosted_text(s,prompt,tools=False,public_input=False):
   print(json.dumps({"model":d.get("model"),"usage":d.get("usage"),"text":text,"tools_enabled":False}));return 0
  except urllib.error.HTTPError as exc:
   if provider=='openrouter' and exc.code==429:
-   try:seconds=max(60,min(86400,int(exc.headers.get('Retry-After','900'))))
-   except (ValueError,TypeError,AttributeError):seconds=900
-   with conn() as rate_db:rate_db.execute('INSERT OR REPLACE INTO cooldowns(slot,until_epoch) VALUES(?,?)',(s['id'],now()+seconds))
+   openrouter_backoff(s['id'],exc.headers.get('Retry-After') if exc.headers else None)
   print(provider.upper()+"_HTTP_"+str(exc.code),file=sys.stderr);return 1
  except (OSError,TimeoutError,ValueError,KeyError,IndexError) as exc:
   print(provider.upper()+"_REQUEST_FAILED_"+type(exc).__name__,file=sys.stderr);return 1
