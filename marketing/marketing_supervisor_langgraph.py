@@ -197,9 +197,50 @@ def replan(s:State):
     if fallback.casefold() in requested:return {"pending_queries":[]}
     return {"pending_queries":[fallback]}
 
+def _client_reference(business):
+    """Static, provenance-labeled client context. Never turns OTA quotes into verified claims."""
+    if business != "andaz_arambol":
+        return None
+    path=ROOT/"andaz_marketing_reference_20261022.json"
+    if not path.is_file() or path.stat().st_size > 20000:
+        raise RuntimeError("andaz_client_reference_missing_or_oversized")
+    data=json.loads(path.read_text(encoding="utf-8"))
+    if (data.get("schema")!="business_house_matrix.marketing.client_reference.v1"
+        or data.get("business")!=business
+        or data.get("ota_goibibo",{}).get("offer_status")!="non_normalized_dynamic_public_display_only"
+        or data["ota_goibibo"].get("live_checkout_verified") is not False
+        or data["research_constraints"].get("no_publish") is not True
+        or data["research_constraints"].get("no_spend") is not True):
+        raise RuntimeError("unsafe_andaz_reference")
+    return data
+
+def _reference_markdown(data):
+    if not data:return ""
+    p=data["property"];g=data["ota_goibibo"]
+    lines=["","## Andaz Lifestyle Stay owner reference — not competitor facts",
+      "Canonical name: "+p["public_name"],
+      "Location: "+p["location"]+"; phone: "+p["public_phone"],
+      "Owner policy: check-in "+p["check_in"]+"; checkout "+p["check_out"],
+      "Experience: "+p["primary_positioning"],
+      "Moksha is an independent wellness partner; no inclusive-treatment assumption.",
+      "Do not claim an operating café/kitchen without owner confirmation.",
+      "","## Goibibo public display reference — NOT confirmed live bookable rates",
+      "Source: "+g["link"],
+      "Snapshot reviewed: "+g["observed_page_reference_date"]+
+      "; dates/occupancy not fixed; taxes shown separately; subject to live recheck.",
+      "| OTA room category | Advertised INR | Taxes/fees INR | Struck INR |",
+      "|---|---:|---:|---:|"]
+    for row in g["prices_in_inr"]:
+        lines.append("| "+row["category"]+" | "+str(row["displayed_room_rate"])+
+            " | "+str(row["displayed_tax_fee"])+" | "+str(row["displayed_struck_price"])+" |")
+    lines.extend(["", "Owner listing policy overrides contradictory OTA check-in/out text.",
+      "These are not internal base tariffs, independently corroborated prices, or rate recommendations."])
+    return "\n".join(lines)+"\n"
+
 def compose(s:State):
     rep=basic.report_from_evidence(s["business"],s.get("research_groups",[]))
     rep["schema"]="bhm.marketing.supervised_research.v2"
+    rep["client_reference"]=_client_reference(s["business"])
     rep["supervisor"]={
         "framework":"LangGraph MIT","validator":"Pydantic MIT",
         "plan_origin":s.get("plan_origin"),"rounds":s.get("rounds"),
@@ -235,6 +276,11 @@ def qa(s:State):
     assert r["quality_gate"]["spend_allowed"] is False
     assert r["quality_gate"]["independent_claims_verified"]==0
     assert all(x["unverified"] is True for x in r["sources"])
+    if s["business"]=="andaz_arambol":
+        ref=r["client_reference"]
+        assert ref["ota_goibibo"]["live_checkout_verified"] is False
+        assert ref["ota_goibibo"]["owner_tariff_verified"] is False
+        assert r["quality_gate"]["contains_verified_prices"] is False
     return {"notes":s.get("notes",[])+["qa_contract_passed"]}
 
 def store(s:State):
@@ -249,7 +295,8 @@ def store(s:State):
             "\n## Supervisor and QA trace\n"+
             json.dumps(r["supervisor"],ensure_ascii=False,indent=2)+
             "\n\n## Brain-generated campaign ideas — unverified hypotheses\n"+
-            (r["model_ideation"]["text"] or "Hosted creative inference unavailable; no invented campaign facts.")+"\n")
+            (r["model_ideation"]["text"] or "Hosted creative inference unavailable; no invented campaign facts.")+"\n"+
+            _reference_markdown(r.get("client_reference")))
     ):
         path=dest/(b+"-supervisor-report"+suffix)
         temp=path.with_suffix(suffix+".tmp")
