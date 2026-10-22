@@ -1,0 +1,21 @@
+{
+  "manifest": {
+    "project": "gate_e_rc1_python",
+    "repository": "aarondash5-star/business-house-matrix",
+    "base_sha": "fbcea95fd22218aabc5a03be48811b23aa15cc66",
+    "files": [
+      "benchmarks/gate_e/money.py",
+      "benchmarks/gate_e/invoice.py",
+      "tests/test_gate_e_invoice_rc1.py"
+    ],
+    "test_profile": "python-unittest",
+    "write_enabled": true
+  },
+  "goal": "Implement both Python source files money.py and invoice.py exactly as in RC1_PUBLIC_AUTONOMY.md using only standard library. Return both complete files, ensure independent trusted tests pass, and never edit the tests.",
+  "context": [
+    "benchmarks/gate_e/RC1_PUBLIC_AUTONOMY.md"
+  ],
+  "tests": [
+    "tests/test_gate_e_invoice_rc1.py"
+  ]
+}
