@@ -244,6 +244,7 @@ def connect(dbpath):
     p=Path(dbpath)
     p.parent.mkdir(mode=0o700,parents=True,exist_ok=True)
     db=sqlite3.connect(str(p),timeout=10)
+    os.chmod(p,0o600)
     db.execute("PRAGMA busy_timeout=5000")
     db.executescript("""
       CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY, applied_utc TEXT NOT NULL);
