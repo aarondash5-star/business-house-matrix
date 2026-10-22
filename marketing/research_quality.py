@@ -61,9 +61,9 @@ def judge(item,category):
     desc=str(item.get("snippet","")).strip()[:650]
     if len(title)<6 or not (desc or len(title)>20):
         return None,"missing_text"
-    engine=str(item.get("engine","")).strip().lower()[:60]
-    if engine and engine not in VALID_ENGINE:
-        return None,"unknown_engine"
+    # SearXNG engines are configurable and often use longer names. Their
+    # metadata is an untrusted attribution label, not an allowlist or trust signal.
+    engine=re.sub(r"[^a-z0-9 _.-]","",str(item.get("engine","")).strip().lower())[:60]
     text=(title+" "+desc+" "+urlsplit(url).path.replace("-"," ")+" "+urlsplit(url).hostname.replace("-"," ")).lower()
     terms=words(text)
     service=terms & SERVICE
@@ -83,8 +83,13 @@ def judge(item,category):
         evidence="general_ux_reference_not_local_demand"
     else:
         evidence="unverified_public_research_lead"
+    if category=="website_ux_reference" and urlsplit(url).hostname in (
+         "www.dribbble.com","dribbble.com","behance.net","www.behance.net","pinterest.com","www.pinterest.com"):
+        evidence="design_inspiration_only_not_ux_research"
     if urlsplit(url).hostname in ("mokshagoa.com","www.mokshagoa.com") or "moksha wellness" in text:
         evidence="own_brand_or_third_party_listing_not_competitor"
+    elif category.startswith("local") and re.search(r"\bmoksha\b",text):
+        evidence="possible_moksha_third_party_listing_verify"
     return {"title":title,"url":url,"snippet":desc,"engine":engine,"category":category,
             "evidence_class":evidence,"verified_facts":False},None
 
