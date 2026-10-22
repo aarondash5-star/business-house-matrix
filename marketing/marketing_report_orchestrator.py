@@ -20,8 +20,8 @@ BUSINESSES={
  "andaz_arambol":{
    "name":"Andaz Vibe Stay - Arambol, Goa",
    "queries":[
-       "hostels in Arambol Goa dorm beds private rooms Happy Panda Dreamcatcher",
-       "Arambol Goa hostel accommodation competitors pool social traveller review",
+       "Dreamcatcher House Hostel Arambol Goa 2026 property features",
+       "Travo Tales Kumbaya 12 Monks Arambol Goa hostel 2026",
        "Andaz Vibe Stay Arambol booking reviews hostel"
    ],
    "owned_terms":("andaz","vibe stay"),
