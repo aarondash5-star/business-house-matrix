@@ -107,7 +107,7 @@ def independent_qa(data):
         checks.append({"type":"unittest","passed":result.returncode==0,
                        "result":result.stderr[-600:]})
     elif profile=="static-html":
-        if not any(c["type"]=="html_semantics" for c in checks):
+        if not any(c["type"]=="html_semantics_and_active_content" for c in checks):
             raise ValueError("html_source_missing")
     else:
         # Node runtime is not pre-certified in this capsule; never claim QA success.
