@@ -336,6 +336,9 @@ def save_evidence(db,item):
         db.execute("""INSERT OR IGNORE INTO claim(source_id,kind,value,currency,unit,observed_utc,status,quote)
           VALUES(?,?,?,?,?,?,?,?)""",(sid,"displayed_price",price,cur,"unspecified",
           item["observed_utc"],"needs_review",item["excerpt"][:180]))
+    if change != "unchanged":
+        db.execute("INSERT INTO review_queue(claim_id,reason,status) VALUES(NULL,?,?)",
+                   ("source_content_or_identity_review:"+str(sid),"pending"))
     db.commit()
     return {"stored":True,"source_id":sid,"change":change,
             "classification":role["role"],"verified":False,"requires_review":True}
