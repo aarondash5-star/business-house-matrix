@@ -110,6 +110,19 @@ class O(unittest.TestCase):
   with patch.object(m.sys,'argv',['matrix-route.py','run','--slot',self.s['id'],'private']),self.assertRaisesRegex(RuntimeError,'PUBLIC_INPUT'):
    m.main()
   c=m.conn();self.assertEqual(c.execute('SELECT count(*) FROM events').fetchone()[0],0);c.close()
+ def test_http200_error_envelope_is_sanitized(self):
+  out=io.StringIO()
+  with self.api({'error':{'code':503,'message':'synthetic-private-body'}}),contextlib.redirect_stderr(out):self.assertEqual(m.openrouter_text(self.s,'public',False,True),1)
+  self.assertEqual(out.getvalue(),'OPENROUTER_API_ERROR_503\n')
+ def test_http200_rate_limit_sets_account_cooldown(self):
+  with self.api({'error':{'code':429,'message':'synthetic-private-body'}}),contextlib.redirect_stderr(io.StringIO()):self.assertEqual(m.openrouter_text(self.s,'public',False,True),1)
+  c=m.conn();until=c.execute('SELECT until_epoch FROM cooldowns WHERE slot=?',(self.s['id'],)).fetchone()[0];c.close()
+  self.assertGreaterEqual(until,m.now()+895)
+ def test_missing_choices_is_safe_provider_failure(self):
+  for data in ({'choices':[]},{'unexpected':'synthetic-private-body'}):
+   out=io.StringIO()
+   with self.api(data),contextlib.redirect_stderr(out):self.assertEqual(m.openrouter_text(self.s,'public',False,True),1)
+   self.assertEqual(out.getvalue(),'OPENROUTER_INVALID_COMPLETION_ENVELOPE\n')
 if __name__=='__main__':unittest.main(verbosity=1)
 
 
