@@ -42,4 +42,16 @@ class T(unittest.TestCase):
   with self.api() as op,contextlib.redirect_stdout(io.StringIO()):m.groq_text(self.s,'public',False,True)
   handler=op.call_args.args[0]
   with self.assertRaisesRegex(RuntimeError,'REDIRECT'):handler.redirect_request(None,None,None,None,None,None)
+class N(T):
+ def test_development_gate(self):
+  self.s.update(id='nvidia-oss20',provider='nvidia',model='openai/gpt-oss-20b')
+  with self.assertRaisesRegex(RuntimeError,'DEVELOPMENT_TEST'):m.nvidia_text(self.s,'public',False,True)
+ def test_nvidia_payload(self):
+  self.s.update(id='nvidia-oss20',provider='nvidia',model='openai/gpt-oss-20b');m.read_policy.return_value={'nvidia_free_development_owner_confirmed':True}
+  with self.api() as op,contextlib.redirect_stdout(io.StringIO()):self.assertEqual(m.nvidia_text(self.s,'public',False,True,True),0)
+  req=op.return_value.open.call_args.args[0];body=json.loads(req.data);self.assertIn('max_tokens',body);self.assertNotIn('max_completion_tokens',body);self.assertEqual(req.full_url,'https://integrate.api.nvidia.com/v1/chat/completions');self.assertEqual(op.return_value.open.call_args.kwargs['timeout'],45)
+ def test_license_gate(self):
+  self.s.update(provider='nvidia',model='nvidia/nemotron-3-ultra-550b-a55b',license_review_required=True)
+  with self.assertRaisesRegex(RuntimeError,'LICENSE_GATE'):m.nvidia_text(self.s,'public',False,True,True)
 if __name__=='__main__':unittest.main(verbosity=1)
+
