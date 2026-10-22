@@ -26,3 +26,7 @@
 2. Inspect actual Vercel alias deployment READY and unchanged PIN routes after source merge (do **not** claim automatic deploy).
 3. For owner functional beta: authenticated PIN session → server scope check → allowed **read-only** Pine spec/draft status → receipt → logout/reload/negative paths; real model/adapter must be separately connected and tested. If absent, beta remains UX-only.
 4. Publish evidence and short new-chat takeover prompt in private Pine repo, retaining Phase 3 gate ledger and human review.
+
+## Final production-main reconciliation checkpoint
+
+On 2026-10-22, another authorized Matrix workstream advanced `main` to `d250a569b6b7cec5556b142a081143200ba41879` (Marketing persistent queue timer). Preserve it. The Pine integration source branch affects 36 independently compared files; its reviewed main-target CI run `39804185448` passed both repository-safety and starter-tests jobs before that last main update. This documentation-only source refresh requests **fresh PR CI against the new base**; GitHub merge is fail-closed on conflicted files, and a post-merge `main` CI check is mandatory. Do not force push or reset main. If base moves and CI cannot be reconciled, stop and report the exact SHA.
