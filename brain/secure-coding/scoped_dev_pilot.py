@@ -15,6 +15,9 @@ import uuid
 HERE=Path(__file__).resolve().parent
 WORKSPACE_KEY="pine_mcp_chat"
 WORK_IDS={
+ "pine_granite_chat_micro_v1":(
+  "Generate a concise accessible mobile Pine Engineer chat demo with an independent unittest, offline only."
+ ),
  "pine_ui_accessibility_node_retest_v1":(
   "Build a small standalone accessible mobile-first Pine Engineer CHAT DEMO "
   "with clear user and assistant messages, keyboard send and new-chat reset, "
@@ -85,7 +88,9 @@ def isolated(action,patch=None):
 
 def propose(prompt,seconds=130):
     cmd=[str(MODEL),"--no-tools","--no-mcp","--no-extensions",
-        "--no-skills","--no-context-files","--no-session","--offline","--print",prompt]
+        "--no-skills","--no-prompt-templates","--no-context-files",
+        "--no-session","--no-approve","--offline","--model","granite4:3b",
+        "--thinking","off","--system-prompt","Return only compact valid JSON with a files array.","--print",prompt]
     env={"HOME":str(Path.home()),"PATH":"/usr/local/bin:/usr/bin:/bin",
          "PI_TELEMETRY":"0","PI_SKIP_VERSION_CHECK":"1",
          "OLLAMA_HOST":"http://127.0.0.1:11434"}
@@ -154,6 +159,15 @@ def run(work_id):
              " The task is "+WORK_IDS[work_id]+". Existing files (avoid overwriting): "+
              json.dumps(inv.get("files",[]))[:1600]+". Previous QA failure: "+failure[:500]
             )
+            if work_id=="pine_granite_chat_micro_v1":
+                prompt=("Return one valid JSON object with exactly two files: "
+                        "frontend/pine-granite-chat.html with a small mobile responsive "
+                        "accessible offline synthetic Pine chat UI; "
+                        "tests/test_pine_granite_chat.py with Python unittest that opens "
+                        "that HTML and verifies a viewport tag, main region and chat text. "
+                        "No network, external libraries, secrets or accounts. "
+                        "Keep the full response under 3300 characters. "
+                        "Failure from prior independent QA: "+failure[:300])
             patch=propose(prompt)
             patchpath=state/("patch-%d.json"%(idx+1))
             patchpath.write_text(json.dumps(patch))
