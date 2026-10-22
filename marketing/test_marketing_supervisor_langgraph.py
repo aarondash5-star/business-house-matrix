@@ -56,7 +56,7 @@ class SupervisorTests(unittest.TestCase):
             self.assertFalse(saved["quality_gate"]["approved_for_customer_facing_use"])
             self.assertTrue(all(x["unverified"] for x in saved["sources"]))
     def test_directory_duplicates_not_competitor_entities(self):
-        many=[result("https://hostel"+str(i)+".example/happy-panda",
+        many=[result("https://www.hostelworld.com/hostels/p/"+str(330000+i)+"/happy-panda-hostel",
            "Happy Panda Hostel Arambol listing "+str(i)) for i in range(8)]
         s=sup.critic({"business":BUSINESS,"research_groups":[
            {"status":"observed","results":many},
