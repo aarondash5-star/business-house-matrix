@@ -50,6 +50,24 @@ class ResearchQualityTests(unittest.TestCase):
   self.assertEqual(len(result["results"]),1)
   self.assertEqual(result["rejected_count"],3)
   self.assertIn("mokshagoa.com",result["results"][0]["url"])
+ def test_nonstandard_engine_not_silently_discarded(self):
+  candidate={**GOOD[1],"engine":"searxng-brave-local_v3"}
+  row,reason=q.judge(candidate,"local_pricing")
+  self.assertIsNone(reason)
+  self.assertEqual(row["engine"],"searxng-brave-local_v3")
+ def test_inspiration_separated_from_ux_evidence(self):
+  candidate={"title":"Spa Booking App - Dribbble","url":"https://dribbble.com/shots/spa-booking",
+             "snippet":"Website booking mobile wellness spa interface inspiration","engine":"duckduckgo"}
+  row,reason=q.judge(candidate,"website_ux_reference")
+  self.assertIsNone(reason)
+  self.assertEqual(row["evidence_class"],"design_inspiration_only_not_ux_research")
+ def test_moksha_listing_not_presented_as_competitor(self):
+  candidate={"title":"Ayurvedic Fire & Ice Reset - Sauna & Ice Bath Goa",
+             "url":"https://www.getyourguide.com/arambol-l123/goa-moksha-fire-ice",
+             "snippet":"Moksha Goan sauna and ice bath tour","engine":"startpage"}
+  row,reason=q.judge(candidate,"local_pricing")
+  self.assertIsNone(reason)
+  self.assertEqual(row["evidence_class"],"possible_moksha_third_party_listing_verify")
  def test_own_brand_not_marked_competitor(self):
   res,_=q.judge(GOOD[0],"local_services")
   self.assertEqual(res["evidence_class"],"own_brand_or_third_party_listing_not_competitor")
