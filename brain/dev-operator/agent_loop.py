@@ -129,9 +129,13 @@ def run(task):
             prompt=("Build this original, offline public developer prototype: "+spec["goal"]
                     +"\nReturn only one COMPLETE HTML5 document, starting with <!doctype html> "
                     +"and ending with </html>. Do NOT use JSON, markdown or explanations. "
-                    +"Include <html lang='en'>, viewport meta and <main>. "
-                    +"Use self-contained responsive inline CSS, no JavaScript, external URLs, "
-                    +"CDNs, dependencies, credential values, accounts, browser storage or forms. "
+                    +"Output <html lang='en'><head> with a viewport meta tag, "
+                    +"<title> and optional <style>; close </head>, then "
+                    +"<body><main> with headings and paragraphs, close </main></body></html>. "
+                    +"Use only headings, paragraphs, sections, divs, lists and spans; "
+                    +"no interactive elements, labels, inputs, links, embedded assets, comments, "
+                    +"scripts, external URLs, imports, credentials or forms. "
+                    +"Any CSS must be self-contained and contain no URL resources. "
                     +"Keep the entire page under 900 characters.")
         else:
             prompt=("Implement this public prototype: "+spec["goal"]
