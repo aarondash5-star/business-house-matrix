@@ -97,7 +97,7 @@ def plan(s:State):
             if proposed:
                 candidate=proposed.queries[0]
                 if (candidate.casefold() not in [x.casefold() for x in fixed]
-                    and len(candidate.split()) >= 7
+                    and len(candidate.split()) >= 6
                     and any(term in candidate.casefold() for term in ("hostel", "dorm", "price", "booking", "official"))):
                     fixed=[fixed[0],candidate]
                     src="approved_oss_model_planner"
