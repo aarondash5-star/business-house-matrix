@@ -42,5 +42,10 @@ jobs:
           cache-dependency-path: pyproject.toml
       - name: Install Matrix test dependencies
         run: python -m pip install -e '.[test]'
+      - name: Install rootless Bubblewrap test dependency
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends bubblewrap
+          command -v bwrap
       - name: Run existing nine-department and approval tests
         run: python -m pytest -q
