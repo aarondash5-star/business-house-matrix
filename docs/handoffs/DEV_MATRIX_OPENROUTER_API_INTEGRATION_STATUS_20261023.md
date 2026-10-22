@@ -1,8 +1,8 @@
 # Dev Matrix OpenRouter integration — 23 October 2026 IST
 
 ## Current state
-ADAPTER_DEPLOYED / OFFLINE_QA_PASS / OWNER_KEY_ENTRY_PENDING / LIVE_INFERENCE_NOT_VERIFIED.
-Owner authorized adding OpenRouter. Existing Dell development router extended on isolated branch feat/dev-groq-api-20261023; no merge or v6 controller enrollment. Selected slot openrouter-code, model cohere/north-mini-code:free. Slot stays disabled until credential validation and live sandbox QA pass. No OpenRouter inference has been sent as of readback6949fad6-a92e-4bb5-ae23-ffde7266c01b.
+CONNECTED / OFFLINE_QA_PASS / AUTHENTICATED / LIVE_PUBLIC_CODING_QA_PASS.
+Owner authorized adding OpenRouter. Existing Dell development router extended on isolated branch feat/dev-groq-api-20261023; no merge or v6 controller enrollment. Selected slot openrouter-code, model cohere/north-mini-code:free. Enabled for bounded public development text after authenticated API completion and six sandbox assertions passed. Exactly one successful live OpenRouter inference verified; provider-reported cost0. Production controller certification/enrollment is unchanged. Earlier pending-entry observations below are historical; see final receipts.
 
 ## Live selection correction
 Original recommendation qwen/qwen3-coder:free relied on a still-visible model page. Live Dell catalog and endpoints were checked before asking for a key: catalog receipt5cc3f6e6-9a7a-4b2f-997e-0fc3626f8497 exit0 listed468 models and17 free variants, with no Qwen Coder free variant. Endpoint receiptcaeb71c0-e697-462c-b812-143a74d02a29 exit0 explicitly returned endpoints=[] for Qwen Coder free. It returned a Cohere endpoint for cohere/north-mini-code:free, zero prompt/completion pricing, context256000, and max_tokens support. This proves public advertised availability, not authentication or a successful inference.
@@ -41,3 +41,15 @@ Reuse existing owned Python/SQLite router, secure vault/relay, Bubblewrap, Git b
 - https://openrouter.ai/docs/api/api-reference/api-keys/get-current-api-key
 
 Pre-OpenRouter source/policy snapshot ~/.local/share/matrix-dev-router/backup-openrouter-20261023 retains the working Groq+paused-NVIDIA state. Reconcile newer changes before restoring those exact files with original modes. Keep all keys, receipts, staged files and quota ledgers. Do not restore older pre-Groq snapshots. Business House Matrix remains independent from Moksha Master; no shared registry federation or FULLY_SYNCED claim.
+
+## Successful enrollment and live verification — 21:35–21:37 UTC
+
+Owner reported the CLI disappeared before manually pressing Enter. Audit9024363e-2420-4b46-ad36-3af611fbc68a completed exit0: openrouter-code key exists, private permissions, non-symlink and nonempty; entry process Result=success/ExecMainStatus0, unloaded/inactive, window absent. No need to re-enter or reopen. The exact input event that completed submission was not inferred or replayed; no credential contents inspected or emitted.
+
+Authentication receiptfb87205d-5f12-4325-91d8-dba685f9e413 completed exit0 at21:36:06.201Z. Authenticated /api/v1/key returned sanitized free quota used0/limit50/remaining50 before inference. This is provider-reported account state at that time, not a permanent quota guarantee.
+
+Exactly one bounded public clamp coding fixture: receipt2ba1cfbb-7ca2-4a53-a352-a69a142a8b16 completed exit0, started21:36:33.86Z, finished21:36:40.526Z. Model cohere/north-mini-code:free authenticated completion succeeded. Usage37 prompt+204 completion=241 total tokens (including189 reported reasoning tokens); usage.cost0 and upstream inference cost0. Existing Bubblewrap evaluator with clear environment/no network executed six independent clamp assertions; qa_exit0, QA_PASS. No tools/private source/customer data sent. No paid fallback or privacy-setting relaxation used.
+
+Independent postflight514ee0c5-c734-47e0-b886-c16b6cff0550 completed exit0 at21:37:16.989Z: OpenRouter enabled, one local event outcome=ok, key private, live receipt QA_PASS/cost0. Every pre-existing connection still equals pre-OpenRouter snapshot; Groq OSS120/OSS20 enabled, NVIDIA disabled. Router final hash a71f670ab1ae1d49f6d2f61d46da2c02bc5fa0cc907aa8f03012b0fe6d308e45 and v6 controller hash b1ed132245b1bac5fb0cd66b16f1632e457bdeffaea9ac3b300b5cb7b1b9209e match, v6 service active. Key retained exclusively in existing Dell vault.
+
+No source change after final offline suite. No merge, paid subscription, credits purchase, privilege change, public publishing or production-controller activation. This verifies one small public coding fixture, not general repository-scale autonomy or guaranteed free-provider uptime. To pause only this integration use existing router set openrouter-code --enabled no; retain all ledgers and credentials.
