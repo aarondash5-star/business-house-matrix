@@ -83,32 +83,37 @@ def get_slot(policy,id):
  s=next((s for s in policy["connections"] if s["id"]==id),None)
  if not s:raise RuntimeError("unknown connection slot")
  return s
-def groq_text(s,prompt,tools=False,public_input=False):
+def _hosted_text(s,prompt,tools=False,public_input=False):
+ provider=s["provider"]
+ if provider not in {"groq","nvidia"}:raise RuntimeError("PROVIDER_DENIED")
+ if provider=="nvidia" and (s["model"]!="openai/gpt-oss-20b" or s.get("license_review_required")):raise RuntimeError("NVIDIA_MODEL_LICENSE_GATE")
  if not public_input or tools:raise RuntimeError("PUBLIC_TEXT_ONLY_NO_TOOLS_REQUIRED")
- if s["model"] not in ALLOWED["groq"]:raise RuntimeError("MODEL_DENIED")
- if not read_policy().get("groq_free_plan_owner_confirmed"):raise RuntimeError("FREE_PLAN_ATTESTATION_REQUIRED")
+ if s["model"] not in ALLOWED[provider]:raise RuntimeError("MODEL_DENIED")
+ if not read_policy().get("groq_free_plan_owner_confirmed" if provider=="groq" else "nvidia_free_development_owner_confirmed"):raise RuntimeError("FREE_PLAN_ATTESTATION_REQUIRED")
  if not prompt or len(prompt.encode())>2048:raise RuntimeError("PUBLIC_PROMPT_MAX_2048_BYTES")
  sp=secret_path(s.get("credential_ref",s["id"]))
  if sp.is_symlink() or not sp.is_file() or sp.stat().st_mode&0o077:raise RuntimeError("NO_SECURE_CREDENTIAL")
  budget=len(prompt.encode())+1536
- c=conn();c.execute("CREATE TABLE IF NOT EXISTS token_reservations(ts INTEGER,budget INTEGER)")
+ table="token_reservations" if provider=="groq" else "nvidia_token_reservations"
+ c=conn();c.execute(f"CREATE TABLE IF NOT EXISTS {table}(ts INTEGER,budget INTEGER)")
  c.execute("BEGIN IMMEDIATE")
  try:
   ts=now();day=ts-ts%86400
-  minute=c.execute("SELECT COALESCE(SUM(budget),0) FROM token_reservations WHERE ts>=?",(ts-60,)).fetchone()[0]
-  daily=c.execute("SELECT COALESCE(SUM(budget),0) FROM token_reservations WHERE ts>=?",(day,)).fetchone()[0]
-  if minute+budget>7600 or daily+budget>80000:raise RuntimeError("GROQ_SHARED_TOKEN_BUDGET")
-  c.execute("INSERT INTO token_reservations VALUES(?,?)",(ts,budget));c.commit()
+  minute=c.execute(f"SELECT COALESCE(SUM(budget),0) FROM {table} WHERE ts>=?",(ts-60,)).fetchone()[0]
+  daily=c.execute(f"SELECT COALESCE(SUM(budget),0) FROM {table} WHERE ts>=?",(day,)).fetchone()[0]
+  if minute+budget>7600 or daily+budget>(80000 if provider=="groq" else 20000):raise RuntimeError("GROQ_SHARED_TOKEN_BUDGET")
+  c.execute(f"INSERT INTO {table} VALUES(?,?)",(ts,budget));c.commit()
  except: c.rollback();raise
  finally:c.close()
  body={"model":s["model"],"messages":[{"role":"system","content":"Return only the requested public coding answer. No tools."},{"role":"user","content":prompt}],"max_completion_tokens":1024,"temperature":0.1,"stream":False,"reasoning_effort":"none" if s["model"].startswith("qwen/") else "low"}
+ if provider=="nvidia":body["max_tokens"]=body.pop("max_completion_tokens")
  class NoRedirect(urllib.request.HTTPRedirectHandler):
   def redirect_request(self,*a,**kw):raise RuntimeError("PROVIDER_REDIRECT_DENIED")
  def deadline(*a):raise TimeoutError("GROQ_DEADLINE")
- old=signal.signal(signal.SIGALRM,deadline);signal.alarm(30)
+ old=signal.signal(signal.SIGALRM,deadline);signal.alarm(30 if provider=="groq" else 60)
  try:
-  request=urllib.request.Request("https://api.groq.com/openai/v1/chat/completions",data=json.dumps(body).encode(),headers={"Authorization":"Bearer "+sp.read_text().strip(),"Content-Type":"application/json","User-Agent":"BusinessHouseMatrixDev/1.0 (+https://github.com/aarondash5-star/business-house-matrix)"})
-  with urllib.request.build_opener(NoRedirect()).open(request,timeout=15) as response:
+  request=urllib.request.Request("https://api.groq.com/openai/v1/chat/completions" if provider=="groq" else "https://integrate.api.nvidia.com/v1/chat/completions",data=json.dumps(body).encode(),headers={"Authorization":"Bearer "+sp.read_text().strip(),"Content-Type":"application/json","User-Agent":"BusinessHouseMatrixDev/1.0 (+https://github.com/aarondash5-star/business-house-matrix)"})
+  with urllib.request.build_opener(NoRedirect()).open(request,timeout=15 if provider=="groq" else 45) as response:
    raw=response.read(65537)
    if len(raw)>65536:raise RuntimeError("PROVIDER_RESPONSE_TOO_LARGE")
    d=json.loads(raw)
@@ -117,12 +122,18 @@ def groq_text(s,prompt,tools=False,public_input=False):
   if d["choices"][0].get("finish_reason")!="stop":raise RuntimeError("PROVIDER_OUTPUT_INCOMPLETE")
   print(json.dumps({"model":d.get("model"),"usage":d.get("usage"),"text":text,"tools_enabled":False}));return 0
  except urllib.error.HTTPError as exc:
-  print("GROQ_HTTP_"+str(exc.code),file=sys.stderr);return 1
+  print(provider.upper()+"_HTTP_"+str(exc.code),file=sys.stderr);return 1
  except (OSError,TimeoutError,ValueError,KeyError,IndexError) as exc:
-  print("GROQ_REQUEST_FAILED_"+type(exc).__name__,file=sys.stderr);return 1
+  print(provider.upper()+"_REQUEST_FAILED_"+type(exc).__name__,file=sys.stderr);return 1
  finally:signal.alarm(0);signal.signal(signal.SIGALRM,old)
 
-def launch(s,prompt,tools=False,public_input=False):
+def groq_text(s,prompt,tools=False,public_input=False):
+ return _hosted_text(s,prompt,tools,public_input)
+def nvidia_text(s,prompt,tools=False,public_input=False,development_test=False):
+ if not development_test:raise RuntimeError("NVIDIA_DEVELOPMENT_TEST_CONFIRMATION_REQUIRED")
+ return _hosted_text(s,prompt,tools,public_input)
+def launch(s,prompt,tools=False,public_input=False,development_test=False):
+ if s["provider"]=="nvidia":return nvidia_text(s,prompt,tools,public_input,development_test)
  if s["provider"]=="groq":return groq_text(s,prompt,tools,public_input)
  env=os.environ.copy()
  env["PI_CODING_AGENT_DIR"]=str(PIHOME)
@@ -182,7 +193,7 @@ def main():
  verify=sub.add_parser("verify-provider");verify.add_argument("slot")
  manage=sub.add_parser("set");manage.add_argument("slot");manage.add_argument("--enabled",choices=["yes","no"]);manage.add_argument("--profile",choices=["coding","reasoning","review","fast","private"]);manage.add_argument("--rank",type=int);manage.add_argument("--daily",type=int);manage.add_argument("--rpm",type=int);manage.add_argument("--account-id")
  choose=sub.add_parser("choose");choose.add_argument("--profile",default="coding")
- run=sub.add_parser("run");run.add_argument("--profile",default="coding");run.add_argument("--public-input",action="store_true");run.add_argument("--allow-tools",action="store_true");run.add_argument("--slot");run.add_argument("--no-fallback",action="store_true");run.add_argument("prompt")
+ run=sub.add_parser("run");run.add_argument("--profile",default="coding");run.add_argument("--public-input",action="store_true");run.add_argument("--development-test",action="store_true");run.add_argument("--allow-tools",action="store_true");run.add_argument("--slot");run.add_argument("--no-fallback",action="store_true");run.add_argument("prompt")
  sim=sub.add_parser("simulate-429");sim.add_argument("slot");sim.add_argument("--seconds",type=int,default=3600)
  enroll=sub.add_parser("enroll");enroll.add_argument("slot");enroll.add_argument("--free-plan-confirmed",action="store_true")
  args=parser.parse_args();p=read_policy()
@@ -243,6 +254,10 @@ def main():
   s=choice(p,args.profile,c)
   print("SELECT",s["id"],s["provider"]+"/"+s["model"]);return
  if args.command=="run":
+  if not args.development_test:
+   if args.slot and get_slot(p,args.slot)["provider"]=="nvidia":raise RuntimeError("NVIDIA_DEVELOPMENT_TEST_CONFIRMATION_REQUIRED")
+   for item in p["connections"]:
+    if item["provider"]=="nvidia":item["enabled"]=False
   if not args.public_input:
    if args.slot and get_slot(p,args.slot)["provider"]!="ollama":raise RuntimeError("PUBLIC_INPUT_CONFIRMATION_REQUIRED")
    for item in p["connections"]:
@@ -267,7 +282,7 @@ def main():
   while True:
    attempts+=1;attempted.add(s["id"])
    print("ROUTE",s["id"],"PROFILE",args.profile,"ATTEMPT",attempts,flush=True)
-   code=launch(s,args.prompt,args.allow_tools,args.public_input)
+   code=launch(s,args.prompt,args.allow_tools,args.public_input,args.development_test)
    c.execute("UPDATE events SET outcome=? WHERE id=?",("ok" if code==0 else "failed",eid))
    if code==0:return
    if args.allow_tools or args.no_fallback:
