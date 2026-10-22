@@ -34,7 +34,7 @@ def inference(prompt, single_html_path=None):
     args=[str(MODEL),"--no-tools","--no-mcp","--no-extensions","--no-skills",
         "--no-prompt-templates","--no-context-files","--no-session",
         "--no-approve","--offline","--model","qwen3:4b-instruct","--thinking","off",
-        "--system-prompt","Output only exact JSON. No markdown.","--print",prompt]
+        "--system-prompt",("Return one complete HTML5 document. No JSON or markdown." if single_html_path else "Output only exact JSON. No markdown."),"--print",prompt]
     p=subprocess.run(args,input="",capture_output=True,text=True,timeout=110,
         env={"PATH":"/usr/local/bin:/usr/bin:/bin","HOME":str(Path.home()),
              "PI_TELEMETRY":"0","PI_SKIP_VERSION_CHECK":"1",
