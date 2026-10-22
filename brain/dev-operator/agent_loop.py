@@ -33,7 +33,7 @@ def git(argv,cwd):
 def inference(prompt, single_html_path=None):
     args=[str(MODEL),"--no-tools","--no-mcp","--no-extensions","--no-skills",
         "--no-prompt-templates","--no-context-files","--no-session",
-        "--no-approve","--offline","--model","qwen3:4b-instruct","--thinking","off",
+        "--no-approve","--offline","--model","granite4:3b","--thinking","off",
         "--system-prompt",("Return one complete HTML5 document. No JSON or markdown." if single_html_path else "Output only exact JSON. No markdown."),"--print",prompt]
     p=subprocess.run(args,input="",capture_output=True,text=True,timeout=110,
         env={"PATH":"/usr/local/bin:/usr/bin:/bin","HOME":str(Path.home()),
@@ -54,6 +54,15 @@ def parse_single_html(text,allowed_path):
     """Single-file HTML output: no fragile JSON escaping or model-selected path."""
     if not allowed_path.endswith(".html"):
         raise ValueError("single_file_html_scope")
+    # Accept a structured legacy wrapper but never trust a model-chosen path.
+    try:
+        obj=json.loads(text)
+        if isinstance(obj,dict) and isinstance(obj.get("html"),str):
+            text=obj["html"]
+        elif isinstance(obj,dict) and isinstance(obj.get("files"),list) and len(obj["files"])==1:
+            text=obj["files"][0].get("content","")
+    except (ValueError,TypeError):
+        pass
     m=re.search(r"(?is)<!doctype\s+html.*?</html\s*>",text)
     if not m:
         raise ValueError("complete_html_document_missing")
@@ -121,7 +130,7 @@ def run(task):
                     +"Include <html lang='en'>, viewport meta and <main>. "
                     +"Use self-contained responsive inline CSS, no JavaScript, external URLs, "
                     +"CDNs, dependencies, credential values, accounts, browser storage or forms. "
-                    +"Keep the page under 2500 characters.")
+                    +"Keep the entire page under 900 characters.")
         else:
             prompt=("Implement this public prototype: "+spec["goal"]
                     +"\nReturn ONLY compact JSON with exactly summary and files; "
