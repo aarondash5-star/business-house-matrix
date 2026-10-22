@@ -43,7 +43,7 @@ def isolated(workspace,action,request=None):
          "--dir","/empty","--chdir","/workspace",
          "/usr/bin/python3","/worker.py",action]
     p=subprocess.run(cmd,input=blob,capture_output=True,text=True,
-                     stdin=subprocess.PIPE,timeout=40,
+                     timeout=40,
                      env={"HOME":"/empty","PATH":"/usr/bin:/bin","LANG":"C.UTF-8"},
                      preexec_fn=limits)
     if p.returncode:
