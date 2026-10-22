@@ -1,0 +1,12 @@
+[Unit]
+Description=Business House Matrix Marketing Brain persistent queue polling
+
+[Timer]
+OnActiveSec=15s
+OnUnitInactiveSec=40s
+AccuracySec=3s
+RandomizedDelaySec=0
+Unit=bhm-marketing-queue-worker.service
+
+[Install]
+WantedBy=timers.target
