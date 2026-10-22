@@ -87,7 +87,7 @@ def collect(topic, geo="IN", site=None, include_web=True):
         trend = {"status":"unavailable","source":"official_google_trends",
                  "national_news_spikes":[],"relative_index_groups":[],
                  "reason":type(exc).__name__}
-    gsc = research_quality.gsc_gate(gsc_metrics.relevant(topic,site=site,limit=25),topic)
+    gsc = research_quality.gsc_gate(gsc_metrics.relevant(topic,site=site,limit=10),topic)
     status = gsc_metrics.status(site=site)
     return {
         "version":"1.1.0",
