@@ -97,6 +97,15 @@ test('origin must be approved before creating page', async () => {
   await denied(guard.open(lease(), 'https://elsewhere.org/'), 'DESTINATION_NOT_ALLOWED');
   assert.equal(context.pages.length, 0);
 });
+test('offline UI test may open only its exact pinned local fixture', async () => {
+  const context = new Context(), guard = createVisibleWindowGuard(context);
+  const spec = lease({ allowedOrigins: [], offlineFixtureUrl: 'file:///tmp/aw1-offline-fixture.html' });
+  const page = await guard.open(spec, spec.offlineFixtureUrl);
+  await assert.doesNotReject(guard.inspect(page, spec));
+  await denied(guard.navigate(page, spec, 'file:///etc/passwd'), 'DESTINATION_NOT_ALLOWED');
+  await denied(guard.navigate(page, spec, 'file:///tmp/other-fixture.html'), 'DESTINATION_NOT_ALLOWED');
+  assert.equal(page.url, spec.offlineFixtureUrl);
+});
 test('one-writer blocks parallel actions on same page', async () => {
   const { guard, page, spec } = await fixture(lease({ mode: 'EDIT-QA' }));
   let release;
