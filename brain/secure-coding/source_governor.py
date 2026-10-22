@@ -22,6 +22,13 @@ ARTIFACTS = frozenset({
     "frontend/pine-chat-a11y.html",
     "tests/test_pine_chat_a11y.py",
 })
+ENROLLED_ARTIFACTS = {
+    WORK_ID: ARTIFACTS,
+    "dev_matrix_synthetic_release_v1": frozenset({
+        "frontend/dev-autonomy-validated-v1.html",
+        "tests/test_dev_autonomy_validated_v1.py",
+    }),
+}
 MAX_TOTAL_BYTES = 24000
 MAX_FILE_BYTES = 18000
 FORBIDDEN = (
@@ -44,11 +51,11 @@ def _sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def _path(value):
+def _path(value, enrolled=ARTIFACTS):
     if not isinstance(value, str) or "\x00" in value or "\\" in value:
         raise PolicyDenied("invalid_path")
     p = PurePosixPath(value)
-    if p.is_absolute() or ".." in p.parts or "." in p.parts or value not in ARTIFACTS:
+    if p.is_absolute() or ".." in p.parts or "." in p.parts or value not in enrolled:
         raise PolicyDenied("path_not_enrolled")
     return value
 
@@ -92,16 +99,17 @@ def inspect(envelope, baseline=None):
     """
     if not isinstance(envelope, dict) or set(envelope) != {"project", "manifest", "work_id", "repository", "base_branch", "files"}:
         raise PolicyDenied("envelope_schema_denied")
-    expected = (PROJECT, MANIFEST, WORK_ID, REPOSITORY, BASE_BRANCH)
-    got = tuple(envelope[k] for k in ("project", "manifest", "work_id", "repository", "base_branch"))
-    if got != expected:
+    expected = (PROJECT, MANIFEST, REPOSITORY, BASE_BRANCH)
+    got = tuple(envelope[k] for k in ("project", "manifest", "repository", "base_branch"))
+    allowed = ENROLLED_ARTIFACTS.get(envelope["work_id"])
+    if got != expected or allowed is None:
         raise PolicyDenied("scope_mismatch")
     files = envelope["files"]
     if not isinstance(files, list) or len(files) != 2:
         raise PolicyDenied("exact_file_count_required")
     if baseline is None:
         baseline = {}
-    if not isinstance(baseline, dict) or set(baseline) - ARTIFACTS:
+    if not isinstance(baseline, dict) or set(baseline) - allowed:
         raise PolicyDenied("baseline_scope_denied")
     if not all(isinstance(v, str) and re.fullmatch(r"[0-9a-f]{64}", v) for v in baseline.values()):
         raise PolicyDenied("baseline_hash_denied")
@@ -111,7 +119,7 @@ def inspect(envelope, baseline=None):
     for entry in files:
         if not isinstance(entry, dict) or set(entry) != {"path", "content"}:
             raise PolicyDenied("proposal_file_schema_denied")
-        name = _path(entry["path"])
+        name = _path(entry["path"],allowed)
         if name in names:
             raise PolicyDenied("duplicate_target")
         names.add(name)
@@ -119,7 +127,7 @@ def inspect(envelope, baseline=None):
         total += len(content)
         prepared.append({"path": name, "content": entry["content"],
                          "expected_sha256": baseline.get(name)})
-    if names != ARTIFACTS or total > MAX_TOTAL_BYTES:
+    if names != allowed or total > MAX_TOTAL_BYTES:
         raise PolicyDenied("manifest_artifacts_mismatch")
     payload = {"files": sorted(prepared, key=lambda item: item["path"])}
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
