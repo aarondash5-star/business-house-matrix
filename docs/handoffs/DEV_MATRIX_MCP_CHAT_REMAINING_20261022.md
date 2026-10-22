@@ -61,3 +61,12 @@
 The source-governed, review-only A1 validator and 12 unit tests were added. Dell and independently Mac passed 12/12 each. The original B1 synthetic mobile UI was enhanced with ephemeral in-tab threads and search, accessible nav and a denied tool-intent inspector; Dell Chrome/Playwright passed 63/63 checks across 7 widths. Screenshots saved on Dell in isolated local staging. Complete receipts, commit references, controller source drift, rollback and limitations: [ISSUE2_A1_B1_GOVERNED_QA_20261022.md](../receipts/ISSUE2_A1_B1_GOVERNED_QA_20261022.md).
 
 **Status remains review-only.** Live controller contains extra unversioned additive actions relative to public reference; independently review exact source before promoting A1. Existing live fixed-source preview unchanged; autonomous code, real MCP transport, private Pine integration, authentication and production deploy NOT CERTIFIED. Issue #2 OPEN. No root, spend, publish, or credentials changed.
+
+
+## 22 Oct 2026 — Dev Matrix first: scoped autonomy is LIVE and certified
+
+A1 **restricted, manifest-enrolled autonomy MVP is deployed and verified** on Dell (not unrestricted Dev autonomy). End-to-end live Matrix task **`2ce7c08b-e1f2-450e-a61b-5f234416daaa`** auto-delegated, generated validated synthetic source offline, passed **6/6** isolated QA checks, and created local review commit **`706f02d3077a3f551c6c3cf0eccc7627ed80a015`**. Live controller postflight active, rollback preserved. The earlier independent staged v3 pipeline passed **4/4** tests and produced local commit `6764836943bde1bd89636e34e0f44791ce8da850`. Dell and Mac each passed **20/20** source-governance and bounded-agent tests; existing Bubblewrap suite passed **5/5**; postflight cross-tenant and unknown manifest denials plus idempotency verified.
+
+**Canonical certification, release source SHAs, security boundaries, license evidence, rollback, pending A2–A8 generalization:** [DEV_MATRIX_SCOPED_AUTONOMY_CERTIFICATION_20261022.md](../receipts/DEV_MATRIX_SCOPED_AUTONOMY_CERTIFICATION_20261022.md).
+
+A1 is certified **only for the enrolled synthetic manifest**; generalized self-directed coding, repository-scoped GitHub PR identity, cancellation and broad toolchains remain unapproved/pending. Keep `dev_proposal` proposal-only. No private Pine source/TradingView, production website, publishing, spending, root or SSH permission changes. **Keep Issue #2 OPEN.** Continue expanding general Dev Matrix autonomy before resuming B2–B8 Pine chat work.
