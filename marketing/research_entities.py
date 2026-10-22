@@ -9,6 +9,7 @@ DIRECTORIES=frozenset(("tripadvisor.com","getyourguide.com","bookmyshow.com","so
                        "airbnb.com","viator.com","booking.com","agoda.com","google.com"))
 OWN_DOMAINS=frozenset(("mokshagoa.com","www.mokshagoa.com"))
 UX_REFERENCE_DOMAINS=frozenset(("w3.org","developer.mozilla.org","web.dev","nngroup.com"))
+SOCIAL_DOMAINS=frozenset(("facebook.com","instagram.com","youtube.com","x.com","t.me","vk.com"))
 STALE_DAYS={"displayed_price":7,"opening_hours":14,"service":30,"booking_path":14,"ux_reference":90}
 
 def domain(url):
@@ -32,6 +33,12 @@ def classify(source_url,title,description="",owner_name="Moksha Wellness"):
         return {"role":"public_ux_guidance","competitor":False}
     if host in OWN_DOMAINS:
         return {"role":"first_party_own_brand","competitor":False}
+    # Social posts and profiles do not establish an independent competing business.
+    # Many reference the owner's brand without spelling the complete legal name.
+    if any(same_or_subdomain(host,x) for x in SOCIAL_DOMAINS):
+        owner_hint=any(x in label.split() for x in ("moksha","andaz"))
+        return {"role":"third_party_own_brand_listing" if owner_hint else "third_party_social_listing",
+                "competitor":False}
     if is_own:
         return {"role":"third_party_own_brand_listing","competitor":False}
     if any(same_or_subdomain(host,x) for x in DIRECTORIES):
