@@ -55,3 +55,11 @@
 | Production/root/permissions/publishing/spend changes | NONE |
 
 **Outcome:** Migration design and Mac-local adapter are prepared. Production migration and Stage B cannot be truthfully certified under the current explicit Mac security denial. Preserve the working Dell environment and original signed search integrations.
+
+## Migration completed — 23 October 2026
+**Supersedes the earlier source-only status above.** Following new explicit user authorization, the ordinary Mac fixed probe and development-lane jobs became accepted and completed. Mac now holds a pinned local copy of the evidence engine and a verified SHA256-identical SQLite snapshot and is **LIVE as the evidence/report primary for Marketing Brain `research_market`**. The original Dell signed public search remains a subordinate discovery worker and rollback. No standalone Mac-local SearXNG replacement or separate Mac research API daemon was installed, and those were not necessary for this bounded evidence-primary switch.
+- [Live production cutover and all terminal receipts](../receipts/MARKETING_RESEARCH_MAC_PRIMARY_CUTOVER_2026-10-23.md).
+- Mac stage and install: branch `feat/marketing-research-engine-20261022` pinned at `0f61caf249823c1a7a63712c0f4597b0bbbd6238`; **80/80 tests passed**, runtime packet smoke and signed Dell discovery passed.
+- Mac private DB `~/.local/share/bhm-research/evidence.sqlite3`: verified 90,112 bytes and matching SHA256, 5 sources/0 claims/12 review-queue entries. Dell DB and four original services preserved, no platform safety denial on these latest approved Mac tool operations.
+- Mac live bridge file replaced atomically with original saved as `research_market_bridge.py.pre-mac-primary-20261023`. Mac Brain queue timer active, host low load, 6.1Gi available RAM.
+- **Explicit limit:** Stage B hotel exact-page extraction and source-policy / trusted reviewer / new typed attestation release remain unapproved and inactive. No production website publishing, expenditure, root, permissions, credentials or Supabase changes.
