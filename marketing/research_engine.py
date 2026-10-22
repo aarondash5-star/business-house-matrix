@@ -146,6 +146,9 @@ def check_robots(url,grants):
         return False  # fail closed on robots outage / denial
     rules=RobotFileParser()
     rules.parse(resp["body"].decode("utf-8","replace").splitlines())
+    delay=rules.crawl_delay(UA)
+    if delay and delay>INTERVAL_SECONDS:
+        return False  # do not violate slower site-defined crawl rates
     return rules.can_fetch(UA,url)
 
 class Meta(HTMLParser):
@@ -275,6 +278,23 @@ def last_crawl(db,host):
     try:return dt.datetime.fromisoformat(row[0])
     except ValueError:return None
 
+def reserve_slot(db,url):
+    """Atomic per-host cooldown reservation across concurrent CLI processes."""
+    db.execute("BEGIN IMMEDIATE")
+    try:
+        host=urlsplit(url).hostname
+        previous=last_crawl(db,host)
+        if previous and (dt.datetime.now(UTC)-previous).total_seconds()<INTERVAL_SECONDS:
+            db.rollback()
+            return False
+        db.execute("INSERT INTO crawl_attempt(url,host,observed_utc,outcome) VALUES(?,?,?,?)",
+                   (url,host,now(),"started"))
+        db.commit()
+        return True
+    except BaseException:
+        db.rollback()
+        raise
+
 def record_attempt(db,url,outcome):
     db.execute("INSERT INTO crawl_attempt(url,host,observed_utc,outcome) VALUES(?,?,?,?)",
                (url,urlsplit(url).hostname,now(),outcome))
@@ -282,12 +302,9 @@ def record_attempt(db,url,outcome):
 
 def fetch_extract(url,grants,db):
     safe=validate_url(url,grants)
-    host=urlsplit(safe).hostname
-    previous=last_crawl(db,host)
-    if previous and (dt.datetime.now(UTC)-previous).total_seconds()<INTERVAL_SECONDS:
+    # Atomic host slot before any DNS, robots or public network calls.
+    if not reserve_slot(db,safe):
         return {"status":"unavailable","reason":"domain_rate_limit","source_url":safe}
-    # Book a domain slot before network; robots is fetched without infinite recursion.
-    record_attempt(db,safe,"started")
     try:
         if not check_robots(safe,grants):
             record_attempt(db,safe,"robots_denied")
