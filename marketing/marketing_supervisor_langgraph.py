@@ -47,6 +47,8 @@ class Score(BaseModel):
     non_owner_leads: int = Field(ge=0,le=30)
     distinct_domains: int = Field(ge=0,le=30)
     live_queries: int = Field(ge=0,le=3)
+    distinct_competitors: int = Field(ge=0,le=20)
+    competitor_names: list[str]
     passed: bool
     finding: str
 
@@ -142,18 +144,40 @@ def research(s:State):
     return {"research_groups":groups,"requested":requested,
             "pending_queries":[],"rounds":int(s.get("rounds",0))+1}
 
+COMPETITOR_ALIASES={
+ "andaz_arambol":{
+  "Happy Panda Hostel":("happy panda",),
+  "Dreamcatcher House & Hostel":("dreamcatcher house","dreamcatcher hostel arambol"),
+  "Travo Tales Goa":("travo tales",),
+  "12 Monks Backpacker Resort":("12 monks backpacker",),
+  "12 Monks Beachfront Hostel":("12 monks beachfront",),
+  "Kumbaya Beachside Hostel":("kumbaya",),
+  "The Hosteller Goa Mandrem":("hosteller goa mandrem",),
+ }
+}
+def _named_competitors(business,sources):
+    found=set()
+    for item in sources:
+        if item.get("source_type")=="own_property_listing":continue
+        title=item.get("title","").lower()
+        for label,aliases in COMPETITOR_ALIASES.get(business,{}).items():
+            if any(alias in title for alias in aliases):found.add(label)
+    return sorted(found)
+
 def critic(s:State):
     c=_business(s["business"])
     sources=basic.source_roles(s.get("research_groups",[]),c["owned_terms"])
     leads=[x for x in sources if x["source_type"]!="own_property_listing"]
     domains={urlsplit(x["url"]).hostname for x in sources}
     live=sum(x.get("status")=="observed" for x in s.get("research_groups",[]))
-    passed=(len(sources)>=7 and len(leads)>=3 and len(domains)>=2 and live>=2)
+    competitors=_named_competitors(s["business"],sources)
+    passed=(len(sources)>=7 and len(leads)>=3 and len(domains)>=2 and live>=2 and len(competitors)>=3)
     # This measures sufficiency of LEADS, not factual correctness of prices/claims.
     finding=("source_diversity_review_ready" if passed else
              "low_source_diversity_or_missing_evidence")
     grade=Score(unique_sources=len(sources),non_owner_leads=len(leads),
                 distinct_domains=len(domains),live_queries=live,
+                distinct_competitors=len(competitors),competitor_names=competitors,
                 passed=passed,finding=finding)
     return {"score":grade.model_dump()}
 
@@ -165,7 +189,7 @@ def decision(s:State):
 
 def replan(s:State):
     b=s["business"]
-    fallback=("Hostelworld Arambol Goa Happy Panda Dreamcatcher Hostel 2026 official pages"
+    fallback=("Travo Tales Goa Arambol hostel official property 2026"
         if b=="andaz_arambol" else
         "Arambol Morjim Goa sauna ice bath spa independent provider current services")
     # Automatic evidence-gap response; bounded, deterministic, no model decides tools.
@@ -194,6 +218,8 @@ def compose(s:State):
                            "available":bool(model_text)}
     rep["quality_gate"]["source_lead_sufficiency_pass"]=bool(s["score"]["passed"])
     rep["quality_gate"]["independent_claims_verified"]=0
+    rep["quality_gate"]["distinct_competitor_names_observed"]=s["score"].get("distinct_competitors",0)
+    rep["competitor_landscape"]["observed_competitor_names_not_fact_verified"]=s["score"].get("competitor_names",[])
     rep["quality_gate"]["approved_for_customer_facing_use"]=False
     rep["quality_gate"]["publish_allowed"]=False
     rep["quality_gate"]["spend_allowed"]=False
