@@ -1,0 +1,13 @@
+{
+  "manifest": {
+    "project": "matrix_dev",
+    "repository": "aarondash5-star/business-house-matrix",
+    "base_sha": "f4ad954ef19f9791a042d9f95d737c528c655334",
+    "files": [
+      "frontend/dev-release-dashboard-v4.html"
+    ],
+    "test_profile": "static-html",
+    "write_enabled": true
+  },
+  "goal": "Create a compact mobile-first release status page for the independent Business House Matrix Dev department. Show Planning, Coding, QA and Review as simple cards with synthetic sample status text."
+}
