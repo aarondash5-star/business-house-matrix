@@ -1,0 +1,21 @@
+{
+  "manifest": {
+    "project": "gate_e_python2",
+    "repository": "aarondash5-star/business-house-matrix",
+    "base_sha": "fbcea95fd22218aabc5a03be48811b23aa15cc66",
+    "files": [
+      "benchmarks/gate_e/money.py",
+      "benchmarks/gate_e/invoice.py",
+      "tests/test_gate_e_invoice_rc1.py"
+    ],
+    "test_profile": "python-unittest",
+    "write_enabled": true
+  },
+  "goal": "Owner-reviewed NEW multi-file Python task following bounded Qwen failure gate-e-rc1-python. Use proven bounded structured Granite proposer. Implement both public money.py parse_cents() and invoice.py invoice_total() as specified in immutable RC1_PUBLIC_AUTONOMY.md, strictly only these two source files; pass trusted tests. No push or remote writes.",
+  "context": [
+    "benchmarks/gate_e/RC1_PUBLIC_AUTONOMY.md"
+  ],
+  "tests": [
+    "tests/test_gate_e_invoice_rc1.py"
+  ]
+}
