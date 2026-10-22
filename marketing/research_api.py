@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Business House Matrix research API v1.3: owner-local, read-only public evidence.
 
-Launch: python research_api.py serve --port 18889
+Launch: python research_api.py serve --port 18890
         python research_api.py smoke
 Never expose on WAN/LAN. No arbitrary URLs, shell, website publishing or spend.
 """
@@ -20,6 +20,7 @@ from urllib.parse import urlsplit
 
 import research_engine as engine
 import research_entities as entities
+import research_ddg as ddg
 
 ROOT=Path(__file__).resolve().parent
 DATA=ROOT/"private-evidence.sqlite3"
@@ -84,8 +85,9 @@ def build_packet(topic="moksha_arambol"):
                 "publish_approval":False,"spend_approval":False,"paid_fallback":False}
     finally:db.close()
 
-def run(topic="moksha_arambol",refresh=False):
-    if topic not in TOPICS or type(refresh) is not bool:raise ValueError("invalid_run_request")
+def run(topic="moksha_arambol",refresh=False,source_engine="searxng"):
+    if topic not in TOPICS or type(refresh) is not bool or source_engine not in ("searxng","duckduckgo"):
+        raise ValueError("invalid_run_request")
     if not LOCK.acquire(blocking=False):return {"status":"busy","retry_later":True}
     try:
         scans=[]
@@ -103,6 +105,17 @@ def run(topic="moksha_arambol",refresh=False):
             finally:db.close()
         searches=[]
         for q in TOPICS[topic]:
+            if source_engine=="duckduckgo":
+                result=ddg.search(q)
+                sources=[{"url":x["url"],"title":x["title"],
+                          "role":entities.classify(x["url"],x["title"])["role"],
+                          "verified":False} for x in result["results"]]
+                searches.append({"query":q,"status":result["status"],
+                                 "engine":"duckduckgo","source_blocked":result.get("blocked_by_source",False),
+                                 "sources":sources,"fallback_used":False})
+                if result["status"]=="blocked_captcha":
+                    break
+                continue
             if not SEARCH.is_file():break
             try:
                 p=subprocess.run([sys.executable,str(SEARCH),q,"--limit","5"],capture_output=True,
@@ -121,6 +134,9 @@ def run(topic="moksha_arambol",refresh=False):
                 searches.append({"query":q,"status":"unavailable","reason":type(exc).__name__})
         packet=build_packet(topic)
         packet["discovery_queries"]=searches
+        packet["requested_engine"]=source_engine
+        packet["duckduckgo_available"]=any(x.get("status")=="observed" for x in searches) if source_engine=="duckduckgo" else None
+        packet["no_captcha_bypass"]=True
         packet["crawl_results"]=scans
         packet["quality_gate"]={"historical_or_unrelated_source_promoted":False,
             "all_critical_facts_verified":False,"release_status":"research_only",
@@ -160,9 +176,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self._reply(413,{"error":"bounded_body_required"});return
         try:
             value=json.loads(self.rfile.read(int(rawsize)))
-            if not isinstance(value,dict) or set(value)-{"topic","refresh"}:
+            if not isinstance(value,dict) or set(value)-{"topic","refresh","source_engine"}:
                 raise ValueError("request_schema")
-            response=run(value.get("topic","moksha_arambol"),value.get("refresh",False))
+            response=run(value.get("topic","moksha_arambol"),value.get("refresh",False),
+                         value.get("source_engine","searxng"))
             self._reply(200,response)
         except (ValueError,TypeError,KeyError) as exc:
             self._reply(400,{"error":str(exc)[:80]})
@@ -172,7 +189,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
 def main():
     p=argparse.ArgumentParser()
     sub=p.add_subparsers(dest="action",required=True)
-    s=sub.add_parser("serve");s.add_argument("--port",type=int,default=18889)
+    s=sub.add_parser("serve");s.add_argument("--port",type=int,default=18890)
     sub.add_parser("smoke");sub.add_parser("packet")
     a=p.parse_args()
     if a.action=="smoke":
