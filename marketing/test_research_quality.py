@@ -112,6 +112,20 @@ class ResearchQualityTests(unittest.TestCase):
    out=u.collect("Goa sauna ice wellness")
    self.assertEqual(out["web_research"]["status"],"unavailable")
    self.assertFalse(out["web_research"]["results"])
+ def test_actual_gsc_limit_contract(self):
+  tr={"no_verified_relevance":True,"rss_signal":[],"historical_comparison_groups":[],
+      "rss_scope":"test","index_scope":"test","do_not_infer":[]}
+  status={"oauth_configured":False,"stored_query_rows":3,"last_imported_utc":"2026-10-21"}
+  def bounded(*args,**kw):
+   if kw.get("limit",0)>10:raise ValueError("Bounded GSC result limit required")
+   return gsc_rows()
+  with patch.object(u.trends,"brief_context",return_value=tr),\
+       patch.object(u.gsc_metrics,"relevant",side_effect=bounded),\
+       patch.object(u.gsc_metrics,"status",return_value=status):
+   result=u.collect("Goa sauna mud wellness",include_web=False)
+   self.assertEqual(result["version"],"1.1.0")
+   self.assertEqual(result["web_research"]["status"],"skipped")
+   self.assertEqual(result["verified_property_performance"]["status"],"observed")
  def test_privacy_validation_before_network(self):
   with patch.object(u.searxng_research,"search") as search:
    with self.assertRaises(ValueError):u.collect("Send jane@example.com sauna research")
