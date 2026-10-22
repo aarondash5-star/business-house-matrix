@@ -1,0 +1,20 @@
+{
+  "manifest": {
+    "project": "gate_e_rc1_node_json_retry_reviewed",
+    "repository": "aarondash5-star/business-house-matrix",
+    "base_sha": "fbcea95fd22218aabc5a03be48811b23aa15cc66",
+    "files": [
+      "benchmarks/gate_e/normalize_tag.js",
+      "tests/gate_e_normalize_tag.test.js"
+    ],
+    "test_profile": "node-test",
+    "write_enabled": true
+  },
+  "goal": "Owner-reviewed NEW task after original gate-e-rc1-node ended needs_review from excessive model output. Use bounded local JSON Ollama proposer. Implement only the public Node CommonJS normalizeTag() source precisely as trusted RC1_PUBLIC_AUTONOMY.md specifies. Pass independent tests. No remote writes.",
+  "context": [
+    "benchmarks/gate_e/RC1_PUBLIC_AUTONOMY.md"
+  ],
+  "tests": [
+    "tests/gate_e_normalize_tag.test.js"
+  ]
+}
