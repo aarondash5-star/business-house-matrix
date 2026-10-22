@@ -63,7 +63,7 @@ def resolve_global(host):
         infos = socket.getaddrinfo(host, 443, type=socket.SOCK_STREAM)
     except OSError:
         raise ValueError("dns_unavailable") from None
-    addresses = sorted({i[4][0] for i in infos})
+    addresses = sorted({i[4][0] for i in infos}, key=lambda a: (ipaddress.ip_address(a).version != 4, a))
     if not addresses or len(addresses) > 16:
         raise ValueError("dns_unavailable")
     if any(not ipaddress.ip_address(addr).is_global for addr in addresses):
@@ -72,23 +72,30 @@ def resolve_global(host):
 
 class PinnedHTTPS(http.client.HTTPSConnection):
     """TLS SNI/cert match hostname, but TCP connection uses vetted resolved IP."""
-    def __init__(self, host, ip):
+    def __init__(self, host, ips):
         super().__init__(host, port=443, timeout=TIMEOUT, context=ssl.create_default_context())
-        self.ip = ip
+        self.ips = ips[:4]
     def connect(self):
-        raw = socket.create_connection((self.ip, 443), timeout=TIMEOUT)
-        try:
-            self.sock = self._context.wrap_socket(raw, server_hostname=self.host)
-        except BaseException:
-            raw.close()
-            raise
+        # All candidate IPs were DNS-vetted before connecting. Prefer IPv4 where
+        # IPv6 routes are unavailable; never re-resolve inside the connection.
+        for ip in self.ips:
+            try:
+                raw = socket.create_connection((ip, 443), timeout=TIMEOUT)
+                try:
+                    self.sock = self._context.wrap_socket(raw, server_hostname=self.host)
+                    return
+                except (OSError, ssl.SSLError):
+                    raw.close()
+            except OSError:
+                pass
+        raise OSError("no_validated_public_endpoint_reachable")
 
 def request_once(url, grants, max_bytes=MAX_BYTES):
     safe = validate_url(url, grants)
     u = urlsplit(safe)
     addresses = resolve_global(u.hostname)
     # DNS is resolved once; connection is pinned to vetted IP (rebinding resistant).
-    conn = PinnedHTTPS(u.hostname, addresses[0])
+    conn = PinnedHTTPS(u.hostname, addresses)
     try:
         path = (u.path or "/") + (("?" + u.query) if u.query else "")
         conn.request("GET", path, headers={"Host":u.hostname,"User-Agent":UA,
