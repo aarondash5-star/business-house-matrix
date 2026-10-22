@@ -1,0 +1,2 @@
+import {json} from "../lib/session.js";
+export default function handler(req,res){if(req.method!=="POST")return json(res,405,{error:"method_not_allowed"});res.setHeader("Set-Cookie","pine_session=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Strict");return json(res,200,{authenticated:false});}
