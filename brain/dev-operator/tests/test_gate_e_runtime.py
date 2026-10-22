@@ -173,7 +173,7 @@ class GateETests(unittest.TestCase):
             "import time\ntime.sleep(5)\nimport unittest\n"
             "from src.arithmetic import add\n"
             "class Tests(unittest.TestCase):\n"
-            " def test_sum(self): self.assertEqual(add(2,3),5)\n".replace("\\\n","\n")
+            " def test_sum(self): self.assertEqual(add(2,3),5)\n"
         )
         # Pin the modified trusted test baseline, not a model-generated test.
         sha=self.commit()
