@@ -6,6 +6,7 @@ benchmarks; offline local model; no Git push, deployment, private mounts,
 dynamic shell, or automatic retry. One terminal receipt per unique task.
 """
 import json
+import time
 from pathlib import Path
 import sys
 
@@ -31,8 +32,21 @@ def main(name):
     if (RUNS/name).exists():
         raise gate.GateError("completed_or_ambiguous_task_not_replayed")
     cancel=RUNS/name/"owner-cancel-requested"
+    def limited_local_model(prompt,attempt):
+        remaining=getattr(limited_local_model,"gate_e_deadline",time.monotonic()+110)-time.monotonic()
+        if remaining<=0:
+            raise gate.GateError("job_time_budget_exceeded")
+        outcome=gate.bounded([sys.executable,"-B",str(Path(__file__).with_name("gate_e_rc1_ollama.py"))],
+                             cwd=Path(__file__).resolve().parent,
+                             input_text=prompt,timeout=min(105,remaining),
+                             cancel_file=cancel,max_output=35000,
+                             isolated_env={"PATH":"/usr/bin:/bin","HOME":"/empty",
+                                           "PYTHONDONTWRITEBYTECODE":"1"})
+        if outcome["code"]!=0:
+            raise gate.GateError("local_structured_model_failed")
+        return json.loads(outcome["stdout"])
     record=gate.exact_run(record,SOURCE,RUNS,name,
-                          operator.proposer(cancel),cancel_file=cancel)
+                          limited_local_model,cancel_file=cancel)
     print(json.dumps(record,sort_keys=True))
     if record["status"]!="verified_local_review":
         raise gate.GateError("benchmark_not_verified")
