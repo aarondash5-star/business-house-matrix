@@ -84,3 +84,20 @@ The previously operational `bhm-autonomy-controller.service` is **active**, live
 The enabled `dev_general_build` route is **manifest-enrolled, synthetic-only and not certified for routine use** following its two failed live E2E receipts. Preserve the current working controller, the historical receipts and the source-review branch. A subsequently **authorized** deployment route must first promote a new source-pinned candidate with verified independent test results and rollback. Require at least two successful controller-dispatched end-to-end jobs with different enrolled workloads, plus fault-injection and cross-tenant tests, before promoting general Dev autonomy. Do not bypass platform security checks to accomplish that.
 
 **Do not represent the v4 candidate as deployed. Do not classify a started systemd unit as a successful autonomous development release.**
+
+
+---
+
+## New live success — v4 promotion and controller end-to-end, 22 Oct 2026
+
+The previously blocked v4 deployment was completed via the existing authorized non-root Dell SSH release mechanism, with exact source hash prechecks, staged release files and a rollback copy.
+
+- Independent fresh preflight: Dell **28/28** and Mac **28/28** operator tests PASS; v4 controller selftests both PASS; source candidate SHA256 `8d33ced5f9bebfa7eaa70bb2cd345ab63a983a48572d53e5e4b5fbea9fd74d1f`.
+- Exact staged worker source `~/matrix-controller/general-dev-release-v4/agent_loop.py`, SHA256 `0bde24a59f39bde2781c48807ec4e2fc20b3e7b34e09ebeccaab6aa0f5d6d86c`, copied and compared against GitHub branch source.
+- Live Dell `~/matrix-controller/controller.py` **now SHA256 `8d33ced5f9bebfa7eaa70bb2cd345ab63a983a48572d53e5e4b5fbea9fd74d1f`**, service `bhm-autonomy-controller.service` ACTIVE; new v3 rollback `controller.py.bak-20261022-generaldev-v4` verified SHA256 `ce09dabcc4037a401eb8df3617c375dad0ffddc3cd32e81df056e26317db29bd`. No root, SSH, WiFi, auth, paid endpoint or production changes.
+- Real **controller-queued** v4 task **`ead38a98-dabf-43c2-8934-98b2a453ffe7`**, `matrix_dev / dev_general_build / matrix-dev-dashboard-v4`, idempotency `dev-general-controller-v4-20261022`.
+- Worker `matrix-general-dev-dispatch-v4-20261022.service` reached terminal status and exited inactive. Two model attempts: first rejected with `ValueError`; second generated permitted complete HTML, independent isolated semantic QA PASS, exact file `frontend/dev-release-dashboard-v4.html`. Unpublished local review commit **`e618995f006ed4fdb13a02d31fa854ff1d4ee827`** independently matched `git rev-parse HEAD`.
+- Controller independently recognized receipt, recorded `status=completed`, `qa_level=manifest_enrolled_sandbox_qa`, `published=false`. Postflight counts `completed=10, needs_review=11`, no replay of v2/v3 failures.
+- Negative live controller tests: cross-project task DENIED, unknown manifest DENIED, duplicate idempotency key returned same v4 task ID with `deduplicated=true`.
+
+**Release classification changed:** the **v4 manifest-enrolled autonomous coding route is LIVE and passed one controller-dispatched, independently validated end-to-end test**. Still NOT FULL GENERAL DEV AUTONOMY: current enrollment is one synthetic HTML task, only static-HTML runtime QA is fully exercised, no generic arbitrary project self-enrollment, no remote GitHub push/PR from the autonomous Dell worker, no multiple concurrently independent project workflows and no production deployment. Promote broader capabilities only after an additional independently enrolled task and new policy/QA gates.
