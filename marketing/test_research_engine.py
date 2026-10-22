@@ -69,6 +69,16 @@ class GuardTests(unittest.TestCase):
     def test_robots_failed_closed(self):
         with patch.object(e,"follow",return_value={"status":503}):
             self.assertFalse(e.check_robots("https://example.org/a",GRANTS))
+    def test_robots_slow_crawl_delay_respected(self):
+        with patch.object(e,"follow",return_value={"status":200,"body":b"User-agent: *\\nCrawl-delay: 30\\n"}):
+            self.assertFalse(e.check_robots("https://example.org/a",GRANTS))
+    def test_atomic_domain_reservation(self):
+        with tempfile.TemporaryDirectory() as d:
+            p=d+"/x.sqlite"
+            first=e.connect(p);second=e.connect(p)
+            self.assertTrue(e.reserve_slot(first,"https://example.org/1"))
+            self.assertFalse(e.reserve_slot(second,"https://example.org/2"))
+            first.close();second.close()
     def test_robots_404_allowed(self):
         with patch.object(e,"follow",return_value={"status":404}):
             self.assertTrue(e.check_robots("https://example.org/a",GRANTS))
