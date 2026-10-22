@@ -9,7 +9,7 @@ VAULT=BASE/"secrets"
 ALLOWED={"groq":{"qwen/qwen3.8-27b","openai/gpt-oss-120b","openai/gpt-oss-20b"},
          "cloudflare-workers-ai":{"@cf/zai-org/glm-4.7-flash"},
          "nvidia":{"openai/gpt-oss-20b","nvidia/nemotron-3-ultra-550b-a55b"},
-         "openrouter":{"qwen/qwen3-coder:free"},
+         "openrouter":{"cohere/north-mini-code:free"},
          "ollama":{"qwen3:4b-instruct","granite4:3b"}}
 PI=pathlib.Path.home()/".local/share/matrix-pi-pilot/node_modules/.bin/pi"
 PIHOME=BASE/"pi-home"
@@ -128,7 +128,7 @@ def _hosted_text(s,prompt,tools=False,public_input=False):
   if not isinstance(text,str) or not text.strip() or len(text.encode())>8192:raise RuntimeError("INVALID_OR_TRUNCATED_PROVIDER_OUTPUT")
   if d["choices"][0].get("finish_reason")!="stop":raise RuntimeError("PROVIDER_OUTPUT_INCOMPLETE")
   if provider=="openrouter":
-   if d.get("model") not in {"qwen/qwen3-coder","qwen/qwen3-coder:free"}:raise RuntimeError("OPENROUTER_UNEXPECTED_MODEL")
+   if d.get("model") not in {"cohere/north-mini-code","cohere/north-mini-code:free","cohere/north-mini-code-20260617:free","cohere/north-mini-code-20260617"}:raise RuntimeError("OPENROUTER_UNEXPECTED_MODEL")
    cost=(d.get("usage") or {}).get("cost")
    if cost is not None and (isinstance(cost,bool) or not isinstance(cost,(int,float)) or cost!=0):raise RuntimeError("OPENROUTER_UNEXPECTED_COST")
   print(json.dumps({"model":d.get("model"),"usage":d.get("usage"),"text":text,"tools_enabled":False}));return 0
