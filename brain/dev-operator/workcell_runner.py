@@ -11,6 +11,7 @@ import subprocess
 import sys
 
 WORKER=Path(__file__).with_name("workcell_worker.py")
+STATIC_POLICY=WORKER.with_name("static_html_policy.py")
 BWRAP=Path("/usr/bin/bwrap")
 MAX_INPUT=70000
 
