@@ -54,6 +54,10 @@ class SupervisorTests(unittest.TestCase):
             saved=json.loads((Path(td)/"andaz_arambol-supervisor-report.json").read_text())
             self.assertEqual(saved["quality_gate"]["independent_claims_verified"],0)
             self.assertFalse(saved["quality_gate"]["approved_for_customer_facing_use"])
+            self.assertEqual(saved["client_reference"]["property"]["public_name"],
+                             "Andaz Vibe Stay - Arambol, Goa")
+            self.assertEqual(len(saved["client_reference"]["ota_goibibo"]["prices_in_inr"]),3)
+            self.assertFalse(saved["client_reference"]["ota_goibibo"]["live_checkout_verified"])
             self.assertTrue(all(x["unverified"] for x in saved["sources"]))
     def test_directory_duplicates_not_competitor_entities(self):
         many=[result("https://www.hostelworld.com/hostels/p/"+str(330000+i)+"/happy-panda-hostel",
