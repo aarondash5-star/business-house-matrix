@@ -8,6 +8,8 @@ import os
 import subprocess
 import sys
 import tempfile
+import threading
+import time
 import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -163,4 +165,48 @@ class GateETests(unittest.TestCase):
         with self.assertRaises(gate.Cancelled):
             gate.bounded(["/usr/bin/python3","-c","import time;time.sleep(10)"],
                          cwd=self.root,timeout=2,cancel_file=flag)
+    def test_owner_cancellation_during_active_python_qa(self):
+        # The immutable approved QA itself is intentionally slow so we
+        # exercise cancellation after the sandboxed test subprocess starts.
+        record=self.python_case()
+        (self.repo/"tests"/"test_arithmetic.py").write_text(
+            "import time\\ntime.sleep(5)\\nimport unittest\\n"
+            "from src.arithmetic import add\\n"
+            "class Tests(unittest.TestCase):\\n"
+            " def test_sum(self): self.assertEqual(add(2,3),5)\\n".replace("\\\\n","\\n")
+        )
+        # Pin the modified trusted test baseline, not a model-generated test.
+        sha=self.commit()
+        record["manifest"]["base_sha"]=sha
+        flag=self.root/"cancel-active-qa"
+        timer=threading.Timer(1.3, lambda:flag.write_text("stop"))
+        timer.daemon=True
+        timer.start()
+        self.addCleanup(timer.cancel)
+        started=time.monotonic()
+        result=gate.exact_run(record,self.repo,self.stage,"qa_cancel_live_worker",
+            lambda prompt,attempt:{"summary":"fix","files":[
+                {"path":"src/arithmetic.py","content":"def add(a,b): return a+b\\n"}]},
+            cancel_file=flag)
+        self.assertEqual(result["status"],"cancelled_verified",result)
+        self.assertLess(time.monotonic()-started,5)
+        self.assertFalse((self.stage/"qa_cancel_live_worker"/"local-review").exists())
+
+    def test_global_budget_rejects_late_model_response(self):
+        from unittest.mock import patch
+        record=self.python_case()
+        with patch.object(gate,"TIME_BUDGET",.15):
+            result=gate.exact_run(record,self.repo,self.stage,"qa_time_budget",
+                lambda prompt,attempt:(time.sleep(.3) or {"summary":"late","files":[
+                    {"path":"src/arithmetic.py","content":"def add(a,b):return a+b\\n"}]}))
+        self.assertEqual(result["status"],"needs_review",result)
+        self.assertEqual(result["error"],"GateError")
+        self.assertFalse((self.stage/"qa_time_budget"/"local-review").exists())
+
+    def test_streaming_output_guard_fails_before_child_exit(self):
+        with self.assertRaises(gate.GateError):
+            gate.bounded(["/usr/bin/python3","-c",
+                          "import sys,time;sys.stdout.write('x'*100000);sys.stdout.flush();time.sleep(9)"],
+                         cwd=self.root,timeout=3,max_output=2000)
+
 if __name__=="__main__":unittest.main()
