@@ -7,6 +7,7 @@ Does not access cloud accounts, repositories outside this checkout, or networks.
 from __future__ import annotations
 
 import ast
+import hashlib
 from pathlib import Path
 import re
 import subprocess
@@ -48,7 +49,16 @@ for path in paths:
         errors.append(f"Non-text or binary file requires review: {path}")
         continue
     for label, signature in SIGNATURES:
-        if signature.search(content):
+        scan_content = content
+        # Only redact the audited policy-regex text for the exact known Git
+        # blob. Any modification restores the complete scan (fail closed).
+        if path == "brain/dev-operator/protocol.py" and label == "private key":
+            raw = file.read_bytes()
+            blob = hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
+            if blob == "a45de0dfdbfb86313e0c15bf272cadf647a78f98":
+                scan_content = scan_content.replace(
+                    "(?:-----BEGIN PRIVATE KEY-----|", "(?:AUDITED_REGEX_LITERAL|", 1)
+        if signature.search(scan_content):
             errors.append(f"Potential {label} in tracked file: {path}")
 
 compose_file = ROOT / "pilot/docker-compose.yml"
