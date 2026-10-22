@@ -44,3 +44,13 @@ The live route is still a *narrow, exact-manifest* coding lane; the two test art
 Before restoring a previous controller: verify no queued/delegated/dispatching tasks remain. Copy `controller.py.bak-20261022-generaldev-v5` over `controller.py`, restart only `bhm-autonomy-controller.service`, compare SHA against the v4 hash above; preserve receipts. This rollback is not executed by this document.
 
 **Approved status wording:** **Dev Matrix bounded autonomous coding MVP operational across two enrolled task manifests, with two live controller E2E successes. General-purpose autonomous Dev Matrix remains a staged roadmap.**
+
+
+## Independent Dell browser validation — completed after live E2E
+
+- Host: `dell-linux`; Generic SSH development lane receipt **`0baffbe8-c501-4a20-ab4e-47a9eabf2677`**, exit 0.
+- Existing Google Chrome binary `/usr/bin/google-chrome` launched through installed Playwright Node API; **no dependency or browser installed**.
+- Both generated artifacts from **verified local Git review checkouts** checked at widths **320, 360, 390, 430, 768 and 1440**.
+- **12/12 PASS**: semantic `main` present and visible, non-empty document language, viewport meta, no horizontal overflow, no page exceptions, **zero unexpected external network requests**. Browser requests were intercepted and non-local requests denied.
+- Initial Playwright default cached browser launch failed due to absent requested Chromium build; deliberately reused installed system Chrome to complete the same test. This was a browser dependency path mismatch, **not a failure of the generated page**.
+- This is a bounded headless runtime check, *not* a full visual-design/accessibility/security audit. External cross-host Mac v5 tests remain pending while Mac SSH heartbeat is offline.
