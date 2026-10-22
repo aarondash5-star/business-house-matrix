@@ -36,3 +36,7 @@ Next: use provider status/account support or one separately authorized, quota-aw
 
 ## Primary references and reuse/cost gate
 Reuse existing stdlib/SQLite router and vault, secure relay and Bubblewrap evaluator; no new SDK/dependency installed. Official provider request schema https://docs.api.nvidia.com/nim/reference/openai-gpt-oss-20b-infer documents endpoint, max_tokens and low/medium/high reasoning. https://build.nvidia.com/openai/gpt-oss-20b advertises its free prototyping endpoint. GPT-OSS20 Apache2.0 license verified earlier from original publisher. Trial terms and billing account not independently audited. Nemotron OpenMDW1.1/OSI review remains unresolved; no license gate waived. Business House Matrix remains independent from Moksha Master; Gate E production certification unchanged.
+
+## Final paused-state readback
+
+Receipt2585a75a-b2ca-4e2e-ac40-7719fd10fec2 completed exit0: both NVIDIA slots disabled, Groq OSS120/OSS20 enabled, NVIDIA key still private, final router hash matches. Enrollment unit LoadState=not-found/ActiveState=inactive after prior successful closure. Earlier pause task d46de865-fcbd-4565-a1f8-e154ffa2e29a did apply disable/cooldown and print status, then exited5 only because its redundant stop command found the enrollment unit already unloaded. This later independent readback verifies the desired paused state; do not relabel the earlier job exit as0.
