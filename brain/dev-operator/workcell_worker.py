@@ -91,8 +91,12 @@ def independent_qa(data):
             checks.append({"type":"python_syntax","file":str(file.relative_to(ROOT)),"passed":True})
         if suffix==".html":
             parser=SemanticHTML();parser.feed(src)
-            ok="html" in parser.tags and "main" in parser.tags and parser.viewport
-            checks.append({"type":"html_semantics","file":str(file.relative_to(ROOT)),"passed":ok})
+            try:
+                validate_static_html(src)
+                ok=True
+            except StaticHTMLViolation:
+                ok=False
+            checks.append({"type":"html_semantics_and_active_content","file":str(file.relative_to(ROOT)),"passed":ok})
     if profile=="python-unittest":
         tests=ROOT/"tests"
         if not tests.is_dir():
