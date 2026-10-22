@@ -54,3 +54,10 @@
 ## Shortest new-chat handover prompt
 
 > Continue Dev Matrix autonomy + Pine MCP Chat. Read `aarondash5-star/business-house-matrix/docs/handoffs/DEV_MATRIX_MCP_CHAT_REMAINING_20261022.md` on branch `docs/modular-mcp-chat-template-20261022` and Issue #2. Resume A1/B1 without rebuilding, preserve security gates; execute and verify.
+
+
+## 2026-10-22 follow-up — A1/B1 governed review branch
+
+The source-governed, review-only A1 validator and 12 unit tests were added. Dell and independently Mac passed 12/12 each. The original B1 synthetic mobile UI was enhanced with ephemeral in-tab threads and search, accessible nav and a denied tool-intent inspector; Dell Chrome/Playwright passed 63/63 checks across 7 widths. Screenshots saved on Dell in isolated local staging. Complete receipts, commit references, controller source drift, rollback and limitations: [ISSUE2_A1_B1_GOVERNED_QA_20261022.md](../receipts/ISSUE2_A1_B1_GOVERNED_QA_20261022.md).
+
+**Status remains review-only.** Live controller contains extra unversioned additive actions relative to public reference; independently review exact source before promoting A1. Existing live fixed-source preview unchanged; autonomous code, real MCP transport, private Pine integration, authentication and production deploy NOT CERTIFIED. Issue #2 OPEN. No root, spend, publish, or credentials changed.
