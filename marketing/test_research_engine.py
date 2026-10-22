@@ -70,7 +70,7 @@ class GuardTests(unittest.TestCase):
         with patch.object(e,"follow",return_value={"status":503}):
             self.assertFalse(e.check_robots("https://example.org/a",GRANTS))
     def test_robots_slow_crawl_delay_respected(self):
-        with patch.object(e,"follow",return_value={"status":200,"body":b"User-agent: *\\nCrawl-delay: 30\\n"}):
+        with patch.object(e,"follow",return_value={"status":200,"body":b"User-agent: *\nCrawl-delay: 30\n"}):
             self.assertFalse(e.check_robots("https://example.org/a",GRANTS))
     def test_atomic_domain_reservation(self):
         with tempfile.TemporaryDirectory() as d:
