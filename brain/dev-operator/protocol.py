@@ -86,7 +86,7 @@ def validate_proposal(enrolled: Manifest, proposal: object):
         if not isinstance(f, dict) or set(f) != {"path", "content"}:
             raise PolicyError("file_schema")
         name = path(f["path"])
-        if name not in enrolled.files or name in seen:
+        if name not in enrolled.files or name in seen or name.startswith("tests/"):
             raise PolicyError("path_not_enrolled")
         seen.add(name)
         contents = f["content"]
