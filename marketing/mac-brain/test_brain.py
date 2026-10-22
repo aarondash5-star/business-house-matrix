@@ -5,6 +5,7 @@ import os
 import sqlite3
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 MODULE = Path(__file__).with_name("brain.py")
@@ -54,8 +55,22 @@ class MarketingBrainTest(unittest.TestCase):
         config = self.brain.configure()
         with self.assertRaisesRegex(RuntimeError, "memory"):
             self.brain.local_resource_guard({**config, "min_available_mem_mb": 999999})
-        with self.assertRaisesRegex(RuntimeError, "temperature"):
-            self.brain.local_resource_guard({**config, "min_available_mem_mb": 0, "max_core_temp_c": 1})
+        # CI runners may expose no coretemp devices; simulate one deterministically
+        # rather than treating absence of a host sensor as a policy failure.
+        with tempfile.TemporaryDirectory(prefix="bhm-temp-sensor-test-") as root:
+            fake_hwmon = Path(root)
+            dev = fake_hwmon / "hwmon0"
+            dev.mkdir()
+            (dev / "name").write_text("coretemp")
+            (dev / "temp1_input").write_text("85000")
+            original_path = Path
+            def sensor_path(value):
+                return fake_hwmon if str(value) == "/sys/class/hwmon" else original_path(value)
+            with mock.patch.object(self.brain, "Path", side_effect=sensor_path):
+                with self.assertRaisesRegex(RuntimeError, "temperature"):
+                    self.brain.local_resource_guard({
+                        **config, "min_available_mem_mb": 0, "max_core_temp_c": 1
+                    })
 
 
 if __name__ == "__main__":
