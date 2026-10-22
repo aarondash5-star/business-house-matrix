@@ -37,6 +37,17 @@ class GovernanceTest(unittest.TestCase):
         self.assertEqual(set(f["path"] for f in receipt["payload"]["files"]), gate.ARTIFACTS)
         self.assertEqual(len(receipt["review_sha256"]), 64)
 
+    def test_second_enrolled_task_is_exactly_scoped(self):
+        f=fixture()
+        f["work_id"]="dev_matrix_synthetic_release_v1"
+        f["files"][0]["path"]="frontend/dev-autonomy-validated-v1.html"
+        f["files"][1]["path"]="tests/test_dev_autonomy_validated_v1.py"
+        allowed=gate.inspect(f)
+        self.assertFalse(allowed["executed"])
+        self.assertEqual(allowed["work_id"],"dev_matrix_synthetic_release_v1")
+        f["files"][1]["path"]="tests/test_pine_chat_a11y.py"
+        self.deny(f,"path_not_enrolled")
+
     def test_cross_tenant_denied(self):
         f = fixture(); f["project"] = "pine_private"
         self.deny(f, "scope_mismatch")
