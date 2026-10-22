@@ -4,6 +4,7 @@ This is executed as /worker.py after the caller has unshared all namespaces and
 exposed only /workspace as writable. No LLM, remote Git or host tools run here.
 """
 from html.parser import HTMLParser
+from static_html_policy import validate_static_html, StaticHTMLViolation
 import ast
 import json
 import os
