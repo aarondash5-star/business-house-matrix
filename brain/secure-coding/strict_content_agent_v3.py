@@ -90,7 +90,7 @@ def payload(html):
     gate=load_source("source_governor.py")
     envelope={
         "project":gate.PROJECT,"manifest":gate.MANIFEST,
-        "work_id":gate.WORK_ID,"repository":gate.REPOSITORY,
+        "work_id":TASK,"repository":gate.REPOSITORY,
         "base_branch":gate.BASE_BRANCH,
         "files":[{"path":APP,"content":repair_known_markup(html)},
                  {"path":TEST,"content":TEST_SOURCE}],
