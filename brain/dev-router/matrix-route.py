@@ -9,6 +9,7 @@ VAULT=BASE/"secrets"
 ALLOWED={"groq":{"qwen/qwen3.8-27b","openai/gpt-oss-120b","openai/gpt-oss-20b"},
          "cloudflare-workers-ai":{"@cf/zai-org/glm-4.7-flash"},
          "nvidia":{"openai/gpt-oss-20b","nvidia/nemotron-3-ultra-550b-a55b"},
+         "openrouter":{"qwen/qwen3-coder:free"},
          "ollama":{"qwen3:4b-instruct","granite4:3b"}}
 PI=pathlib.Path.home()/".local/share/matrix-pi-pilot/node_modules/.bin/pi"
 PIHOME=BASE/"pi-home"
@@ -85,16 +86,17 @@ def get_slot(policy,id):
  return s
 def _hosted_text(s,prompt,tools=False,public_input=False):
  provider=s["provider"]
- if provider not in {"groq","nvidia"}:raise RuntimeError("PROVIDER_DENIED")
+ if provider not in {"groq","nvidia","openrouter"}:raise RuntimeError("PROVIDER_DENIED")
  if provider=="nvidia" and (s["model"]!="openai/gpt-oss-20b" or s.get("license_review_required")):raise RuntimeError("NVIDIA_MODEL_LICENSE_GATE")
  if not public_input or tools:raise RuntimeError("PUBLIC_TEXT_ONLY_NO_TOOLS_REQUIRED")
  if s["model"] not in ALLOWED[provider]:raise RuntimeError("MODEL_DENIED")
- if not read_policy().get("groq_free_plan_owner_confirmed" if provider=="groq" else "nvidia_free_development_owner_confirmed"):raise RuntimeError("FREE_PLAN_ATTESTATION_REQUIRED")
+ flag={"groq":"groq_free_plan_owner_confirmed","nvidia":"nvidia_free_development_owner_confirmed","openrouter":"openrouter_free_only_owner_confirmed"}[provider]
+ if not read_policy().get(flag):raise RuntimeError("FREE_PLAN_ATTESTATION_REQUIRED")
  if not prompt or len(prompt.encode())>2048:raise RuntimeError("PUBLIC_PROMPT_MAX_2048_BYTES")
  sp=secret_path(s.get("credential_ref",s["id"]))
  if sp.is_symlink() or not sp.is_file() or sp.stat().st_mode&0o077:raise RuntimeError("NO_SECURE_CREDENTIAL")
  budget=len(prompt.encode())+1536
- table="token_reservations" if provider=="groq" else "nvidia_token_reservations"
+ table={"groq":"token_reservations","nvidia":"nvidia_token_reservations","openrouter":"openrouter_token_reservations"}[provider]
  c=conn();c.execute(f"CREATE TABLE IF NOT EXISTS {table}(ts INTEGER,budget INTEGER)")
  c.execute("BEGIN IMMEDIATE")
  try:
@@ -107,19 +109,28 @@ def _hosted_text(s,prompt,tools=False,public_input=False):
  finally:c.close()
  body={"model":s["model"],"messages":[{"role":"system","content":"Return only the requested public coding answer. No tools."},{"role":"user","content":prompt}],"max_completion_tokens":1024,"temperature":0.1,"stream":False,"reasoning_effort":"none" if s["model"].startswith("qwen/") else "low"}
  if provider=="nvidia":body["max_tokens"]=body.pop("max_completion_tokens")
+ if provider=="openrouter":
+  body["max_tokens"]=body.pop("max_completion_tokens");body.pop("reasoning_effort")
+  body["provider"]={"data_collection":"deny","max_price":{"prompt":0,"completion":0}}
+  body["plugins"]=[]
  class NoRedirect(urllib.request.HTTPRedirectHandler):
   def redirect_request(self,*a,**kw):raise RuntimeError("PROVIDER_REDIRECT_DENIED")
  def deadline(*a):raise TimeoutError("GROQ_DEADLINE")
- old=signal.signal(signal.SIGALRM,deadline);signal.alarm(30 if provider=="groq" else 60)
+ old=signal.signal(signal.SIGALRM,deadline);signal.alarm({"groq":30,"nvidia":60,"openrouter":45}[provider])
  try:
-  request=urllib.request.Request("https://api.groq.com/openai/v1/chat/completions" if provider=="groq" else "https://integrate.api.nvidia.com/v1/chat/completions",data=json.dumps(body).encode(),headers={"Authorization":"Bearer "+sp.read_text().strip(),"Content-Type":"application/json","User-Agent":"BusinessHouseMatrixDev/1.0 (+https://github.com/aarondash5-star/business-house-matrix)"})
-  with urllib.request.build_opener(NoRedirect()).open(request,timeout=15 if provider=="groq" else 45) as response:
+  url={"groq":"https://api.groq.com/openai/v1/chat/completions","nvidia":"https://integrate.api.nvidia.com/v1/chat/completions","openrouter":"https://openrouter.ai/api/v1/chat/completions"}[provider]
+  request=urllib.request.Request(url,data=json.dumps(body).encode(),headers={"Authorization":"Bearer "+sp.read_text().strip(),"Content-Type":"application/json","User-Agent":"BusinessHouseMatrixDev/1.0 (+https://github.com/aarondash5-star/business-house-matrix)"})
+  with urllib.request.build_opener(NoRedirect()).open(request,timeout={"groq":15,"nvidia":45,"openrouter":30}[provider]) as response:
    raw=response.read(65537)
    if len(raw)>65536:raise RuntimeError("PROVIDER_RESPONSE_TOO_LARGE")
    d=json.loads(raw)
   text=d["choices"][0]["message"].get("content")
   if not isinstance(text,str) or not text.strip() or len(text.encode())>8192:raise RuntimeError("INVALID_OR_TRUNCATED_PROVIDER_OUTPUT")
   if d["choices"][0].get("finish_reason")!="stop":raise RuntimeError("PROVIDER_OUTPUT_INCOMPLETE")
+  if provider=="openrouter":
+   if d.get("model") not in {"qwen/qwen3-coder","qwen/qwen3-coder:free"}:raise RuntimeError("OPENROUTER_UNEXPECTED_MODEL")
+   cost=(d.get("usage") or {}).get("cost")
+   if cost is not None and (isinstance(cost,bool) or not isinstance(cost,(int,float)) or cost!=0):raise RuntimeError("OPENROUTER_UNEXPECTED_COST")
   print(json.dumps({"model":d.get("model"),"usage":d.get("usage"),"text":text,"tools_enabled":False}));return 0
  except urllib.error.HTTPError as exc:
   print(provider.upper()+"_HTTP_"+str(exc.code),file=sys.stderr);return 1
@@ -132,7 +143,10 @@ def groq_text(s,prompt,tools=False,public_input=False):
 def nvidia_text(s,prompt,tools=False,public_input=False,development_test=False):
  if not development_test:raise RuntimeError("NVIDIA_DEVELOPMENT_TEST_CONFIRMATION_REQUIRED")
  return _hosted_text(s,prompt,tools,public_input)
+def openrouter_text(s,prompt,tools=False,public_input=False):
+ return _hosted_text(s,prompt,tools,public_input)
 def launch(s,prompt,tools=False,public_input=False,development_test=False):
+ if s["provider"]=="openrouter":return openrouter_text(s,prompt,tools,public_input)
  if s["provider"]=="nvidia":return nvidia_text(s,prompt,tools,public_input,development_test)
  if s["provider"]=="groq":return groq_text(s,prompt,tools,public_input)
  env=os.environ.copy()
@@ -156,6 +170,7 @@ def launch(s,prompt,tools=False,public_input=False,development_test=False):
  args+=["--",prompt]
  return subprocess.run(args,env=env,check=False).returncode
 def verify_provider(s):
+ if s["provider"]=="openrouter":return verify_openrouter(s)
  if s["provider"]=="ollama":
   print("LOCAL_NO_EXTERNAL_TOKEN_REQUIRED",s["id"]);return
  sp=secret_path(s.get("credential_ref",s["id"]))
@@ -186,6 +201,27 @@ def verify_provider(s):
   if not data.get("success") or not data.get("result"):
    raise RuntimeError("CLOUDFLARE_CREDENTIAL_OR_MODEL_PERMISSION_FAILED")
  print("PROVIDER_CREDENTIAL_PASS",s["id"],"PLAN_AND_BILLING_STILL_REQUIRE_ACCOUNT_VERIFICATION")
+def verify_openrouter(s):
+ sp=secret_path(s.get("credential_ref",s["id"]))
+ if sp.is_symlink() or not sp.is_file() or sp.stat().st_mode&0o077:raise RuntimeError("NO_SECURE_CREDENTIAL")
+ class NoRedirect(urllib.request.HTTPRedirectHandler):
+  def redirect_request(self,*a,**kw):raise RuntimeError("PROVIDER_REDIRECT_DENIED")
+ def deadline(*a):raise TimeoutError("OPENROUTER_KEY_CHECK_DEADLINE")
+ old=signal.signal(signal.SIGALRM,deadline);signal.alarm(30)
+ try:
+  req=urllib.request.Request("https://openrouter.ai/api/v1/key",headers={"Authorization":"Bearer "+sp.read_text().strip(),"User-Agent":"BusinessHouseMatrixDev/1.0 (+https://github.com/aarondash5-star/business-house-matrix)"})
+  with urllib.request.build_opener(NoRedirect()).open(req,timeout=15) as res:
+   raw=res.read(65537)
+   if len(raw)>65536:raise RuntimeError("PROVIDER_RESPONSE_TOO_LARGE")
+   data=json.loads(raw)["data"]
+  if not isinstance(data,dict) or data.get("is_management_key") or data.get("is_provisioning_key"):raise RuntimeError("OPENROUTER_INFERENCE_KEY_REQUIRED")
+  q=data.get("free_model_daily_requests") or {}
+  if not isinstance(q,dict):raise RuntimeError("OPENROUTER_INVALID_QUOTA")
+  safe_quota={k:v for k,v in q.items() if k in {"used","limit","remaining"} and type(v) is int and v>=0}
+  print(json.dumps({"status":"OPENROUTER_CREDENTIAL_PASS","slot":s["id"],"free_model_daily_requests":safe_quota,"paid_routes_allowed":False,"inference_verified":False}))
+ except urllib.error.HTTPError as exc:raise RuntimeError("OPENROUTER_KEY_CHECK_HTTP_"+str(exc.code))
+ except (OSError,TimeoutError,ValueError,KeyError,TypeError) as exc:raise RuntimeError("OPENROUTER_KEY_CHECK_FAILED_"+type(exc).__name__)
+ finally:signal.alarm(0);signal.signal(signal.SIGALRM,old)
 def main():
  parser=argparse.ArgumentParser(description="Zero-paid Matrix Dev API selector")
  sub=parser.add_subparsers(dest="command",required=True)
@@ -304,4 +340,5 @@ if __name__=="__main__":
  try:main()
  except (AssertionError,ValueError,RuntimeError,sqlite3.Error) as exc:
   print("ROUTER_ERROR",str(exc),file=sys.stderr);sys.exit(2)
+
 
