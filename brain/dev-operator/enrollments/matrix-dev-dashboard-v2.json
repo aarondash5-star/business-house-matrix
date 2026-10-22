@@ -1,0 +1,13 @@
+{
+  "manifest": {
+    "project": "matrix_dev",
+    "repository": "aarondash5-star/business-house-matrix",
+    "base_sha": "f4ad954ef19f9791a042d9f95d737c528c655334",
+    "files": [
+      "frontend/dev-release-dashboard.html"
+    ],
+    "test_profile": "static-html",
+    "write_enabled": true
+  },
+  "goal": "Create a responsive accessible single-page release dashboard for the independent Business House Matrix. Include sections for planned jobs, completed QA checks, local review status and security boundaries. Use concise original HTML and CSS only, and label it as a synthetic demo."
+}
