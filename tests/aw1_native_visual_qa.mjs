@@ -14,7 +14,7 @@ import { renderAutomationWindowTag, inspectAutomationWindowTag } from '../brain/
 const root = path.join(tmpdir(), 'aw1-native-visual-disposable-20261022');
 mkdirSync(root, { recursive: true, mode: 0o700 });
 const browser = process.env.AW1_CHROME_BINARY || '/opt/google/chrome/google-chrome';
-const widths = [390, 1440];
+const widths = [320, 390, 768, 1440];
 const tag = {
   project: 'PINE-QA', worker: 'DELL', taskId: 'AW1-TEST-ONLY',
   mode: 'READ-ONLY', state: 'RUNNING'
