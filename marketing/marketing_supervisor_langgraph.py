@@ -10,6 +10,7 @@ import datetime as dt
 import json
 import os
 import re
+import time
 from pathlib import Path
 from typing import Any, TypedDict
 from urllib.parse import urlsplit
@@ -95,12 +96,32 @@ def plan(s:State):
             proposed=SearchPlan.model_validate_json(match.group(0)) if match else None
             if proposed:
                 candidate=proposed.queries[0]
-                if candidate.casefold() not in [x.casefold() for x in fixed]:
+                if (candidate.casefold() not in [x.casefold() for x in fixed]
+                    and len(candidate.split()) >= 7
+                    and any(term in candidate.casefold() for term in ("hostel", "dorm", "price", "booking", "official"))):
                     fixed=[fixed[0],candidate]
                     src="approved_oss_model_planner"
         except (ValueError,TypeError):pass
     return {"pending_queries":fixed,"requested":[],"research_groups":[],
         "plan_origin":src,"notes":[],"rounds":0}
+
+def _quota_aware_search(query):
+    """Honor the existing Mac search quota. At most one bounded wait."""
+    try:
+        return searxng_research.search(query)
+    except RuntimeError as ex:
+        if "Local search rate limit" not in str(ex):
+            raise
+        db=searxng_research._ledger()
+        try:
+            now=int(time.time())
+            recent=db.execute("SELECT MIN(ts) FROM attempts WHERE ts>=?",(now-60,)).fetchone()[0]
+        finally:
+            db.close()
+        if recent is None:
+            raise
+        time.sleep(min(61,max(1,int(recent)+61-now)))
+        return searxng_research.search(query)
 
 def research(s:State):
     groups=list(s.get("research_groups",[]))
@@ -109,7 +130,7 @@ def research(s:State):
         if query in requested or len(requested)>=MAX_QUERIES:continue
         requested.append(query)
         try:
-            data=searxng_research.search(query)
+            data=_quota_aware_search(query)
             if data.get("device_peer_verified") is not True or data.get("mode")!="self_hosted_encrypted_paired_relay":
                 raise RuntimeError("unsigned_or_wrong_peer")
             rows=[x for x in data.get("results",[])[:8] if isinstance(x,dict)]
