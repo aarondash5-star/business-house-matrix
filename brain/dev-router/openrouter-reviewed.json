@@ -1,0 +1,18 @@
+{
+  "models": {
+    "cohere/north-mini-code:free": {
+      "canonical_slug": "cohere/north-mini-code-20260617",
+      "license": "Apache-2.0", "license_verified": true,
+      "license_source": "https://huggingface.co/CohereLabs/North-Mini-Code-1.0",
+      "response_models": ["cohere/north-mini-code", "cohere/north-mini-code:free", "cohere/north-mini-code-20260617", "cohere/north-mini-code-20260617:free"],
+      "preference": {"coding": 0, "review": 0, "reasoning": 5, "fast": 0}
+    },
+    "xingchen-agi/xing4.0-29b-a4b:free": {
+      "canonical_slug": "xingchen-agi/xing4.0-29b-a4b-20261015",
+      "license": "Apache-2.0", "license_verified": true,
+      "license_source": "https://github.com/XingChen-AGI/Xing4.0-29B-A4B/blob/main/LICENSE",
+      "response_models": ["xingchen-agi/xing4.0-29b-a4b", "xingchen-agi/xing4.0-29b-a4b:free", "xingchen-agi/xing4.0-29b-a4b-20261015", "xingchen-agi/xing4.0-29b-a4b-20261015:free"],
+      "preference": {"coding": 5, "review": 5, "reasoning": 0, "fast": 3}
+    }
+  }
+}
