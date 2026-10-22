@@ -5,7 +5,9 @@ Owner-approved manifest filenames only, no arbitrary CLI command, host mount,
 new repository enrollment, remote Git push, production deployment or spending.
 """
 import json
+import fcntl
 import os
+import time
 from pathlib import Path
 import re
 import sys
@@ -43,7 +45,10 @@ def proposer(cancel_file):
             "PI_SKIP_VERSION_CHECK":"1",
             "OLLAMA_HOST":"http://127.0.0.1:11434",
             "PYTHONDONTWRITEBYTECODE":"1"}
-        outcome=gate.bounded(args,cwd=HERE,timeout=108,cancel_file=cancel_file,
+        deadline=getattr(propose,"gate_e_deadline",time.monotonic()+108)
+        permitted=min(108,deadline-time.monotonic())
+        if permitted<=0:raise gate.GateError("job_time_budget_exceeded")
+        outcome=gate.bounded(args,cwd=HERE,timeout=permitted,cancel_file=cancel_file,
                              isolated_env=runtime_env,max_output=70000)
         if outcome["code"]!=0:
             raise gate.GateError("offline_model_failed")
@@ -80,8 +85,15 @@ def main(argv):
         (run/"owner-cancel-requested").write_text("1",encoding="ascii")
         return {"task":name,"status":"cancel_requested"}
     RUNS.mkdir(parents=True,exist_ok=True,mode=0o700)
-    cancel=RUNS/name/"owner-cancel-requested"
-    return gate.exact_run(record,REPO,RUNS,name,proposer(cancel),cancel_file=cancel)
+    # Single admission slot on the current Dell candidate host. Exceeding
+    # capacity fails closed; this lock is released if the process crashes.
+    lock=RUNS/".gate-e-owner-capacity.lock"
+    with lock.open("a+",encoding="ascii") as handle:
+        os.chmod(lock,0o600)
+        try:fcntl.flock(handle.fileno(),fcntl.LOCK_EX|fcntl.LOCK_NB)
+        except BlockingIOError:raise gate.GateError("workload_concurrency_cap")
+        cancel=RUNS/name/"owner-cancel-requested"
+        return gate.exact_run(record,REPO,RUNS,name,proposer(cancel),cancel_file=cancel)
 
 if __name__=="__main__":
     try:
