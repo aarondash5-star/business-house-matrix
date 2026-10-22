@@ -348,8 +348,8 @@ def packet(db,topic):
             "entity_classification":entities.classify(b,c)["role"]} for a,b,c,d,e in rows]
     return {"type":"bhm_research_packet","version":"1.2-dev","topic":topic,
             "created_utc":now(),"market_map":{"status":"needs_review","leads":leads},
-            "verified_competitors":[],"unverified_leads":leads,
-            "source_backed_ux_references":[],"pricing_table":[],
+            "verified_competitors":[],"unverified_leads":[x for x in leads if x["entity_classification"] in ("provider_candidate_needs_review","third_party_directory_or_reseller")],
+            "source_backed_ux_references":[x for x in leads if x["entity_classification"]=="public_ux_guidance"],"pricing_table":[],
             "gsc_opportunities":{"status":"adapter_unchanged_read_only","site_data_only":True},
             "trends":{"local_time_series":"unknown","rss_news_not_search_volume":True},
             "unresolved_questions":["Verify service/provider identity and exact pricing using official pages",
