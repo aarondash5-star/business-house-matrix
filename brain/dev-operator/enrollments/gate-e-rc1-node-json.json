@@ -1,6 +1,6 @@
 {
   "manifest": {
-    "project": "gate_e_rc1_node_json_retry_reviewed",
+    "project": "gate_e_node2",
     "repository": "aarondash5-star/business-house-matrix",
     "base_sha": "fbcea95fd22218aabc5a03be48811b23aa15cc66",
     "files": [
