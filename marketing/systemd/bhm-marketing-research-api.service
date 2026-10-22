@@ -1,0 +1,20 @@
+[Unit]
+Description=Business House Matrix owner-local Marketing Research API (public-readonly)
+After=network-online.target bhm-searxng.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/var/lib/generic-linux-automator-exec/bhm-research-expansion-20261022
+ExecStart=/var/lib/generic-linux-automator-exec/bhm-research-expansion-20261022/.venv/bin/python /var/lib/generic-linux-automator-exec/bhm-research-expansion-20261022/research_api.py serve --port 18890
+Restart=on-failure
+RestartSec=12
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+MemoryMax=768M
+TasksMax=64
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=default.target
