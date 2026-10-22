@@ -1,0 +1,27 @@
+name: AW-1 automation window tag
+on:
+  pull_request:
+    paths:
+      - "brain/automation/visible_window_tag.mjs"
+      - "tests/aw1_visible_window_tag.test.mjs"
+      - ".github/workflows/aw1-visible-tag.yml"
+  push:
+    branches: [main]
+    paths:
+      - "brain/automation/visible_window_tag.mjs"
+      - "tests/aw1_visible_window_tag.test.mjs"
+      - ".github/workflows/aw1-visible-tag.yml"
+permissions:
+  contents: read
+jobs:
+  aw1-fail-closed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify checked-in automation guard syntax
+        run: |
+          node --check brain/automation/visible_window_tag.mjs
+          node --check tests/aw1_visible_window_tag.test.mjs
+      - name: Verify tag lifecycle, manual-window isolation and prohibited actions
+        run: node --test tests/aw1_visible_window_tag.test.mjs
