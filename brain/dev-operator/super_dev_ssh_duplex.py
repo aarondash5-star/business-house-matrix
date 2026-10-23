@@ -69,6 +69,9 @@ class Mailbox:
         self.db.execute(
             "CREATE INDEX IF NOT EXISTS messages_thread_seq ON messages(thread_id,seq)"
         )
+        self.db.execute(
+            "CREATE INDEX IF NOT EXISTS messages_reply_lookup ON messages(in_reply_to,sender)"
+        )
         self.db.commit()
         try:
             self.path.chmod(0o600)
