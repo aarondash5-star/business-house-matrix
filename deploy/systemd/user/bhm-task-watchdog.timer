@@ -1,0 +1,11 @@
+[Unit]
+Description=Internal task-stall detection, not user-facing reminders
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=10min
+AccuracySec=1min
+Unit=bhm-task-watchdog.service
+
+[Install]
+WantedBy=timers.target
