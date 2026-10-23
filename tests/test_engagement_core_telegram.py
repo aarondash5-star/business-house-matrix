@@ -11,12 +11,12 @@ sys.path.insert(0,str(ROOT/"brain"/"automation"))
 import task_events as e
 import engagement_core_telegram as tg
 
-PRIVATE_ID="123456789"
+PRIVATE_ID="-1001827799147"
 def bot_status():
     return {"connected":True,"destinations":[
-       {"key":"primary","enabled":True,"chat_id":"-1001827799147"},
+       {"key":"primary","level":"primary","enabled":True,"chat_id":PRIVATE_ID},
        {"key":"moksha","enabled":True,"chat_id":"@mokshasauna"},
-       {"key":"owner_private","enabled":True,"chat_id":PRIVATE_ID}]}
+       {"key":"owner_private","level":"private","enabled":True,"chat_id":"123456789"}]}
 
 class TelegramTest(unittest.TestCase):
     def setUp(self):
@@ -32,12 +32,12 @@ class TelegramTest(unittest.TestCase):
     def test_target_is_exact_owner_private(self):
         self.assertTrue(tg.allow_target(bot_status(),PRIVATE_ID))
         with self.assertRaises(tg.DeliveryError):
-            tg.allow_target(bot_status(),"-1001827799147")
+            tg.allow_target(bot_status(),"-1001999999999")
         with self.assertRaises(tg.DeliveryError):
             tg.allow_target(bot_status(),"987654321")
     def test_missing_owner_private_fails_closed(self):
         s=bot_status()
-        s["destinations"]=s["destinations"][:2]
+        s["destinations"]=s["destinations"][1:]
         with self.assertRaises(tg.DeliveryError):
             tg.allow_target(s,PRIVATE_ID)
     def test_no_empty_targets_or_levels(self):
@@ -47,11 +47,11 @@ class TelegramTest(unittest.TestCase):
             calls.append(req)
             if req.get_method()=="GET":return bot_status()
             request=json.loads(req.data)
-            self.assertEqual(request["targets"],["owner_private"])
+            self.assertEqual(request["targets"],["primary"])
             self.assertNotIn("levels",request)
             self.assertNotIn("media",request)
             self.assertIn("Andaz",request["text"].replace("andaz","Andaz"))
-            return {"ok":True,"sent":[{"key":"owner_private",
+            return {"ok":True,"sent":[{"key":"primary",
                      "chat_id":PRIVATE_ID,"message_ids":[190]}],"failed":[]}
         with mock.patch.object(tg,"_http",side_effect=mocked):
             result=tg.send_once(self.db,conf)
@@ -73,7 +73,7 @@ class TelegramTest(unittest.TestCase):
     def test_wrong_delivery_receipt_stays_uncertain(self):
         def wrong(req,opener=None):
             if req.get_method()=="GET":return bot_status()
-            return {"ok":True,"sent":[{"key":"primary","chat_id":"-1001827799147",
+            return {"ok":True,"sent":[{"key":"owner_private","chat_id":"123456789",
                   "message_ids":[200]}],"failed":[]}
         with mock.patch.object(tg,"_http",side_effect=wrong):
             answer=tg.send_once(self.db,{"chat_id":PRIVATE_ID,"key":"FAKE"})
@@ -91,16 +91,16 @@ class TelegramTest(unittest.TestCase):
             tg.render({"kind":"failed","summary":"api_key=abcd","stage":"qa"})
     def test_negative_group_id_rejected(self):
         with self.assertRaises(tg.DeliveryError):
-            tg.load_config({"MATRIX_OWNER_TG_CHAT_ID":"-1001827799147",
+            tg.load_config({"MATRIX_OWNER_TG_GROUP_ID":"123456789",
                "MATRIX_GREC_KEY_FILE":"/tmp/missing"})
     def test_requires_0600_file(self):
         file=Path(self.d.name)/"key"
         file.write_text("x"*32)
         file.chmod(0o644)
         with self.assertRaises(tg.DeliveryError):
-            tg.load_config({"MATRIX_OWNER_TG_CHAT_ID":PRIVATE_ID,
+            tg.load_config({"MATRIX_OWNER_TG_GROUP_ID":PRIVATE_ID,
                 "MATRIX_GREC_KEY_FILE":str(file)})
     def test_status_only_no_credentials(self):
         self.assertNotIn("bot",tg.PUBLISH_URL)
-        self.assertEqual(tg.TARGET,"owner_private")
+        self.assertEqual(tg.TARGET,"primary")
 if __name__=="__main__":unittest.main()
