@@ -107,6 +107,7 @@ class Mailbox:
             "in_reply_to": in_reply_to,
         }
         with self.db:
+            self.db.execute("BEGIN IMMEDIATE")
             old = self.db.execute(
                 "SELECT seq,thread_id,sender,kind,body,in_reply_to FROM messages WHERE message_id=?",
                 (message_id,),
@@ -128,6 +129,8 @@ class Mailbox:
             ).fetchall()
             if len(rows) >= MAX_EVENTS_PER_THREAD:
                 raise Denied("thread_event_limit")
+            if any(r[2] in ("result", "error") for r in rows):
+                raise Denied("terminal_thread_closed")
             if not rows:
                 if (sender, kind, in_reply_to) != ("super", "task", None):
                     raise Denied("thread_requires_owner_task")
