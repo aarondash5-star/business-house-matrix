@@ -49,6 +49,8 @@ def validate(m):
            any(not isinstance(x, str) or not re.fullmatch(r"[a-zA-Z0-9_.\-/]+", x) for x in cmd[1:])
            for cmd in tests):
         raise GateError("unsafe_test_command")
+    if any(any(flag in cmd for flag in ("-c","-e","--eval","--require","--loader","--inspect","--import")) for cmd in tests):
+        raise GateError("inline_test_execution_denied")
     if not isinstance(m.get("max_steps"), int) or not 5 <= m["max_steps"] <= 150:
         raise GateError("step_budget")
     if not isinstance(m.get("model"), str) or not re.fullmatch(r"[a-zA-Z0-9_:/.-]{2,75}", m["model"]):
@@ -107,7 +109,7 @@ def sandbox(w, commands):
         if Path(folder).exists():
             prefix.extend(("--ro-bind",folder,folder))
     prefix+=["--proc","/proc","--dev","/dev","--tmpfs","/tmp",
-             "--bind",str(w),"/work","--chdir","/work",
+             "--ro-bind",str(w),"/work","--chdir","/work",
              "--setenv","HOME","/tmp","--setenv","PATH","/usr/bin:/bin",
              "--setenv","CI","1","--"]
     evidence=[]
