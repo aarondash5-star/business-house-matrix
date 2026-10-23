@@ -2,6 +2,14 @@
 
 **Status:** Stack approved; Open WebUI-first pilot delivery prepared 2026-10-18. Runtime deployment requires selected host and verified Docker startup.
 
+## Owner governance overlay — Super Brain role (approved 2026-10-23)
+
+The **Super Brain** is the owner's ChatGPT-facing decision-confirmation, departmental assignment and outcome-review role. It is **above the technical coordination plane as an authority interface**, not a replacement for the central LangGraph brain, Temporal, MCP authorization or a departmental model. The owner confirms the objective and material authority with Super Brain; the technical central dispatcher conveys the approved task to its appropriate Matrix Brain when a real ingest/acceptance mechanism exists. The **receiving departmental Brain**, not the ChatGPT assistant, owns resource/worker management, implementation, tests, bounded correction, receipts and result delivery. The assistant cannot directly commandeer Dell/Mac/SSH/browser workers for departmental work merely because the tools are connected. An explicitly approved brokered gateway action can be requested and logged where permitted.
+
+Status stages must distinguish documented, approved, dispatch pending, accepted, executing, independent QA, review ready and owner accepted. Permissions/production side effects remain enforced by real tool/connector gates; documentation never grants those capabilities or starts a runtime.
+
+**Source of truth:** [Operating charter](governance/SUPER_BRAIN_OPERATING_CHARTER.md); [routing and handover](governance/DEPARTMENT_ROUTING_AND_HANDOFF.md); [task approval schema](../brain/governance/task-envelope-v1.schema.json). This section updates governance, **not** deployment claims or existing v6 certification.
+
 ## Responsibilities and trust boundaries
 
 | Plane | System | Owns | Must not own |
