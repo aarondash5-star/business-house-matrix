@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import re
+import secrets
 import sqlite3
 import subprocess
 import time
@@ -185,18 +186,35 @@ class PodmanWorkcell:
         self.work = Path(work)
     def execute(self, image, command, timeout, read_only=False):
         argv = podman_argv("/usr/bin/podman", image, self.work, command, read_only=read_only)
-        # Podman itself needs the owner's existing rootless storage/runtime context.
-        # Only the guest receives the restricted HOME=/tmp and approved volume.
+        # Unique per-attempt name permits scoped cleanup even if the Podman client dies.
+        container_name="bhm-universal-"+secrets.token_hex(10)
+        argv[2:2]=["--name",container_name]
+        # Podman itself needs existing rootless storage/runtime context; the guest
+        # receives only the restricted HOME=/tmp and isolated project volume.
         engine_env={"PATH":"/usr/bin:/bin", "HOME":str(Path.home()), "LANG":"C.UTF-8"}
         for name in ("XDG_RUNTIME_DIR", "CONTAINERS_STORAGE_CONF", "XDG_CONFIG_HOME"):
             value=os.environ.get(name)
             if value:
                 engine_env[name]=value
+        def remove_own_container():
+            try:
+                stopped=subprocess.run(
+                    ["/usr/bin/podman","rm","-f","--ignore",container_name],
+                    stdin=subprocess.DEVNULL,capture_output=True,text=True,
+                    timeout=18,env=engine_env)
+                return stopped.returncode==0
+            except (subprocess.TimeoutExpired, OSError):
+                return False
         try:
             p = subprocess.run(argv, input="", capture_output=True, text=True,
                                timeout=timeout, env=engine_env)
         except subprocess.TimeoutExpired:
-            return Outcome(124, "", "workcell_timeout")
+            if not remove_own_container():
+                raise Denied("workcell_timeout_cleanup_unverified")
+            return Outcome(124, "", "workcell_timeout_stopped")
+        except BaseException:
+            remove_own_container()
+            raise
         return Outcome(p.returncode, p.stdout[-MAX_OUTPUT:], p.stderr[-MAX_OUTPUT:])
 
 class LocalModel:
