@@ -4,6 +4,17 @@ Independent, recursive nine-department AI operating-system project. **Not connec
 
 **GitHub home:** [aarondash5-star/business-house-matrix](https://github.com/aarondash5-star/business-house-matrix) (**public**, as approved on 2026-10-18).
 
+## Owner-approved operating hierarchy (23 October 2026)
+
+**Owner → Super Brain (ChatGPT decision interface) → appropriate departmental Matrix Brain → its authorized workers/resources → independent QA → Super Brain reporting → owner acceptance.**
+
+The Super Brain confirms material decisions and scope with the owner, delegates to the appropriate Brain and reports verified results. Department Brains own execution and can autonomously use their already-approved workers within that scope; the assistant does not directly commandeer departmental workers. New permissions, production effects and other material changes remain separately gated. **A GitHub task is not proof of Brain execution.**
+
+- [**Canonical Super Brain operating charter**](docs/governance/SUPER_BRAIN_OPERATING_CHARTER.md)
+- [Nine-department routing, delegation and handover](docs/governance/DEPARTMENT_ROUTING_AND_HANDOFF.md)
+- [Reusable Super Brain governance skill](skills/matrix-super-brain-governance/SKILL.md)
+- [Machine-readable approved task envelope](brain/governance/task-envelope-v1.schema.json)
+
 ## Approved architecture
 
 - **Open WebUI** — first pilot interface (not deployed).
