@@ -68,7 +68,7 @@ Keep the separate `Pine Manbir SSH` plugin unchanged. It is the only approved ro
 ## Deprecation decision and recovery
 
 1. Treat `Pine ENgine USER BETA` as a legacy app; do not use it for new beta capability work.
-2. Verify that the canonical `pine-chat-mvp-mcp` v0.2.0 connection exposes all ten tools and passes owner-authenticated smoke tests before removing the legacy app.
+2. Pre-removal recommendation was to verify all ten successor tools first. The owner requested immediate legacy removal; that removal is complete, while the successor's full ChatGPT tool exposure and owner-authenticated smoke tests remain **PENDING**.
 3. The owner explicitly requested removal on 2026-10-23; the Plugin Management connector returned `status=uninstalled` for the exact app `Pine ENgine USER BETA`.
 4. If reference is needed, use this document, the current personal plugin release, and the existing Supabase Edge Function source. No credentials or OAuth tokens are archived here.
 5. Reinstallation/rollback may require app-owner configuration access; this document is an operational reference, not a restorable app export.
