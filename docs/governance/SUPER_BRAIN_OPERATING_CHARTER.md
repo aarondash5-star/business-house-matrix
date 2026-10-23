@@ -75,6 +75,14 @@ Preferred notifications: the already tested **event-driven private Telegram tran
 
 **Explicit status distinction:** This file establishes the *approved role contract*. Automatic ingestion by currently deployed central/departmental Matrix runtimes, task routing, cross-app access and durable notifications need their own verified integrations. Never label them operational solely because this charter exists.
 
+## Current authenticated Super Brain → Dev Matrix transport
+
+**Owner decision 23 October 2026:** the connected **Generic Linux SSH bridge** is the ongoing interface through which Super Brain contacts the existing Dev Matrix controller/Brain on Dell. This is a narrowly brokered **task submission/status channel**, not assistant authorization to directly operate departmental development workers. Prefer the bridge's control lane when online; an approved operations lane may reach the **same fixed controller interface** if the control lane is unavailable. No direct arbitrary code/run/build instructions, worker selection or security/permission changes by the assistant.
+
+Record both SSH terminal receipt and actual controller/Brain job IDs. The Brain alone decides which authorized specialists execute its approved task. Invalid or unregistered build manifests must fail closed and be escalated, not worked around. See [the canonical ingress instructions](DEPARTMENT_ROUTING_AND_HANDOFF.md#super-brain--dev-matrix-brain-ssh-bridge--canonical-current-ingress-owner-directive-2026-10-23).
+
+**Verified Andaz receipt:** controller task `faa9d42b-01d3-4df6-b571-86479cc199b9`, downstream Dev Brain `1280be9b-8465-4a78-bcc4-e92542979e7c`, status **running/planning** at 09:44 UTC; executable website-building capability not yet enrolled. No worker code execution or completed website claimed.
+
 ## 8. Current Andaz example (binding actor division)
 
 Owner-approved Stage 1: standalone responsive static Andaz HTML/CSS/JS frontend plus complete honest enquiry-first booking UI. **Dev Matrix Brain** leads, assigns its authorized existing workers, tests, self-corrects and provides source/QA; **Super Brain** briefs, oversees and reports, but does not directly SSH to Dell/Mac or run subordinate workers. StayCore is the future sole booking authority via a later approved isolated gateway; WordPress integration later. No live bookings, fake rates, publication, merge or production change. Tracked in [Business House Matrix Issue #16](https://github.com/aarondash5-star/business-house-matrix/issues/16); task runtime activation must be verified separately.
