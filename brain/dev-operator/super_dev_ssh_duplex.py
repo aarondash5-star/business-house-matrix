@@ -4,7 +4,9 @@
 This is a transport/data-plane candidate, NOT an execution gateway or a new
 identity provider. The authenticated Generic SSH gateway is the ingress; this
 module never opens a listener, launches commands, grants privileges or invokes
-models. Worker receipts remain independently verified by the existing ledger.
+models. Its SSH-facing CLI only submits Super messages; fixed Dev adapters use the
+internal API. This is defense-in-depth, not an independent local role identity.
+Worker receipts remain independently verified by the existing ledger.
 """
 from __future__ import annotations
 
@@ -214,7 +216,7 @@ def main() -> int:
     send = sub.add_parser("send")
     send.add_argument("--message-id", required=True)
     send.add_argument("--thread-id", required=True)
-    send.add_argument("--sender", choices=tuple(KINDS), required=True)
+    send.add_argument("--sender", choices=("super",), required=True)
     send.add_argument("--kind", required=True)
     send.add_argument("--body-json", required=True)
     send.add_argument("--reply-to")
