@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BHM Mac fixed-function preflight attestation — proposed MCP action v1",
+  "status": "PROPOSED_NOT_DEPLOYED",
+  "derived_from": "generic-linux-automator MCP seven-tool v1.2.0; additive action only",
+  "tool": {
+    "name": "linux_mac_fixed_attestation",
+    "description": "Return only signed predefined Mac Marketing Brain timer/fingerprint/disable-flags evidence. No shell command, path, URL, credentials, publishing or external extraction.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "host_id",
+        "preflight_nonce"
+      ],
+      "properties": {
+        "host_id": {
+          "const": "mac-linux"
+        },
+        "preflight_nonce": {
+          "type": "string",
+          "minLength": 24,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9_-]{24,64}$"
+        }
+      }
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "payload",
+        "signature"
+      ],
+      "properties": {
+        "signature": {
+          "type": "string",
+          "contentEncoding": "base64"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema",
+            "host_id",
+            "observed_utc",
+            "units",
+            "artifacts",
+            "extract_gate_active",
+            "publish_enabled",
+            "spend_enabled",
+            "preflight_nonce"
+          ],
+          "properties": {
+            "schema": {
+              "const": "bhm.mac.fixed_preflight.v1"
+            },
+            "host_id": {
+              "const": "mac-linux"
+            },
+            "observed_utc": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "units": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "bhm-marketing-queue-worker.timer"
+              ],
+              "properties": {
+                "bhm-marketing-queue-worker.timer": {
+                  "const": "active"
+                }
+              }
+            },
+            "artifacts": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "marketing_report_orchestrator.py",
+                "searxng_research.py",
+                "matrix-research-transport/transport.py"
+              ],
+              "properties": {
+                "marketing_report_orchestrator.py": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "searxng_research.py": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "matrix-research-transport/transport.py": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            },
+            "extract_gate_active": {
+              "const": false
+            },
+            "publish_enabled": {
+              "const": false
+            },
+            "spend_enabled": {
+              "const": false
+            },
+            "preflight_nonce": {
+              "type": "string",
+              "minLength": 24,
+              "maxLength": 64,
+              "pattern": "^[A-Za-z0-9_-]{24,64}$"
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": {
+    "deployed": false,
+    "new_permission_granted": false,
+    "requires_connector_owner_review": true,
+    "worker_signing_identity": "existing paired mac-linux, independently vetted",
+    "no_shell": true,
+    "no_side_effects": true,
+    "no_external_network": true,
+    "fail_closed_on_security_denial": true
+  }
+}
