@@ -1,0 +1,287 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/aarondash5-star/business-house-matrix/blob/main/brain/governance/task-envelope-v1.schema.json",
+  "title": "Super Brain to Departmental Matrix Brain — approved task envelope v1",
+  "description": "Records a human-confirmed task; validating this envelope does not itself trigger a worker, override security controls, or prove live dispatch.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "task_id",
+    "project",
+    "receiving_brain",
+    "owner_decision",
+    "requested_outcome",
+    "done_when",
+    "scope",
+    "authority",
+    "routing",
+    "reporting"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 6,
+      "maxLength": 120,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]+$"
+    },
+    "project": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 160
+    },
+    "source_issue": {
+      "type": "string",
+      "format": "uri",
+      "maxLength": 500
+    },
+    "receiving_brain": {
+      "enum": [
+        "concept",
+        "design",
+        "development",
+        "qa_qc",
+        "marketing",
+        "sales",
+        "accounts",
+        "support",
+        "evolution"
+      ]
+    },
+    "requested_outcome": {
+      "type": "string",
+      "minLength": 15,
+      "maxLength": 4000
+    },
+    "done_when": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 900
+      },
+      "minItems": 1,
+      "maxItems": 30
+    },
+    "owner_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "evidence",
+        "confirmed_at",
+        "decision_version"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "awaiting_confirmation",
+            "approved",
+            "rejected",
+            "revoked"
+          ]
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 900,
+          "description": "Reference to the exact user instruction/approval; cannot be a generic old blanket permission."
+        },
+        "confirmed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "decision_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 400
+          },
+          "maxItems": 30
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approved_actions",
+        "forbidden_actions",
+        "data_boundary",
+        "release_mode"
+      ],
+      "properties": {
+        "approved_actions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "maxLength": 300
+          }
+        },
+        "forbidden_actions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "maxLength": 300
+          }
+        },
+        "data_boundary": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 500
+        },
+        "release_mode": {
+          "enum": [
+            "proposal_only",
+            "isolated_source_only",
+            "private_staging_only",
+            "production_effect_separately_authorized"
+          ]
+        },
+        "budget_ceiling": {
+          "type": "string",
+          "maxLength": 100
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "department_owns_execution",
+        "brain_may_delegate_enrolled_workers",
+        "super_brain_direct_worker_control",
+        "new_permissions_require_owner",
+        "sensitive_external_actions_require_owner"
+      ],
+      "properties": {
+        "department_owns_execution": {
+          "const": true
+        },
+        "brain_may_delegate_enrolled_workers": {
+          "type": "boolean"
+        },
+        "super_brain_direct_worker_control": {
+          "type": "boolean",
+          "description": "Default false; if true, require a separate explicit named scoped broker authorization."
+        },
+        "new_permissions_require_owner": {
+          "const": true
+        },
+        "sensitive_external_actions_require_owner": {
+          "const": true
+        },
+        "super_brain_gateway_approval_ref": {
+          "type": "string",
+          "maxLength": 500
+        }
+      }
+    },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "brain_ingress",
+        "acknowledgement"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "documented_only",
+            "dispatch_pending",
+            "accepted",
+            "running",
+            "blocked",
+            "qa",
+            "review_ready",
+            "closed"
+          ]
+        },
+        "brain_ingress": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "acknowledgement": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 800,
+          "description": "Actual runtime/ingress receipt. Null means a task is NOT proven to be running."
+        },
+        "correlation_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 120
+        }
+      }
+    },
+    "reporting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receipt_store",
+        "owner_review_required",
+        "notification_mode"
+      ],
+      "properties": {
+        "receipt_store": {
+          "type": "string",
+          "maxLength": 700
+        },
+        "owner_review_required": {
+          "const": true
+        },
+        "notification_mode": {
+          "enum": [
+            "on_request",
+            "verified_terminal_events",
+            "verified_milestones"
+          ]
+        },
+        "independent_qa_required": {
+          "type": "boolean"
+        },
+        "rollback_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 600
+        }
+      }
+    },
+    "dependency_task_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 120
+      }
+    },
+    "supersedes_decision_version": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
+    }
+  }
+}
