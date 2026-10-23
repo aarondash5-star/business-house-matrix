@@ -39,15 +39,25 @@ jobs:
           corepack prepare yarn@1.22.22 --activate
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+      - name: Disable optional Firebase benchmark integration for standalone prototype
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("android/app/build.gradle")
+          s = p.read_text()
+          target = 'apply plugin: "com.google.gms.google-services"'
+          assert s.count(target) == 1, "Upstream Gradle file changed; review before patching"
+          p.write_text(s.replace(target, '// Firebase Google Services disabled for standalone CI prototype'))
+          PY
       - name: Build Android debug APK
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew :app:assembleProdDebug --no-daemon --stacktrace
       - name: Upload APK
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: supergpt-pocketpal-frontend-debug
-          path: android/app/build/outputs/apk/debug/*.apk
+          path: android/app/build/outputs/apk/prod/debug/*.apk
           if-no-files-found: error
