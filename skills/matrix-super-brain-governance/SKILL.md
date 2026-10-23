@@ -26,6 +26,10 @@ description: Owner-confirmed Super Brain decisions, routing to departmental Matr
 
 Dev Matrix Brain owns the real static Andaz website + complete enquiry-first booking UI. The Brain may use its authorized existing workers without one approval for every subtask. This assistant cannot directly invoke Dell/Mac/SSH/browser workers to implement it. WordPress installation, PMS-backed availability/checkout, public deployment, permissions and spending are later separately authorized actions.
 
+## Current Dev Matrix ingress: connected SSH bridge
+
+Use the owner-approved Generic Linux SSH bridge as **Super Brain-to-Dev Matrix controller intake and status transport**. It is not a direct command channel for the assistant to run the Brain's coding/browser workers. Read authenticated Dell status, use available approved controller/operations lane, submit one idempotent owner-approved task through `matrix-controller/controller.py submit`, and record the controller and downstream Brain receipts. Only `dev_general_build` manifest-enrolled tasks are actual sandboxed coding; never claim an ordinary `dev_proposal` runs source edits. If external-project manifest is missing, ask Brain to report the scoped enrollment gate, not bypass it. Other Matrix Brains require their own verified approved ingress, not an assumed Dell route.
+
 ## Apply carefully
 
 This skill is a portable instruction, not live enforcement, a user-account settings change or an automatically installed runtime. The live host/plugin authorizations are independent. Never claim the skill is deployed to a remote Brain until ingestion is independently verified.
