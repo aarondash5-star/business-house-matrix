@@ -157,14 +157,19 @@ def podman_argv(podman, image, work, command, *, read_only=False, cpu="2", memor
         raise Denied("invalid_workcell")
     if podman != "/usr/bin/podman":
         raise Denied("host_engine_must_be_pinned")
+    git_dir = work / ".git"
+    if not git_dir.is_dir() or git_dir.is_symlink():
+        raise Denied("git_metadata_not_isolated")
     mount = f"{work}:/workspace:{'ro' if read_only else 'rw'},Z"
+    metadata_mount = f"{git_dir}:/workspace/.git:ro,Z"
     return [
         podman, "run", "--rm", "--pull=never", "--network=none",
         "--userns=keep-id", "--cap-drop=all",
         "--security-opt=no-new-privileges", "--read-only",
         "--pids-limit=128", "--memory="+memory, "--cpus="+cpu,
         "--tmpfs=/tmp:rw,nosuid,nodev,size=128m",
-        "--volume", mount, "--workdir", "/workspace",
+        "--volume", mount, "--volume", metadata_mount,
+        "--workdir", "/workspace",
         "--env=HOME=/tmp", "--env=CI=1", "--env=PYTHONDONTWRITEBYTECODE=1",
         "--entrypoint", "/bin/sh", image, "-lc", command
     ]
