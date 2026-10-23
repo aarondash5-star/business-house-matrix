@@ -360,6 +360,31 @@ def execute_job(ledger, ident, key, *, workspace_root, model_factory=LocalModel,
                 result=engine.execute(request["image"],action["command"],min(remaining,150))
                 history.append({"step":step,"exit":result.exit,"output":result.output[-2500:],
                                 "stderr":result.stderr[-1000:]})
+                # Completion is determined by independent immutable QA, not by
+                # the model saying 'finished' or exhausting an arbitrary step budget.
+                if result.exit == 0:
+                    try:
+                        changed=verified_source_changes(work,request)
+                    except Denied as exc:
+                        if str(exc)!="no_source_changes":
+                            raise
+                    else:
+                        qa_time=int(expires-time.monotonic())
+                        if qa_time>2:
+                            qa=engine.execute(request["image"],request["test_command"],
+                                              min(qa_time,90),read_only=True)
+                            if qa.exit==0:
+                                verified_source_changes(work,request)
+                                receipt={"summary":"independent_tests_passed_after_model_action",
+                                         "qa_exit":qa.exit,"qa_stdout":qa.output[-5000:],
+                                         "qa_stderr":qa.stderr[-2000:],
+                                         "source_changes":changed,"model":request["model"],
+                                         "workcell":"rootless_podman_offline",
+                                         "model_steps":step,"published":False,"pushed":False}
+                                ledger.finish(ident,"review_ready",step,receipt)
+                                return ledger.status(ident)
+                            history.append({"step":step,"independent_qa_exit":qa.exit,
+                                            "qa_stderr":qa.stderr[-1200:]})
             elif kind=="finish" and set(action)=={"action","summary"}:
                 if not history or not isinstance(action["summary"],str):
                     raise Denied("fake_finish_without_work")
