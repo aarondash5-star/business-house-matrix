@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "task_id": "andaz-static-stage1",
+  "mode": "brain_direct_only",
+  "workers_allowed": false,
+  "model": "qwen3:4b-instruct",
+  "max_steps": 100,
+  "editable": [
+    "site/",
+    "docs/"
+  ],
+  "tests": [
+    [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "verification",
+      "-p",
+      "test_static_site.py",
+      "-v"
+    ]
+  ],
+  "publish": false,
+  "merge": false,
+  "spend": false,
+  "permissions": false,
+  "brief": "Build the complete standalone, responsive static HTML/CSS/JS website for Andaz Vibe Stay - Arambol, Goa. The Dev Matrix Brain itself must author, improve, run independent offline tests, debug and provide source and evidence; do not delegate to Dell/Mac/SSH/browser or other workers. Use the original index.html as immutable visual reference and write all new site files into site/; do not modify baseline. Provide a real booking UI with check-in/check-out calendar dates, guest count, dorm/private/long stay type, input errors, loading, no-results/unavailable, and clear enquiry-only fallback. All real-time prices, inventory, payment and reservation confirmation are unavailable pending a separately reviewed StayCore server-side bridge. Only that eventual booking adapter may communicate with StayCore; all marketing remains static. Include Stay/Connect/Play/Reset brand storytelling, confirmed facilities pool, karaoke, bar, social areas, separate Moksha partner, directions, gallery structure, useful FAQs, WhatsApp enquiry, mobile CTAs and accessibility. Use real rights-cleared photos only when verified; otherwise clearly marked placeholders. Remove unsourced review/rating claims. No PHP, WordPress dependency, live reservation/payment, publishing or source pushes. Finish only after immutable independent verification passes on latest revision; report an honestly reviewable private artifact rather than claiming production deployment."
+}
