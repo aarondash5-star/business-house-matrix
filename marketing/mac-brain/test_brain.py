@@ -5,6 +5,7 @@ import os
 import sqlite3
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 MODULE = Path(__file__).with_name("brain.py")
@@ -54,8 +55,21 @@ class MarketingBrainTest(unittest.TestCase):
         config = self.brain.configure()
         with self.assertRaisesRegex(RuntimeError, "memory"):
             self.brain.local_resource_guard({**config, "min_available_mem_mb": 999999})
-        with self.assertRaisesRegex(RuntimeError, "temperature"):
-            self.brain.local_resource_guard({**config, "min_available_mem_mb": 0, "max_core_temp_c": 1})
+        # CI hosts may not expose physical coretemp sensors. Supply a
+        # deterministic fake sensor, without changing or bypassing the guard.
+        with tempfile.TemporaryDirectory(prefix="bhm-thermal-fixture-") as root:
+            fake = Path(root) / "hwmon0"
+            fake.mkdir()
+            (fake / "name").write_text("coretemp")
+            (fake / "temp1_input").write_text("85000")
+            original_glob = Path.glob
+            def thermal_glob(path, pattern):
+                if str(path) == "/sys/class/hwmon" and pattern == "hwmon*":
+                    return iter([fake])
+                return original_glob(path, pattern)
+            with patch.object(Path, "glob", thermal_glob):
+                with self.assertRaisesRegex(RuntimeError, "temperature"):
+                    self.brain.local_resource_guard({**config, "min_available_mem_mb": 0, "max_core_temp_c": 1})
 
 
 if __name__ == "__main__":

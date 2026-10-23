@@ -5,6 +5,9 @@ The model cannot supply commands or change process/mount flags. This file does
 not provide Git push, SSH, dependency installs, provider APIs or deployments.
 """
 import json
+import os
+import signal
+import time
 from pathlib import Path
 import resource
 import subprocess
@@ -23,8 +26,9 @@ def limits():
     resource.setrlimit(resource.RLIMIT_FSIZE,(1048576,1048576))
     resource.setrlimit(resource.RLIMIT_CORE,(0,0))
     resource.setrlimit(resource.RLIMIT_NOFILE,(64,64))
+    resource.setrlimit(resource.RLIMIT_AS,(536870912,536870912))
 
-def isolated(workspace,action,request=None):
+def isolated(workspace,action,request=None,*,cancel_file=None,timeout=40,deadline=None):
     if action not in ("probe","apply","qa"):
         raise IsolationError("action_not_enrolled")
     ws=Path(workspace)
@@ -46,14 +50,43 @@ def isolated(workspace,action,request=None):
          "--ro-bind",str(STATIC_POLICY),"/static_html_policy.py",
          "--dir","/empty","--chdir","/workspace",
          "/usr/bin/python3","/worker.py",action]
-    p=subprocess.run(cmd,input=blob,capture_output=True,text=True,
-                     timeout=40,
-                     env={"HOME":"/empty","PATH":"/usr/bin:/bin","LANG":"C.UTF-8"},
-                     preexec_fn=limits)
-    if p.returncode:
-        raise IsolationError("isolated_"+action+"_failed:"+p.stderr[-180:])
-    try: return json.loads(p.stdout)
-    except json.JSONDecodeError:raise IsolationError("worker_response_invalid")
+    # Cancellation also applies mid-QA, not only between model attempts.
+    if not 0 < timeout <= 40:
+        raise IsolationError("worker_timeout_invalid")
+    p=subprocess.Popen(cmd,stdin=subprocess.PIPE,stdout=subprocess.PIPE,
+                       stderr=subprocess.PIPE,text=True,start_new_session=True,
+                       env={"HOME":"/empty","PATH":"/usr/bin:/bin","LANG":"C.UTF-8"},
+                       preexec_fn=limits)
+    start=time.monotonic()
+    payload=blob
+    try:
+        while True:
+            if cancel_file and Path(cancel_file).is_file():
+                raise IsolationError("worker_cancelled")
+            remaining=timeout-(time.monotonic()-start)
+            if deadline is not None:
+                remaining=min(remaining,deadline-time.monotonic())
+            if remaining<=0:
+                raise IsolationError("worker_deadline_exceeded")
+            try:
+                stdout,stderr=p.communicate(input=payload,timeout=min(.25,remaining))
+                if len(stdout.encode("utf-8"))>70000 or len(stderr.encode("utf-8"))>70000:
+                    raise IsolationError("worker_output_limit")
+                if p.returncode:
+                    raise IsolationError("isolated_"+action+"_failed:"+stderr[-180:])
+                try:return json.loads(stdout)
+                except json.JSONDecodeError:raise IsolationError("worker_response_invalid")
+            except subprocess.TimeoutExpired as partial:
+                payload=None
+                if len(partial.stdout or b"")>70000 or len(partial.stderr or b"")>70000:
+                    raise IsolationError("worker_output_limit")
+    except BaseException:
+        if p.poll() is None:
+            try:os.killpg(p.pid,signal.SIGKILL)
+            except ProcessLookupError:pass
+        try:p.communicate(timeout=3)
+        except Exception:pass
+        raise
 
 def doctor(workspace):
     result=isolated(workspace,"probe")
