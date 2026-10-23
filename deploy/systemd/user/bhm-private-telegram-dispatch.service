@@ -9,6 +9,7 @@ Type=oneshot
 NoNewPrivileges=yes
 PrivateTmp=yes
 ProtectSystem=strict
+ReadWritePaths=%h/.local/state/business-house-matrix
 ProtectHome=no
 MemoryMax=256M
 CPUQuota=75%
