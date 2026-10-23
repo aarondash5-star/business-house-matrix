@@ -163,5 +163,45 @@ class DevGateTests(unittest.TestCase):
         self.assertIn("no_source_changes",result["receipt"]["reason"])
 
 
+    def test_verified_qa_auto_completes_without_model_finish(self):
+        class NeverFinish:
+            def __init__(self,name):
+                self.called=0
+            def next_action(self,request,history):
+                self.called+=1
+                return {"action":"command","command":"edit app.py"}
+        class Backend:
+            def __init__(self,work):
+                self.work=work
+            def execute(self,image,command,timeout,read_only=False):
+                if not read_only:
+                    (self.work/"app.py").write_text("VALUE=2\\n")
+                return dut.Outcome(0,"QA PASS","")
+        ledger=dut.JobLedger(self.root/"auto-verified.sqlite")
+        ledger.submit(self.request,self.signature,self.key)
+        result=dut.execute_job(ledger,self.request["task_id"],self.key,
+                workspace_root=self.root,model_factory=NeverFinish,backend_factory=Backend)
+        self.assertEqual(result["state"],"review_ready")
+        self.assertEqual(result["steps"],1)
+        self.assertEqual(result["receipt"]["qa_exit"],0)
+        self.assertIn("app.py",result["receipt"]["source_changes"]["changed_files"])
+
+    def test_failed_independent_qa_does_not_auto_complete(self):
+        class NeverFinish:
+            def __init__(self,name): pass
+            def next_action(self,request,history):
+                return {"action":"command","command":"edit app.py"}
+        class BadQA:
+            def __init__(self,work): self.work=work
+            def execute(self,image,command,timeout,read_only=False):
+                if not read_only:(self.work/"app.py").write_text("VALUE=2\\n")
+                return dut.Outcome(1 if read_only else 0,"","independent test failed")
+        ledger=dut.JobLedger(self.root/"badqa.sqlite")
+        ledger.submit(self.request,self.signature,self.key)
+        result=dut.execute_job(ledger,self.request["task_id"],self.key,
+            workspace_root=self.root,model_factory=NeverFinish,backend_factory=BadQA)
+        self.assertEqual(result["state"],"needs_review")
+
+
 if __name__=="__main__":
     unittest.main()
