@@ -1,5 +1,13 @@
 # Current Business House AI Matrix rollout status
 
+## Owner governance decision — 2026-10-23: Super Brain operating hierarchy
+
+**Adopted and committed to main; no runtime deployment implied.** Owner sets intent and confirms material decisions with Super Brain; Super Brain selects and delegates to the accountable Concept/Design/Development/QA/Marketing/Sales/Accounts/Support/EVOLUTION Matrix Brain; the receiving Brain autonomously manages its own authorized workers/tools within that task; independent QA returns receipts; Super Brain reviews results and seeks owner acceptance. The ChatGPT assistant does not directly commandeer departmental workers (specific restriction verified for Andaz), though named owner-approved transparent broker actions remain possible. Production, privilege, expense and external side-effect gates remain in effect.
+
+**Sources:** [canonical charter](governance/SUPER_BRAIN_OPERATING_CHARTER.md), [routing](governance/DEPARTMENT_ROUTING_AND_HANDOFF.md), [task envelope](../brain/governance/task-envelope-v1.schema.json), [next-session handover](handoffs/SUPER_BRAIN_GOVERNANCE_HANDOVER_20261023.md).
+
+**Integration gap:** Documenting this policy does not wire Github→Brain ingestion, activate a department, start a task, grant new external API access or certify that running workers loaded the updated governance. Those must be verified separately with actual runtime evidence.
+
 **Matrix-wide baseline:** 2026-10-18; **Marketing checkpoint verified:** 2026-10-21
 
 | Stage | State |
