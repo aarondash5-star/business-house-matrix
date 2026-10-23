@@ -18,6 +18,20 @@
 
 **Cross-department examples.** A site redesign can begin with Marketing/Design, but Development owns executable website work; QA provides independent signoff. A revenue campaign can originate Sales, request Marketing creative, and require Accounts for budgets; each Brain retains responsibility and approvals remain explicit. Super Brain is the human-visible coordinator and arbiter. Do not replace the owner of work just because the supervisor can directly access a convenient tool.
 
+## Super Brain → Dev Matrix Brain SSH bridge — canonical current ingress (owner directive 2026-10-23)
+
+The **connected Generic Linux SSH bridge plugin is the standing owner-approved transport** for Super Brain to communicate with the existing **Dev Matrix Brain/controller on Dell**. This supersedes the earlier documentation-only GitHub handoff as the normal way to reach that Brain. The bridge is a **communication/control route**, not permission for ChatGPT to directly run the Brain's development workers or implement source changes.
+
+- Read authenticated `dell-linux` heartbeat; prefer the dedicated **control** lane when online. If temporarily offline, use another **already-approved control/operations route** only for the same fixed Brain controller intake/status interface. Never broaden scope to run build/test commands or call arbitrary specialist workers directly.
+- Read `matrix-controller/controller.py status` and the Brain queue to identify genuine queued/running work and avoid duplicate tasks.
+- Submit the versioned **owner-approved task** through the existing controller `submit` interface, with one stable idempotency key. Include exact project, action and brief. The SSH task receipt (queued/running/completed) is **transport evidence**, and the controller's own ID is the **Brain handoff receipt**; neither is proof of executed code.
+- Verify the downstream Development Brain queue ID, actual task type, capability enrollment and observed receipt. Do not replace a failed `dev_general_build` admission with an unapproved manifest or silently call the Dev workers. When only `dev_proposal` is available, report **planning accepted; code execution blocked pending reviewed enrollment**.
+- Record host/lane, controller ID, downstream Brain ID, task scope, approval, status, failed gates and next dependency in the governed task envelope. The assistant may **broker this approved intake and status communication**, but **the Brain itself directs all its workers**.
+- If control/operations transport is unavailable, fail closed, report the blocker and avoid blind duplicate/replay. Do not expose SSH tokens, machine secrets or raw sensitive command output to GitHub.
+- This is currently proven for **Development on Dell only**. Other departmental Brains need independently verified approved ingress/host mappings; do not assume every Brain is on Dell or reachable over Generic SSH.
+
+**2026-10-23 Andaz verified example:** controller received `andaz_static dev_proposal` as task `faa9d42b-01d3-4df6-b571-86479cc199b9`, and downstream Brain queue entry `1280be9b-8465-4a78-bcc4-e92542979e7c` was observed queued. The controller's executable `dev_general_build` route admitted only three enrolled internal `matrix_dev` manifests, **not Andaz**; no Andaz coding job was launched by this action. Owner-approved static build remains staged for a properly enrolled real execution path. Keep v6, QA and permissions intact.
+
 ## Standard dispatch handoff
 
 Task envelopes conform to `brain/governance/task-envelope-v1.schema.json`, including:
