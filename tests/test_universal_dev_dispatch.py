@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/"brain"/"dev-operator"))
 import universal_dev_dispatch as dut
@@ -201,6 +202,31 @@ class DevGateTests(unittest.TestCase):
         result=dut.execute_job(ledger,self.request["task_id"],self.key,
             workspace_root=self.root,model_factory=NeverFinish,backend_factory=BadQA)
         self.assertEqual(result["state"],"needs_review")
+
+
+    def test_timed_out_container_forcibly_removed_by_own_name(self):
+        calls=[]
+        def fake_run(argv,**kwargs):
+            calls.append(argv)
+            if argv[1]=="run":
+                raise subprocess.TimeoutExpired(argv,2)
+            return subprocess.CompletedProcess(argv,0,"","")
+        with mock.patch.object(dut.subprocess,"run",side_effect=fake_run):
+            outcome=dut.PodmanWorkcell(self.work).execute(
+                self.request["image"],"sleep 10",timeout=2)
+        self.assertEqual(outcome.exit,124)
+        self.assertEqual(calls[0][1],"run")
+        self.assertEqual(calls[1][1:4],["rm","-f","--ignore"])
+        self.assertEqual(calls[0][calls[0].index("--name")+1],calls[1][-1])
+
+    def test_timeout_cleanup_failure_never_returns_normal_receipt(self):
+        def fake_run(argv,**kwargs):
+            if argv[1]=="run":
+                raise subprocess.TimeoutExpired(argv,2)
+            return subprocess.CompletedProcess(argv,1,"","cannot remove")
+        with mock.patch.object(dut.subprocess,"run",side_effect=fake_run):
+            self.denies(lambda:dut.PodmanWorkcell(self.work).execute(
+                self.request["image"],"sleep 10",timeout=2))
 
 
 if __name__=="__main__":
