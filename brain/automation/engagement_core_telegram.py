@@ -64,6 +64,7 @@ def _http(request,opener=None):
     except ValueError as exc:raise DeliveryError("ENGAGEMENT_CORE_INVALID_JSON") from exc
 
 def preflight(config,opener=None):
+    raise DeliveryError("DESTINATION_NOT_VERIFIED_BY_OWNER")
     request=urllib.request.Request(STATUS_URL,method="GET",headers={
         "X-GREC-Publish-Key":config["key"],"Accept":"application/json"})
     status=_http(request,opener=opener)
