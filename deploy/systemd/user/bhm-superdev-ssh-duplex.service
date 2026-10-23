@@ -1,0 +1,22 @@
+[Unit]
+Description=Business House Matrix Super Brain to Dev Brain SSH duplex (fixed-function)
+Documentation=https://github.com/aarondash5-star/business-house-matrix/tree/feat/super-dev-ssh-duplex-20261023
+After=bhm-autonomy-controller.service
+StartLimitIntervalSec=120
+StartLimitBurst=3
+
+[Service]
+Type=simple
+WorkingDirectory=/var/lib/generic-linux-automator-exec/matrix-superdev-duplex-release-20261023
+ExecStart=/usr/bin/python3 -B /var/lib/generic-linux-automator-exec/matrix-superdev-duplex-release-20261023/brain/dev-operator/super_dev_ssh_listener.py
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=yes
+UMask=0077
+MemoryMax=128M
+CPUQuota=25%
+TasksMax=32
+LimitNOFILE=128
+
+[Install]
+WantedBy=default.target
