@@ -32,8 +32,8 @@ RULES = (
  "Each substantive work package needs: ROLE, OBJECTIVE, EVIDENCE INPUTS, DELIVERABLE, "
  "MEASURABLE ACCEPTANCE TEST, DEPENDENCIES and P0/P1/P2 PRIORITY. "
  "Use Markdown headings and short rich paragraphs; do not use JSON or code fences. "
- "Be specific to Andaz, not generic website advice. Keep 3-5 work packages per phase, "
- "each with genuine implementation detail, and flag unknowns and blockers explicitly."
+ "Be specific to Andaz, not generic website advice. Keep 3-4 substantive work packages per phase, with 80-120 words per package. "
+ "each with genuine implementation detail, Avoid lengthy preambles, repeated disclaimers or decorative headings; use compact work-package sections with all required fields. Demand 100% accurate inventory/availability at every booking acceptance test. Flag unknowns and blockers explicitly."
 )
 CONTEXT=(
  "Andaz Vibe Stay - Arambol, Goa; STAY CONNECT PLAY RESET. Hostel has dorms, private rooms, "
@@ -62,9 +62,9 @@ def stage_request(stage_name,stage_title,focus,previous,keep_alive):
   "Write the real proposals for this phase now; no template-only outline."
  )
  return {"model":MODEL,"prompt":intro,"stream":True,"keep_alive":keep_alive,
-         "options":{"temperature":0.2,"num_ctx":4096,"num_predict":720,
+         "options":{"temperature":0.2,"num_ctx":4096,"num_predict":1400,
                     "num_thread":4,"repeat_penalty":1.04}}
-def generate(req, stage_file, metrics_file, timeout=310):
+def generate(req, stage_file, metrics_file, timeout=540):
  opener=urllib.request.build_opener(urllib.request.ProxyHandler({}),NoRedirect())
  http=urllib.request.Request(URL,data=json.dumps(req).encode("utf8"),
      headers={"Content-Type":"application/json"},method="POST")
@@ -127,7 +127,7 @@ def main():
    status["phases"].append({"name":name,"status":"failed",
      "error_type":type(exc).__name__,"error":str(exc)[:160]})
    status["state"]="incomplete";atomic_json(receipt,status);break
-  if time.monotonic()-started>1100:
+  if time.monotonic()-started>2100:
    status["state"]="incomplete";status["reason"]="total_budget";break
  else:status["state"]="completed"
  status["finished_unix"]=time.time()
