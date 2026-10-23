@@ -1,0 +1,12 @@
+[Unit]
+Description=Check for genuinely stalled Matrix work and create event receipts
+
+[Service]
+Type=oneshot
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=no
+MemoryMax=128M
+CPUQuota=30%
+ExecStart=/usr/bin/python3 -B %h/matrix-gate-s-supervisor-20261023/brain/automation/task_events.py watchdog
