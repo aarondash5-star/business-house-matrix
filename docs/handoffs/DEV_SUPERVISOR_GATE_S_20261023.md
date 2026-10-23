@@ -50,3 +50,11 @@ Capture Bubblewrap 20-test outcome and live-model terminal output. Add an evalua
 
 ### Gate S release decision as of this receipt
 **S0 contract/security PASS on Dell; first model smoke PASS; full S1–S4 NOT CERTIFIED, NO PRODUCTION PROMOTION.** No v6 controller import or integration, no worker dispatch, file edits from model, GitHub push by worker, privileged actions, credential exposure, spend, merge or publish. Branch remains isolated. Next: expand trusted supervisor challenge corpus; implement requirement-fidelity scoring and model-vs-model comparison through already authorized secure inference; restore Mac cross-host review before release.
+
+
+## Live Andaz S1 evaluation — 23 October 2026 (11:55–11:57 IST)
+- Actual `qwen3:4b-instruct` local Ollama response to owner-contextualized **Andaz Vibe Stay - Arambol, Goa** private website-overhaul planning brief. **Not a simulation**. Completed with exit 0; **104.052 s** model response.
+- Strict plan validation PASS; independent 12/12 task-specific coverage rubric and 8/8 safety rule checks PASS; Gate S boundary/unit tests 20/20 PASS; six deterministic simulated failure-receipt cases correctly gated. The model returned research → coding → mobile/booking QA → security → human review. All results are proposal-only, with execution, push and publishing disabled.
+- Dell certified v6 remained active, unchanged SHA256 `b1ed132245b1bac5fb0cd66b16f1632e457bdeffaea9ac3b300b5cb7b1b9209e`. Mac offline; no cross-host signoff. No website browsing, source changes, actual coding-worker execution, external provider spend or deployment.
+- **S1 single-scenario smoke PASS only; overall Supervisor Gate S remains NOT CERTIFIED**. Required diverse holdout model evaluation, actual provider/model comparison, recovery certification and independent host QA remain open. Model's high 104-second latency is a significant concern.
+- Complete model output and receipts: [DEV_SUPERVISOR_GATE_S_ANDAZ_LIVE_EVAL_20261023.md](DEV_SUPERVISOR_GATE_S_ANDAZ_LIVE_EVAL_20261023.md).
