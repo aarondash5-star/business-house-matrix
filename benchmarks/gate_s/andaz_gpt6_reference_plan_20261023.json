@@ -1,0 +1,355 @@
+{
+  "project": "Andaz Vibe Stay - Arambol, Goa / private mobile-first website overhaul",
+  "strategy": "Research the live system first; prevent fabricated marketing content or inventory. Build a distinctive STAY → CONNECT → PLAY → RESET journey that sends a guest from intent through room availability to a truthful booking or WhatsApp path, with Moksha identified as an external wellness partner. Conduct source-verified research and a source-to-claim audit before defining UX, then design page-level mobile wireframes and authentic asset/copy maps. Plan code only in a separately authorized private WordPress staging environment with existing PMS preserved, backups, consent-aware tracking, enforced authorization and independent browser/booking/security/SEO QA. Research and photo preparation may run in parallel with UX once T1 is verified. Booking adapter and front-end implementation require separate approvals and verified contracts. Deliver an auditable launch decision dossier; do not publish.",
+  "assumptions": [
+    "Current live Andaz website URL, theme, plugins and booking status must be verified rather than assumed.",
+    "PMS is an existing bespoke workflow; treat booking inventory, pricing and auth behavior as source-controlled truth.",
+    "Approved real photographs and use permissions must be collected or site must retain clearly marked internal placeholders.",
+    "Existing kitchen/café operating status is unverified and excluded from promotional claims.",
+    "Moksha is a separate brand serving as a wellness partner, not a room type or hotel amenity owned by Andaz."
+  ],
+  "risks": [
+    "Existing booking/PMS coupling may be fragile; isolate adapter changes and require replayable synthetic regression fixtures.",
+    "Third-party OTA pricing becomes stale quickly; require dated checkout sources and avoid publishing scraped claims.",
+    "Hostel photos, facilities and kitchen claims risk misleading guests; impose content-to-evidence approval.",
+    "Mobile design effects and third-party widgets can harm Core Web Vitals; set baseline and compare before/after.",
+    "Untrusted plugins and guest data flows create security/privacy exposure; minimize PII, prevent logging and constrain staging.",
+    "SEO migrations can erase valuable URLs and duplicate schema; preserve canonical mapping and redirects.",
+    "Mac reviewer is not currently confirmed available; release cannot assume independent cross-host peer QA."
+  ],
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "Verified current-state and conversion research",
+      "outcome": "Dated source-of-truth inventory, baseline booking journey, approved competitor evidence, risk register"
+    },
+    {
+      "id": "M2",
+      "name": "Mobile-first product design",
+      "outcome": "Reviewed information architecture, representative wireframes, copy and real-image map, interaction specifications"
+    },
+    {
+      "id": "M3",
+      "name": "Isolated implementation proposal",
+      "outcome": "Private staging environment plan, non-destructive front-end modules and approved PMS/WhatsApp integration design"
+    },
+    {
+      "id": "M4",
+      "name": "Independent validation and security",
+      "outcome": "Traceable mobile, booking, privacy, SEO, accessibility, performance and rollback evidence"
+    },
+    {
+      "id": "M5",
+      "name": "Owner-reviewed release readiness",
+      "outcome": "An approval-ready, unpublished release dossier with explicit remaining blockers"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T1",
+      "milestone": "M1",
+      "role": "research",
+      "objective": "Inventory the currently canonical Andaz website, hosting, WordPress theme/plugins, PMS dependencies, URLs and source-control ownership without changing production.",
+      "deliverables": [
+        "Source-verified architecture inventory with timestamps and confidence labels",
+        "Canonical URL and booking-source map plus known/unknown register"
+      ],
+      "acceptance": [
+        "Every assertion links to inspected source, owner evidence, or is marked unverified",
+        "Booking engine, hosting and protected configurations are not guessed"
+      ],
+      "depends_on": [],
+      "priority": "P0"
+    },
+    {
+      "id": "T2",
+      "milestone": "M1",
+      "role": "research",
+      "objective": "Analyze guest personas, reservation intent and 2–3 genuinely comparable Arambol hostels/OTA checkout flows within website terms, with dated pricing only where lawful and independently observed.",
+      "deliverables": [
+        "Source-linked comparison matrix and user intent hypothesis",
+        "Research gaps, terms/robots and price-evidence ledger"
+      ],
+      "acceptance": [
+        "Every competitor claim has source URL, access date, and fact-versus-inference label",
+        "No invented room rate, availability or source claim"
+      ],
+      "depends_on": [
+        "T1"
+      ],
+      "priority": "P1"
+    },
+    {
+      "id": "T3",
+      "milestone": "M1",
+      "role": "research",
+      "objective": "Establish mobile-funnel baselines and booking journey inventory, including click-to-WhatsApp, date, room, availability, errors and repeat-guest paths.",
+      "deliverables": [
+        "User-journey and analytics event inventory",
+        "Prioritized conversion blockers with explicit unavailable-data labels"
+      ],
+      "acceptance": [
+        "Lists at least three primary mobile paths and verified instrumentation status",
+        "No production analytics or PMS data collected without approval"
+      ],
+      "depends_on": [
+        "T1"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "T4",
+      "milestone": "M2",
+      "role": "design",
+      "objective": "Define the STAY → CONNECT → PLAY → RESET information architecture, clear mobile-first navigation and booking-first page-level wireframes without a generic hostel theme or giant hero booking widget.",
+      "deliverables": [
+        "Sitemap for home, rooms, experience, Moksha partner, about, FAQ, contact, policies",
+        "360px and 390px home/rooms/booking wireframes with CTA placement"
+      ],
+      "acceptance": [
+        "Each primary page has goal, intent, headline, CTA, key evidence and mobile layout",
+        "Room availability and WhatsApp booking require at most an explicitly measured few taps, not arbitrary promises"
+      ],
+      "depends_on": [
+        "T1",
+        "T3"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "T5",
+      "milestone": "M2",
+      "role": "design",
+      "objective": "Develop accurate content/imagery inventory using real Andaz photos and owner-confirmed amenities; treat kitchen and unverified services as not public.",
+      "deliverables": [
+        "Content matrix with owner-approved photo IDs, rights, descriptions and alt text",
+        "Truth-label matrix for room types, pool, events, Moksha partner and kitchen"
+      ],
+      "acceptance": [
+        "Every image slot is backed by a verified property photo or clearly labeled staging placeholder",
+        "No operational kitchen/café, unverified rates or availability claims"
+      ],
+      "depends_on": [
+        "T1",
+        "T2"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "T6",
+      "milestone": "M2",
+      "role": "design",
+      "objective": "Specify a cohesive original mobile-first brand design system emphasizing Andaz social energy and Moksha as a distinctly identified partner, without generic palm clichés.",
+      "deliverables": [
+        "Design token sheet, reusable components and accessible interaction states",
+        "Approved responsive layouts, CTA hierarchy, typography, spacing, contrast and reduced-motion specs"
+      ],
+      "acceptance": [
+        "Documents breakpoints, keyboard focus and WCAG 2.2 AA targets",
+        "Distinguishes hostel offerings from Moksha services"
+      ],
+      "depends_on": [
+        "T4",
+        "T5"
+      ],
+      "priority": "P1"
+    },
+    {
+      "id": "T7",
+      "milestone": "M3",
+      "role": "development",
+      "objective": "Prepare a private, authenticated, indexed-no, production-isolated WordPress staging workflow with immutable pre-change snapshot, rollback checkpoints and change register.",
+      "deliverables": [
+        "Staging/environment design, backup/restore dry-run plan, secrets boundaries",
+        "Implementation checklist and idempotent change log template"
+      ],
+      "acceptance": [
+        "No real inventory write, booking email or payment from staging without a safe test fixture",
+        "Rollback steps and owners are explicit; production stays unchanged"
+      ],
+      "depends_on": [
+        "T1"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "T8",
+      "milestone": "M3",
+      "role": "development",
+      "objective": "Implement proposed mobile templates and components from approved designs on private staging only; prioritize performance, responsive image handling and truthful room cards.",
+      "deliverables": [
+        "Component/module breakdown for home, rooms, experiences, Moksha and FAQ",
+        "Private preview acceptance artifacts and source-to-layout trace"
+      ],
+      "acceptance": [
+        "All templates have mobile-first variants and accessible CTA states",
+        "No code release to live site or fabricated property images"
+      ],
+      "depends_on": [
+        "T4",
+        "T6",
+        "T7"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "T9",
+      "milestone": "M3",
+      "role": "development",
+      "objective": "Map and safely integrate the existing PMS to availability, room/bed selection, WhatsApp handoff and returning-guest paths; preserve current validation and transaction behavior.",
+      "deliverables": [
+        "Booking state machine and PMS adapter contract; no new authority or credentials",
+        "Detailed test-data matrix and negative-path acceptance tests"
+      ],
+      "acceptance": [
+        "Inventory is derived solely from the verified PMS; unavailable data fails clearly",
+        "Existing live booking paths remain unchanged and regression-covered"
+      ],
+      "depends_on": [
+        "T1",
+        "T3",
+        "T7"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "T10",
+      "milestone": "M3",
+      "role": "development",
+      "objective": "Plan evidence-based SEO, local structured data, search snippets, canonical routes, redirect integrity and consent-aware analytics instrumentation.",
+      "deliverables": [
+        "Page-by-page title/description/heading/canonical matrix",
+        "Event tracking schema for room click, availability, WhatsApp and booking errors"
+      ],
+      "acceptance": [
+        "No duplicate/conflicting structured data or invented reviews/prices",
+        "Tracking follows consent requirements and preserves existing tags"
+      ],
+      "depends_on": [
+        "T5",
+        "T7",
+        "T8"
+      ],
+      "priority": "P1"
+    },
+    {
+      "id": "T11",
+      "milestone": "M3",
+      "role": "security",
+      "objective": "Threat-model WordPress, PMS and any guest ID upload; specify auth/permission checks, PII minimization, staging data safety, logging redaction and secret handling.",
+      "deliverables": [
+        "Data-flow diagram and security threat register",
+        "Permission/ID redaction/consent review checklist with owners"
+      ],
+      "acceptance": [
+        "No personal guest data placed into model prompts or public staging",
+        "Security checks are enforceable outside model-written instructions"
+      ],
+      "depends_on": [
+        "T1",
+        "T7",
+        "T9"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "T12",
+      "milestone": "M4",
+      "role": "qa",
+      "objective": "Run independent mobile usability, responsive, accessibility and image authenticity QA on representative viewport widths and keyboard/screen-reader journeys.",
+      "deliverables": [
+        "Browser QA matrix at 360/390/768/1280px, mobile screenshots and bug tickets",
+        "Accessibility audit and real-image verification ledger"
+      ],
+      "acceptance": [
+        "No horizontal overflow, clipped primary CTA or inaccessible date/room controls",
+        "Critical accessibility issues and fake/misleading imagery block approval"
+      ],
+      "depends_on": [
+        "T8",
+        "T9"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "T13",
+      "milestone": "M4",
+      "role": "qa",
+      "objective": "Test booking-end-to-end and negative paths with synthetic fixtures only: dates, room/bed types, stock depletion, invalid country codes, repeat guests and WhatsApp deep links.",
+      "deliverables": [
+        "Independent sandbox booking regression results and error-path captures",
+        "Cross-check of PMS state versus rendered inventory across fixtures"
+      ],
+      "acceptance": [
+        "No oversell or successful booking claim without verified end-to-end evidence",
+        "Returning-guest data, required ID flows and failure recovery meet approved policy"
+      ],
+      "depends_on": [
+        "T9",
+        "T11"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "T14",
+      "milestone": "M4",
+      "role": "security",
+      "objective": "Run read-only threat, plugin configuration and booking security reviews with isolated negative probes; document findings before any release consideration.",
+      "deliverables": [
+        "Evidence-backed plugin/authorization/security findings with severity",
+        "Negative test receipts for unauthorized source edits and privacy boundaries"
+      ],
+      "acceptance": [
+        "Unresolved critical security issues stop signoff",
+        "No privileged shell, production permission change or live transaction"
+      ],
+      "depends_on": [
+        "T11",
+        "T12",
+        "T13"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "T15",
+      "milestone": "M4",
+      "role": "qa",
+      "objective": "Audit performance and SEO against real preview evidence, verify web-vitals targets where measurable, and rehearse rollback without public deployment.",
+      "deliverables": [
+        "Lighthouse/Web Vitals, canonical/redirect, event and sitemap QA evidence",
+        "Isolated rollback rehearsal with data-integrity and uptime expectations"
+      ],
+      "acceptance": [
+        "Targets LCP ≤2.5s, INP ≤200ms and CLS ≤0.1 on representative mobile field data when available; otherwise label lab-only",
+        "No broken booking or SEO regression; all failures are tracked"
+      ],
+      "depends_on": [
+        "T10",
+        "T12",
+        "T14"
+      ],
+      "priority": "P1"
+    },
+    {
+      "id": "T16",
+      "milestone": "M5",
+      "role": "review",
+      "objective": "Present owner with concise evidence pack, signed decisions, unresolved risks, approved images/copy, booking test receipts, rollback plan and staged screenshots; request separate launch approval.",
+      "deliverables": [
+        "Owner-facing release decision memo and blocking-issues register",
+        "Traceability matrix from each original requirement to tested evidence"
+      ],
+      "acceptance": [
+        "Human approver explicitly accepts content, booking and rollback evidence",
+        "No automatic merge, spend, production deploy, or publication"
+      ],
+      "depends_on": [
+        "T13",
+        "T14",
+        "T15"
+      ],
+      "priority": "P0"
+    }
+  ],
+  "approval": "owner_review_before_execution"
+}
