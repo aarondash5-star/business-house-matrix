@@ -1,0 +1,8 @@
+{
+  "name": "business-house-matrix-model-manager",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": false,
+  "ai": { "binding": "AI" },
+  "vars": { "ROUTING_PRIORITY": "quality", "SPENDING_POLICY": "free", "AUTOMATIC_FALLBACK": "true" }
+}
