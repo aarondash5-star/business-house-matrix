@@ -164,3 +164,9 @@ Do not delete the SQLite mailbox or release checkout as part of emergency rollba
 ## Final disposition
 
 **CERTIFIED LIVE for fixed-function Super Brain ↔ Dev Brain status exchange on Dell.** Persistent listener enabled and running, canary/rollback, live response, restart recovery, and later health checks verified with terminal receipts. **NOT CERTIFIED** as a general-purpose autonomous Dev Brain ingress or full Unified Dev Brain release.
+
+## Subsequent operating-mode change — 2026-10-23
+
+The owner subsequently directed that the autonomous Matrix Dev Brain be deactivated and Matrix Dev used as a **Super Brain-operated tool yard**. The `bhm-autonomy-controller.service` was disabled/stopped; the fixed-function SSH duplex sidecar remains active for read-only status. Its controller-status reply now correctly reports `controller_service=inactive` / `state=degraded` because the autonomous dispatcher is intentionally off. The original live release certification above is a historical record, **not** evidence that autonomous dispatch remains active.
+
+Current operational source of truth: [DEV_MATRIX_TOOLYARD_SUPERBRAIN_MODE_20261023.md](https://github.com/aarondash5-star/business-house-matrix/blob/feat/dev-toolyard-superbrain-control-20261023/docs/handoffs/DEV_MATRIX_TOOLYARD_SUPERBRAIN_MODE_20261023.md). No v6 transport, root, model, publish or spend settings were changed by this mode switch.
