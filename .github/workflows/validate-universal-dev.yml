@@ -1,0 +1,29 @@
+name: Universal Dev candidate offline certification
+on:
+  push:
+    branches:
+      - feat/dev-universal-dynamic-intake-20261023
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: universal-dev-candidate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  independent-offline-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout candidate without credentials
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Check repository secret and source policies
+        run: python3 scripts/validate_public_repo.py
+      - name: Compile candidate code
+        run: python3 -m py_compile brain/dev-operator/universal_dev_dispatch.py
+      - name: Run bounded signed-intake and source-evidence regressions
+        run: python3 -B -m unittest -v tests.test_universal_dev_dispatch
