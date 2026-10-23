@@ -276,6 +276,60 @@ class JobLedger:
         with self.db:
             return self.db.execute("UPDATE jobs SET state='needs_review', receipt='{\"reason\":\"orphaned_no_replay\"}' WHERE state='running'").rowcount
 
+
+def verified_source_changes(work, request):
+    """Require actual reviewable edits. Baseline passing tests alone are insufficient."""
+    work = Path(work).resolve(strict=True)
+    env = {"PATH": "/usr/bin:/bin", "HOME": "/nonexistent",
+           "GIT_TERMINAL_PROMPT": "0", "GIT_CONFIG_GLOBAL": "/dev/null",
+           "GIT_CONFIG_NOSYSTEM": "1"}
+    def git(*argv):
+        done = subprocess.run(
+            ["/usr/bin/git", "-c", "core.hooksPath=/dev/null", *argv],
+            cwd=str(work), capture_output=True, timeout=15, env=env)
+        if done.returncode:
+            raise Denied("source_identity_or_diff_failed")
+        return done.stdout
+    if git("rev-parse", "HEAD").decode().strip() != request["base_sha"]:
+        raise Denied("source_baseline_modified")
+    if git("remote", "get-url", "origin").decode().strip() not in {
+            "https://github.com/"+request["repository"],
+            "https://github.com/"+request["repository"]+".git"}:
+        raise Denied("source_origin_modified")
+    entries = git("-c", "status.renames=false", "status", "--porcelain=v1",
+                  "--untracked-files=all", "-z").split(b"\0")
+    names = []
+    protected = set(request["trusted_tests"])
+    for entry in entries:
+        if not entry:
+            continue
+        if len(entry) < 4 or entry[2:3] != b" ":
+            raise Denied("unexpected_git_status")
+        name = entry[3:].decode("utf8", "surrogateescape")
+        rel = Path(name)
+        if (rel.is_absolute() or "." in rel.parts or ".." in rel.parts
+            or name.startswith(".git") or name in protected):
+            raise Denied("protected_source_change")
+        full = work/rel
+        if (not full.is_file() or full.is_symlink()
+            or not full.resolve().is_relative_to(work)
+            or full.stat().st_size > 1000000):
+            raise Denied("unreviewable_source_change")
+        if name not in names:
+            names.append(name)
+    if not names:
+        raise Denied("no_source_changes")
+    if len(names) > 100:
+        raise Denied("source_change_budget")
+    verify_trusted_tests(work, request["trusted_tests"])
+    fingerprint = hashlib.sha256()
+    for name in sorted(names):
+        body = (work/name).read_bytes()
+        fingerprint.update(name.encode("utf8", "surrogateescape")
+                           + b"\0" + hashlib.sha256(body).digest())
+    return {"changed_files": sorted(names),
+            "change_sha256": fingerprint.hexdigest()}
+
 def execute_job(ledger, ident, key, *, workspace_root, model_factory=LocalModel, backend_factory=PodmanWorkcell):
     request, signature = ledger.claim(ident)
     history=[]
@@ -301,14 +355,15 @@ def execute_job(ledger, ident, key, *, workspace_root, model_factory=LocalModel,
                 if not history or not isinstance(action["summary"],str):
                     raise Denied("fake_finish_without_work")
                 # Independent immutable owner-signed command; model cannot override it.
-                verify_trusted_tests(work, request["trusted_tests"])
+                diff_proof=verified_source_changes(work, request)
                 verified=engine.execute(request["image"],request["test_command"],
                                         min(remaining,150),read_only=True)
                 receipt={"summary":action["summary"][:1000],"qa_exit":verified.exit,
                          "qa_stdout":verified.output[-5000:],
                          "qa_stderr":verified.stderr[-2000:],
                          "model":request["model"],"workcell":"rootless_podman_offline",
-                         "published":False,"pushed":False,"model_steps":step}
+                         "published":False,"pushed":False,"model_steps":step,
+                         "source_changes":diff_proof}
                 state="review_ready" if verified.exit==0 else "needs_review"
                 ledger.finish(ident,state,step,receipt)
                 return ledger.status(ident)
