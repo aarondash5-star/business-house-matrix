@@ -164,7 +164,7 @@ def podman_argv(podman, image, work, command, *, read_only=False, cpu="2", memor
     metadata_mount = f"{git_dir}:/workspace/.git:ro,Z"
     return [
         podman, "run", "--rm", "--pull=never", "--network=none",
-        "--userns=keep-id", "--cap-drop=all",
+        "--cap-drop=all",
         "--security-opt=no-new-privileges", "--read-only",
         "--pids-limit=128", "--memory="+memory, "--cpus="+cpu,
         "--tmpfs=/tmp:rw,nosuid,nodev,size=128m",
