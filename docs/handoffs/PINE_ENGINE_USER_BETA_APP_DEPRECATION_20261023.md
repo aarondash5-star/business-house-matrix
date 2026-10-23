@@ -1,8 +1,8 @@
 # Pine ENgine USER BETA — Deprecated App Reference
 
 **Date:** 2026-10-23 (IST)  
-**Status:** DEPRECATED — legacy ChatGPT app; archive/reference only  
-**Change scope:** Documentation only. No app uninstall, auth change, MCP deployment, chart edit, alert, or broker action was performed by this archive.
+**Status:** UNINSTALLED — legacy ChatGPT app; archived for reference only  
+**Change scope:** The exact legacy ChatGPT app was uninstalled on 2026-10-23 at owner request. No Supabase deployment, auth configuration, chart, alert, broker, or successor-plugin change was made.
 
 ## Exact legacy target
 
@@ -69,9 +69,18 @@ Keep the separate `Pine Manbir SSH` plugin unchanged. It is the only approved ro
 
 1. Treat `Pine ENgine USER BETA` as a legacy app; do not use it for new beta capability work.
 2. Verify that the canonical `pine-chat-mvp-mcp` v0.2.0 connection exposes all ten tools and passes owner-authenticated smoke tests before removing the legacy app.
-3. Do not uninstall or change permissions merely because this archive exists. App removal requires an explicit user instruction.
+3. The owner explicitly requested removal on 2026-10-23; the Plugin Management connector returned `status=uninstalled` for the exact app `Pine ENgine USER BETA`.
 4. If reference is needed, use this document, the current personal plugin release, and the existing Supabase Edge Function source. No credentials or OAuth tokens are archived here.
 5. Reinstallation/rollback may require app-owner configuration access; this document is an operational reference, not a restorable app export.
+
+## Confirmed removal receipt
+
+- Exact target: `Pine ENgine USER BETA`
+- Action: uninstall/disconnect legacy ChatGPT app
+- Connector result: `uninstalled`
+- Date: 2026-10-23 (IST)
+- Preserved: `pine-chat-mvp-mcp` v0.2.0 and `Pine Manbir SSH`
+- Recovery: this is a reference archive, not a restorable app export. Recreating the old app would require owner-authorized app configuration.
 
 ## Safety boundaries
 
