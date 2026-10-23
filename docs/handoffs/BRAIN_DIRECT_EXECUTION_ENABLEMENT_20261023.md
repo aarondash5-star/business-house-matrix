@@ -1,22 +1,29 @@
-# Dev Matrix Brain: direct execution enablement, without delegated workers
+# Dev Matrix full development run — Brain-owned workers authorized
 
-**Request:** 23 October 2026 — enable full development runs rather than a proposal-only plan.
+**Owner correction:** 23 October 2026. **Source of truth:** [Andaz Issue #16](https://github.com/aarondash5-star/business-house-matrix/issues/16).
 
-## Boundaries and scope
+## Actor/permission split
 
-- The Brain may own source authoring, test requests, debugging loops and a review-ready final artifact in an isolated working copy of `karanzing1992/andaz-vibe-stay`.
-- **No separate Dev Matrix worker is authorized by this change.** The owner previously required explicit and specific approval before accessing Dell, Mac, SSH lanes, browser workers or coding agents. This remains in force. Updating a GitHub source branch does not activate the running service.
-- No unreviewed root, OS permission, network permission, credential read, third-party spending, direct PMS guest mutation, checkout/payment, merge, public publish or production deployment rights.
-- The Brain can edit only reviewed files in `site/`, `tests/` and `docs/`. Its approved commands run without network in a confined test sandbox, not by dispatching workers.
-- The existing certified v6 runtime remains untouched. An independent experimental runner should be developed, tested and then activated only by specific owner authority.
+**Dev Matrix Brain** owns real implementation, specialist orchestration, QA and final submission. It **may invoke its already-enrolled specialist workers itself** for the isolated Andaz static website and booking UI, including coding, design, browser tests, independent QA and retries. It must preserve each worker's existing access controls and execution receipts.
 
-## Full-run acceptance, not fake progress
+**ChatGPT supervisory assistant** may coordinate the brief, inspect GitHub evidence and report actual results, **but may not call the Brain's workers directly**. That restriction applies to Dell, Mac, SSH, development lanes, browser automation and other subordinate workers. Assistant-originated GitHub issue/branch edits are not a worker run. The Brain is the only authorized delegator for this assignment.
 
-1. Check out exact Andaz feature-branch SHA into a separate writable source copy, leaving the original `index.html` unchanged.
-2. The Brain reads current source and autonomous task brief. It generates or modifies actual files, not just a plan.
-3. The Brain runs reviewed tests in a networkless sandbox and revises code from real failure messages.
-4. It cannot declare success until the latest file revision has passing tests and a terminal receipt.
-5. The completed static frontend and complete booking UI are reviewable independently of WordPress. Until public StayCore APIs are formally certified, it remains an enquiry-only path without fake inventory, prices or checkout.
-6. Deliver files, logs, SHA-256 digests, test outputs and an owner-review gate. No launch/deployment without authorization.
+## Real execution instead of simulation
 
-**Current status:** GitHub source work in progress. Not yet activated on Dell/Mac. Not a claim that Dev Matrix Brain is currently executing the Andaz job.
+The existing `brain/dev-brain/brain.py` queue is proposal-only; `brain/supervisor/autonomous_dev_matrix_v1.py` is a simulator. Neither becomes a real autonomous code developer merely by updating a permission flag. The Brain must have an actual execution adapter to its enrolled worker registry, an isolated source workspace, code editing and independently observed test runner, with receipts that identify who ran what.
+
+The experimental `direct_executor.py` and `manifests/andaz-static-stage1.json` branch files implement **optional workerless lab capability only**. They are **not the authoritative Andaz execution route** after this correction and must not inadvertently prohibit the Brain's approved worker delegation. Do not deploy this candidate as a replacement for Brain-to-worker orchestration.
+
+## Deliverable and scope
+
+Priority Stage 1: pure static, mobile-first Andaz website with STAY / CONNECT / PLAY / RESET branding, complete booking UI, enquiry-only truthful fallback, gallery/placeholders where real photography is not verified, responsiveness and keyboard accessibility. Baseline `index.html` remains unchanged. Only a future narrowly scoped booking utility interfaces with StayCore. WordPress installation and public hosting integration come later.
+
+Allowed Brain-owned worker outputs: static source under isolated review branch, tested JS UI, browser screenshots/viewport receipts, accessibility/security checks, fixes, QA report and final review PR. No production publishing, payments, live PMS reservation writes, credential exposure, spending, root/permission changes, merging, or bypassing certified v6 gates.
+
+For real completion/escalation, route **actual verified events** through the confirmed private Telegram event transport. Synthetic tests and model plans may not be reported as completed implementation.
+
+## Actual activation status
+
+**Permission recorded; live start NOT VERIFIED.** Last controller inspection found no Andaz job in the controller task database and proposal/simulation-only general Brain routes. No Brain worker jobs were launched by the assistant in making this correction. A Brain-owned intake/dispatcher must accept Issue #16 and produce verifiable worker-task receipts before any claim of execution.
+
+This handover supersedes its earlier "no delegated workers" edition.
