@@ -47,7 +47,7 @@ def validate_request(doc, signature, key):
         raise Denied("bad_schema")
     required = {"schema", "task_id", "project", "repository", "base_sha",
                 "objective", "model", "image", "test_command", "approval_ref",
-                "max_steps", "max_seconds"}
+                "max_steps", "max_seconds", "trusted_tests"}
     if set(doc) != required:
         raise Denied("unexpected_scope_fields")
     if not isinstance(signature, str) or not re.fullmatch(r"[0-9a-f]{64}", signature):
@@ -68,6 +68,15 @@ def validate_request(doc, signature, key):
         raise Denied("invalid_model_identity")
     if not 30 <= len(doc["objective"]) <= 9000:
         raise Denied("invalid_objective")
+    trusted = doc["trusted_tests"]
+    if not isinstance(trusted, dict) or not 1 <= len(trusted) <= 40:
+        raise Denied("trusted_tests_required")
+    for rel, digest in trusted.items():
+        if (not isinstance(rel, str) or not isinstance(digest, str)
+            or not re.fullmatch(r"[A-Za-z0-9_-][A-Za-z0-9_./-]{0,170}", rel)
+            or rel.startswith("/") or ".." in Path(rel).parts or
+            not re.fullmatch(r"[a-f0-9]{64}", digest)):
+            raise Denied("invalid_trusted_test_identity")
     if not 8 <= len(doc["approval_ref"]) <= 500:
         raise Denied("approval_record_missing")
     if not 1 <= len(doc["test_command"]) <= MAX_CMD:
@@ -91,7 +100,19 @@ def task_workspace(root, ident):
     # Never allow model/container controlled symlinks to influence host path resolution.
     return work
 
-def validate_source(work, base_sha):
+def verify_trusted_tests(work, approved):
+    """Independent QA files must stay exactly as the owner approved."""
+    for rel, digest in approved.items():
+        path=work/rel
+        if (path.is_symlink() or not path.is_file()
+            or not path.resolve().is_relative_to(work.resolve())):
+            raise Denied("trusted_test_missing_or_symlink")
+        if path.stat().st_size > 1_000_000:
+            raise Denied("trusted_test_size_limit")
+        if hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+            raise Denied("trusted_test_modified")
+
+def validate_source(work, base_sha, repository):
     """Source was independently imported into private disposable workspace."""
     if not (work / ".git").is_dir() or (work / ".git").is_symlink():
         raise Denied("staged_source_not_a_checkout")
@@ -103,6 +124,16 @@ def validate_source(work, base_sha):
              "GIT_CONFIG_NOSYSTEM": "1"})
     if p.returncode or p.stdout.strip() != base_sha:
         raise Denied("repository_sha_mismatch")
+    origin = subprocess.run(
+        ["/usr/bin/git", "-c", "core.hooksPath=/dev/null", "remote", "get-url", "origin"],
+        cwd=str(work), capture_output=True, text=True, timeout=12,
+        env={"PATH":"/usr/bin:/bin", "HOME":"/nonexistent",
+             "GIT_TERMINAL_PROMPT":"0","GIT_CONFIG_GLOBAL":"/dev/null",
+             "GIT_CONFIG_NOSYSTEM":"1"})
+    allowed={"https://github.com/"+repository,
+             "https://github.com/"+repository+".git"}
+    if origin.returncode or origin.stdout.strip() not in allowed:
+        raise Denied("repository_origin_mismatch")
     # Refuse pre-dirty imports; never mistake previously modified workspace for pinned source.
     p = subprocess.run(
         ["/usr/bin/git", "-c", "core.hooksPath=/dev/null", "status", "--porcelain"],
@@ -250,7 +281,8 @@ def execute_job(ledger, ident, key, *, workspace_root, model_factory=LocalModel,
     try:
         validate_request(request, signature, key)
         work=task_workspace(workspace_root, request["task_id"])
-        validate_source(work, request["base_sha"])
+        validate_source(work, request["base_sha"], request["repository"])
+        verify_trusted_tests(work, request["trusted_tests"])
         engine=backend_factory(work)
         model=model_factory(request["model"])
         expires=time.monotonic()+request["max_seconds"]
@@ -267,6 +299,7 @@ def execute_job(ledger, ident, key, *, workspace_root, model_factory=LocalModel,
                 if not history or not isinstance(action["summary"],str):
                     raise Denied("fake_finish_without_work")
                 # Independent immutable owner-signed command; model cannot override it.
+                verify_trusted_tests(work, request["trusted_tests"])
                 verified=engine.execute(request["image"],request["test_command"],
                                         min(remaining,150),read_only=True)
                 receipt={"summary":action["summary"][:1000],"qa_exit":verified.exit,
