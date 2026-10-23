@@ -39,7 +39,7 @@ Reuse the owner-deployed Supabase Edge Function and pinned open-source MCP SDK 1
 - PASS: Source read-back contained exactly ten `server.registerTool` names.
 - PASS: Source inspection found owner token/member check, protected-chart filter, journal-only native request, paper-only simulation, and alert dry run.
 - PASS: Exact retrieved source copied onto this review branch.
-- PENDING: GitHub Actions for the new static contract test; static source inspection is not a live MCP call.
+- PASS: [GitHub Actions run 39903821491](https://github.com/aarondash5-star/business-house-matrix/actions/runs/39903821491), both `starter-tests` and `public-repository-safety` successful, including the new static contract test. Static inspection still is not a live MCP call.
 - BLOCKED: ChatGPT App tool manifest refresh (currently 3/10 visible). Updating Matrix Git alone does not refresh it.
 - BLOCKED: Manbir native worker offline at read-only check on 2026-10-23; no TradingView compile or Replay run.
 - PENDING: ChatGPT-native idea → numbered spec → golden cases → Pine v6 → independent Python oracle → immutable Git receipt, executed as a real end-to-end owner beta case.
