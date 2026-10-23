@@ -53,3 +53,19 @@ Use the established shared outbox for Marketing Matrix, Pine Engineer, Andaz and
 - Wire actual Dev Matrix job runtime and per-project heartbeat emission, not just mocked or reference jobs. Verify independent worker identity and real source/QA receipts before alerts.
 
 **Release verdict:** secure reusable source and Dell local unit/simulation gates PASS. **Live automatic notification integration remains BLOCKED ON OWNER WP APPROVAL/ACTIVATION AND END-TO-END CANARY.** No direct injection into this ChatGPT conversation is provided; Telegram alerts the user only.
+
+## 7. LIVE activation and signed delivery — 2026-10-23 (supersedes earlier PENDING status)
+
+**Release state:** LIVE for Dell-local event emitter; additional project runtimes are NOT yet instrumented automatically.
+
+- Owner explicitly approved WordPress WPCode snippet **#13358**. It was subsequently enabled in wp-admin. Authenticated WordPress REST index showed namespace `bhm-private-events/v1` and route `/bhm-private-events/v1/notify`. An unsigned synthetic `POST` was denied HTTP **403**, `bhm_invalid_signature_format`; no message was sent on negative authentication test.
+- Signed single-use Dell canary: worker task receipt `94dc99a9-f594-4af5-b76f-3fe93fd464f0`, outbox `event_id=acd34f80ba8c6d1dd55c38da9763f658ffb30e9f560cc08a7a626bc81a5d45f0`, **status=delivered_confirmed**, private Telegram **message_id=12**, no guest data. 200 signed payload accepted and recipient checked.
+- Dell activated the user-scoped `bhm-private-telegram-dispatch.path` and `bhm-task-watchdog.timer` units, with `BHM_PRIVATE_TELEGRAM_ENABLE=1` stored in owner-private `~/.config/business-house-matrix/private-telegram.env` (0600). Certified v6 controller and permission boundaries unchanged. Host action receipt `a0f764b0-8bc8-45cb-94b2-1497e0f07bdf`: path active/waiting/enabled; watchdog timer active/running/enabled. Service is a one-shot, typically inactive after successful dispatch.
+- **Unattended event-drive test:** synthetic `blocked` event via normal `task_events.py` emit and **no manual send command**; action receipt `48bb5c50-aa9b-4679-95ac-33a9d11504f5`. The path service picked it up. Independent SQLite join of `events` to `private_notification_receipts` at receipt `8ce6f58d-54c1-47f0-bb26-ecb4995848b8` verified private Telegram **message_id=13** for `event_id=777444921dfd4cc18a08e51e28e71f6744cf4d2b4d3bcea20846222e4340896c`.
+- Final local state: **sent=2, queued=0, uncertain=0**, both event IDs have distinct confirmed Telegram message IDs **12** and **13**; path and timer both active/enabled. Read-only `journalctl --user` was denied by the host's journald permissions; SQL-based app receipt and systemd `Result=success` provide the verification. No root/security changes made.
+- The first completed canary and blocked alert were clearly labeled synthetic; neither asserted actual Andaz website completion or actual blockage.
+- The prior wrong-group publishing test has not been repeated.
+
+**Project reuse:** any permitted runner on Dell can register distinct `run_id` and `task_id` (e.g., `dev-matrix:... `, `marketing-matrix:...`, `pine-engineer:...`) and submit the allowlisted events with evidence through the shared SQLite outbox. The path-based relay then delivers exactly to the paired private booking DM. Mac or external hosts require their **own reviewed Ed25519 public key enrollment**; do not export/copy Dell private key. Projects without emitter/heartbeat instrumentation are **not** monitored merely because the shared transport is enabled.
+
+**Rollback controls:** `systemctl --user disable --now bhm-private-telegram-dispatch.path bhm-task-watchdog.timer` and set `BHM_PRIVATE_TELEGRAM_ENABLE=0`; WordPress WPCode #13358 can be disabled independently. Never disable working paid-booking snippet #13126 or modify protected bot secrets.
