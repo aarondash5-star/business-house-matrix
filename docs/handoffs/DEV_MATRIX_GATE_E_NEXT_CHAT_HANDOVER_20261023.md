@@ -27,3 +27,20 @@
 - Last live Dell read: Node JSON benchmark transient unit inactive/success; Python JSON benchmark transient unit failed; v6 active. No Gate E production canary was deployed.
 - Candidate files: `brain/dev-operator/gate_e_runtime.py`, `workcell_runner.py`, `gate_e_operator.py`, `gate_e_queue.py`, `gate_e_rc1_ollama.py`, `gate_e_rc1_benchmark.py`, owner manifests in `brain/dev-operator/enrollments/`; `.github/workflows/validate.yml`, `ci/gate_e_sandbox.Dockerfile`, `ci/verify_gate_e_ci.py`.
 - Owner wants **execution, not mere suggestions**. Resume existing branch/workspaces, diagnose from receipts, implement bounded safe fixes, test both hosts + GitHub, and update this repo. Do not redo completed pilots or claim production ready without concrete terminal evidence. No publishing, spending, root changes, unapproved permissions, merging or production switch.
+
+
+## 23 October 2026 — latest read-only status and short takeover prompt
+
+**Verification time:** 23 October 2026, 05:08 UTC / 10:38 IST. Read-only status review; no new model evaluation, tests, deployment or service/configuration change was performed in this check.
+
+- **Current release decision:** Gate E RC1 remains **NO-GO**. GitHub PR #13 was open, draft and unmerged at head `c734768412a1a19a2ec915f8281844729723a082`. Certified v6 remains the protected production baseline; do not infer its live state after the last direct service receipt without rechecking.
+- **Proven:** hosted CI repository-safety + starter-tests PASS at code SHA `4b8846a7b9bf31740e253d6fa64a5e6e0a8c8fdf`; Dell/Mac pinned Gate E QA **65/65** each; fail-closed hard-kill quarantine; real autonomous Node with trusted QA **6/6**, local-only reviewed commit; external repository source identity and tamper rejection. These are historical terminal receipts, not tests rerun during this status review.
+- **Blocking gates:** model-driven two-file Python remained `needs_review` after syntax/inference/timeout failures; independent real external-repository model patch not certified; restricted GitHub PR write/review identity not certified; Dell canary, rollback drill and production release not attempted. Do not replay prior completed or `needs_review` task IDs.
+- **Live Generic SSH heartbeat at verification:** Dell paired/online, operations and development lanes fresh, control lane stale. Mac paired but offline/stale (approximately 68 minutes since last heartbeat). Treat this as a transient observation; recheck all target lanes before work, and do not bypass connector/security denials.
+- **Immediate next order:** (1) check Mac/Dell availability and PR/CI source parity; (2) improve bounded Python proposer/repair and evaluate a **new reviewed** two-file enrollment with trusted tests; (3) certify a real model-generated patch in an owner-approved public external repo; (4) provision and security-test project-scoped PR identity with human approval; (5) only then do isolated Dell canary, rollback, final CI/security/parity checks and release signoff. Preserve v6 SHA `b1ed132245b1bac5fb0cd66b16f1632e457bdeffaea9ac3b300b5cb7b1b9209e`, backups and all historical receipts.
+
+**Short next-chat prompt:**
+
+> Continue Business House Matrix Gate E from GitHub draft PR #13 and this handover. Recheck Dell/Mac. Fix and certify bounded multi-file Python and real external-repo autonomy, then scoped PR identity, gated Dell canary and rollback. Preserve certified v6, security controls and receipts; no bypass, merge, production release, publishing, spending or privilege changes before gates pass. Document results in GitHub.
+
+**Reuse/cost decision:** Reuse the existing Gate E branch, trusted tests, Bubblewrap, offline Granite/Ollama, GitHub CI, Dell/Mac workers and approval workflow; no new tools, subscriptions, third-party code or spending introduced by this documentation-only update.
