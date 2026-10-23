@@ -1,0 +1,11 @@
+[Unit]
+Description=Dispatch when Matrix notification outbox changes
+After=network-online.target
+
+[Path]
+PathModified=%h/.local/state/business-house-matrix/task-events.sqlite3
+PathModified=%h/.local/state/business-house-matrix/task-events.sqlite3-wal
+Unit=bhm-private-telegram-dispatch.service
+
+[Install]
+WantedBy=default.target
