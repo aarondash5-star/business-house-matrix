@@ -251,6 +251,11 @@ class LocalModel:
             "not brittle sed regex replacements. After an edit, ensure the contents "
             "actually changed. If feedback says no_source_changes, choose a DIFFERENT "
             "editing command; do not repeat a no-op. "
+            "Python -c ONE-LINERS must not contain if/for/with after semicolons: "
+            "Python compound statements following a semicolon cause SyntaxError. "
+            "Use pathlib.Path('file').write_text(...) simple statements separated "
+            "by semicolons for multiple files. If a command fails, use a DIFFERENT "
+            "corrected command on the next step. "
             "Do not request host/root/SSH, credentials, publishing or "
             "production side effects. The independent trusted tests run before final "
             "acceptance. If tests fail, repair source and retry. "
@@ -402,9 +407,15 @@ def execute_job(ledger, ident, key, *, workspace_root, model_factory=LocalModel,
             kind=action.get("action")
             if kind=="command" and set(action)=={"action","command"}:
                 result=engine.execute(request["image"],action["command"],min(remaining,150))
+                previous_errors={h.get("command") for h in history if h.get("exit") not in (None, 0)}
+                if result.exit != 0 and action["command"] in previous_errors:
+                    history.append({"step":step,"error":"repeated_failed_command",
+                                    "repair_hint":"This exact command already failed; use new corrected syntax, never repeat it."})
                 history.append({"step":step,"command":action["command"][:500],
                                 "exit":result.exit,"output":result.output[-2500:],
-                                "stderr":result.stderr[-1000:]})
+                                "stderr":result.stderr[-1000:],
+                                "repair_hint":("Python -c syntax error: remove inline if/for/with after semicolons; use direct pathlib write_text statements" 
+                                               if result.exit!=0 and "SyntaxError" in result.stderr else "")})
                 # Completion is determined by independent immutable QA, not by
                 # the model saying 'finished' or exhausting an arbitrary step budget.
                 if result.exit == 0:
