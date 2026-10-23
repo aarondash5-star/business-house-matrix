@@ -51,3 +51,16 @@
 7. Until then, do not send new `dev_proposal` tasks to the stopped old Brain consumer; the existing v6 controller should remain healthy and unchanged.
 
 **This is a partial engineering certification milestone, not authorization to weaken the host, nor a successful general-purpose Dev Brain release.**
+
+## Follow-up mount isolation diagnostics, 23 October 2026
+
+**New distinction:** Direct plain rootless Python image guest boot with `--network=none --read-only --cap-drop=all --security-opt=no-new-privileges` returned `PODMAN_GUEST_START_OK`, exit 0 (SSH receipt `0ca0b174-9912-488b-9913-71747b83c1d4`). This proves the installed local Python image can boot without a workspace mount.
+
+- With a temporary disposable workspace and normal rootless Podman, **single workspace bind mount and nested read-only Git metadata bind mount both timed out** using the original `:Z` labeling options. SSH receipt `4c4fc9c0-fa3e-412c-b071-70d2906f8bdb`, process exited 0 only because diagnosis reported both timeouts explicitly.
+- Docker-compatible Podman is rootless and **SELinux disabled**, AppArmor disabled, ext4 host storage with free capacity; diagnostic terminal `333cbd7f-c3e7-421a-852a-a084d27caf4e`, exit 0.
+- Retested both single workspace and nested read-only Git bind mounts **without `:Z`** (SELinux already off). Both again timed out, terminal `24066c95-7d82-459a-a89d-cd730be521fe`. Therefore **SELinux relabel option alone is not the cause**.
+- The rootless workcell failure is now narrowed to **bind-mounted project workspace/container storage/runtime behavior**, rather than universal failure to start any container. The exact underlying cause remains unverified.
+- Do not disable host security, clean unrelated Podman storage, change the live SearXNG container or claim successful guest edit/test. A future reviewed solution may use a disposable copy-in/copy-out OCI workcell with a declared output manifest and independent diff hashes, but that design requires its own security review and QA; it is **not deployed or certified**.
+
+**Updated final release disposition remains NO-GO** for unified Brain integration, source-editing and production cutover. Independent unit certifications **16/16** and **13/13** remain valid for their pinned test targets only. The existing certified v6 is still active and unchanged.
+
