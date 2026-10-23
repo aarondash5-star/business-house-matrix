@@ -9,43 +9,45 @@ permissions:
 jobs:
   android-debug:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
-      - name: Checkout pinned Android frontend foundation
+      - name: Checkout maintained PocketPal AI frontend
         uses: actions/checkout@v4
         with:
-          repository: rikkahub/rikkahub
-          ref: fa5d5f3f6fc10033111bf4d0803bf42031f60ca4
+          repository: a-ghorbani/pocketpal-ai
+          ref: main
           submodules: recursive
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-      - name: Configure Android SDK
+      - name: Configure Android SDK from runner
         run: |
           echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
-          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
-          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "platform-tools" "platforms;android-36" "build-tools;36.0.0"
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: '11'
-      - name: Set up Node
+          SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+      - name: Set up Node 22
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install web UI dependencies
-        working-directory: web-ui
-        run: pnpm install --frozen-lockfile
-      - name: Compile Android debug APK
+          cache: yarn
+      - name: Enable Yarn Classic
+        run: |
+          corepack enable
+          corepack prepare yarn@1.22.22 --activate
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build Android debug APK
+        working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew :app:assembleDebug --stacktrace --no-daemon
-      - name: Upload APK artifact
+          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Upload APK
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: supergpt-frontend-foundation-debug
-          path: app/build/outputs/apk/**/*.apk
+          name: supergpt-pocketpal-frontend-debug
+          path: android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
