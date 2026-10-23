@@ -185,12 +185,16 @@ class PodmanWorkcell:
         self.work = Path(work)
     def execute(self, image, command, timeout, read_only=False):
         argv = podman_argv("/usr/bin/podman", image, self.work, command, read_only=read_only)
+        # Podman itself needs the owner's existing rootless storage/runtime context.
+        # Only the guest receives the restricted HOME=/tmp and approved volume.
+        engine_env={"PATH":"/usr/bin:/bin", "HOME":str(Path.home()), "LANG":"C.UTF-8"}
+        for name in ("XDG_RUNTIME_DIR", "CONTAINERS_STORAGE_CONF", "XDG_CONFIG_HOME"):
+            value=os.environ.get(name)
+            if value:
+                engine_env[name]=value
         try:
             p = subprocess.run(argv, input="", capture_output=True, text=True,
-                               timeout=timeout, env={
-                                   "PATH": "/usr/bin:/bin", "HOME": "/nonexistent",
-                                   "XDG_RUNTIME_DIR": os.environ.get("XDG_RUNTIME_DIR", ""),
-                                   "CONTAINERS_STORAGE_CONF": os.environ.get("CONTAINERS_STORAGE_CONF", "")})
+                               timeout=timeout, env=engine_env)
         except subprocess.TimeoutExpired:
             return Outcome(124, "", "workcell_timeout")
         return Outcome(p.returncode, p.stdout[-MAX_OUTPUT:], p.stderr[-MAX_OUTPUT:])
