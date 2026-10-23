@@ -33,7 +33,7 @@ RULES = (
  "MEASURABLE ACCEPTANCE TEST, DEPENDENCIES and P0/P1/P2 PRIORITY. "
  "Use Markdown headings and short rich paragraphs; do not use JSON or code fences. "
  "Be specific to Andaz, not generic website advice. Keep 3-5 work packages per phase, "
- "each with genuine implementation detail, and flag blockers explicitly."
+ "each with genuine implementation detail, and flag unknowns and blockers explicitly."
 )
 CONTEXT=(
  "Andaz Vibe Stay - Arambol, Goa; STAY CONNECT PLAY RESET. Hostel has dorms, private rooms, "
