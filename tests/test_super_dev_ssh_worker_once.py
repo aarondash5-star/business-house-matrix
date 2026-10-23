@@ -41,6 +41,26 @@ class WorkerOnceTests(unittest.TestCase):
         self.assertFalse(worker.respond_once(self.box)["handled"])
         self.assertEqual(self.box.poll(recipient="super"), [])
 
+    def test_backlog_does_not_starve_new_supported_request(self):
+        for i in range(105):
+            self.box.send(
+                message_id=f"super-unsupported-{i:04d}",
+                thread_id=f"unsupported-thread-{i:04d}",
+                sender="super", kind="task",
+                body={"operation": "unrecognized"},
+            )
+        self.box.send(
+            message_id="super-task-late-001",
+            thread_id="late-thread-001",
+            sender="super", kind="task",
+            body={"operation": "controller_status", "nonce": "late"},
+        )
+        with patch.object(worker, "controller_status", return_value={"state": "ready"}):
+            receipt = worker.respond_once(self.box)
+        self.assertTrue(receipt["handled"])
+        self.assertEqual(receipt["thread_id"], "late-thread-001")
+        self.assertEqual(self.box.poll(recipient="super")[0]["body"]["nonce"], "late")
+
 
 if __name__ == "__main__":
     unittest.main()
