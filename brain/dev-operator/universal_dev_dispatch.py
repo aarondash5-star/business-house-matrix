@@ -60,7 +60,9 @@ def validate_request(doc, signature, key):
         raise Denied("invalid_fields")
     if not ID.fullmatch(doc["task_id"]) or not ID.fullmatch(doc["project"]):
         raise Denied("invalid_identity")
-    if not REPO.fullmatch(doc["repository"]) or not SHA.fullmatch(doc["base_sha"]):
+    if (not REPO.fullmatch(doc["repository"]) or not SHA.fullmatch(doc["base_sha"])
+        or any(segment in (".", "..") or segment.startswith(".")
+               or ".." in segment for segment in doc["repository"].split("/"))):
         raise Denied("unapproved_repository_identity")
     if not IMAGE.fullmatch(doc["image"]):
         raise Denied("image_must_be_pinned_by_digest")
