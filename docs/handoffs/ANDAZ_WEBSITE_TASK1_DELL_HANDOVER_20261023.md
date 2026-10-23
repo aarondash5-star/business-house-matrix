@@ -29,6 +29,8 @@ The separate Dev Brain remains deactivated. API coding providers (Groq/OpenRoute
 - WhatsApp form was tested synthetically with the outgoing navigation intercepted.
 - No production deployment, live booking, payment or user data modifications.
 
+- Final source/PMS regression receipt `52d98129-7fc9-46cf-9a75-97b09dab57b0`: exit **0**; original V1 and StayCore PMS diff empty; static QA repeat 229/229.
+
 ## Known limitations
 
 - Illustrations are explicit placeholders for genuine property photography.
