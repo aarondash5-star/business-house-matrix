@@ -70,7 +70,7 @@ class TestStagedAutonomy(unittest.TestCase):
   p=reference();p["tasks"][3]["role"]="review"
   with self.assertRaises(m.AutonomyError):m.policy_check(p)
  def test_no_review_without_security(self):
-  p=reference();p["tasks"][-1]["depends_on"]=["T13"]
+  p=reference();p["tasks"][-1]["depends_on"]=["T12"]
   with self.assertRaises(m.AutonomyError):m.policy_check(p)
  def test_no_review_without_qa(self):
   p=reference();p["tasks"][-1]["depends_on"]=["T14"]
