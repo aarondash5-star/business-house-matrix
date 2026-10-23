@@ -1,6 +1,9 @@
 name: SuperGPT Android frontend debug APK
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/supergpt-android-debug.yml'
 permissions:
   contents: read
 jobs:
