@@ -25,7 +25,7 @@ The separate Dev Brain remains deactivated. API coding providers (Groq/OpenRoute
 - Dell SearXNG research exit 0: receipt `4f7cb28b-f175-4064-9c21-7a0f24615acd`.
 - Built mobile-first five-page Andaz candidate; original V1 and StayCore PMS untouched.
 - Static QA **229/229 passed**.
-- Real Chrome/Playwright browser QA **22/22 passed**, receipt `737dd086-55cc-4892-814d-92424abc00e9`, exit 0.
+- Real Chrome/Playwright browser QA **35/35 passed**, receipt `3d0b0329-9792-4fe5-8373-354e0d4ad76e`, exit 0.
 - WhatsApp form was tested synthetically with the outgoing navigation intercepted.
 - No production deployment, live booking, payment or user data modifications.
 
