@@ -55,9 +55,9 @@
     "sensitive_external_actions_require_owner": true
   },
   "routing": {
-    "state": "accepted",
+    "state": "blocked",
     "brain_ingress": "Owner-authorized Generic Linux SSH bridge (dell-linux, operations lane) → existing authenticated, nonroot matrix-controller/controller.py submit (Development)",
-    "acknowledgement": "Real Dell controller task faa9d42b-01d3-4df6-b571-86479cc199b9 accepted 2026-10-23T09:44:08Z via SSH terminal receipt 491565fe-de98-441f-9bd6-fed40b0d6f45. Downstream Dev Brain queue job 1280be9b-8465-4a78-bcc4-e92542979e7c observed queued at 2026-10-23T09:44:28Z by SSH receipt 50a55c6c-87cb-441e-91a9-38d293d5ae39; this is proposal-only, not a full website build.",
+    "acknowledgement": "Real Dell controller task faa9d42b-01d3-4df6-b571-86479cc199b9 accepted 2026-10-23T09:44:08Z via SSH terminal receipt 491565fe-de98-441f-9bd6-fed40b0d6f45. Downstream Dev Brain queue job 1280be9b-8465-4a78-bcc4-e92542979e7c observed queued at 2026-10-23T09:44:28Z by SSH receipt 50a55c6c-87cb-441e-91a9-38d293d5ae39; this is proposal-only, not a full website build. Updated: Dev Brain proposal job reached needs_revision, controller marked needs_review / proposal_review_only / 'Incomplete Dev receipt' on 2026-10-23T09:51:49Z. No real website code production. Owner-directed generic runtime upgrade in Issue #2 is prerequisite: controller task 4c47c9e9-1d60-444c-9eed-b78582c21216, Brain job 01645bcd-d767-46e5-9dec-3f376a3883cd.",
     "correlation_id": "dev.andaz.static-first.20261023.v1"
   },
   "reporting": {
