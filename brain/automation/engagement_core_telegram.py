@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Send event receipts only to enrolled owner private chat through Engagement Core REST.
+"""Send event receipts only to enrolled verified Primary group through Engagement Core REST.
 
-Reuses the existing GREC WordPress bot; NEVER sends to the Primary group.
-Requires owner_private enabled destination (positive private chat id) and a preexisting
+Reuses existing GREC WordPress bot; sends ONLY to the owner-approved Primary group.
+Requires exact Primary destination and a preexisting
 scoped GREC key in an owner-private 0600 local file. No automatic retry of uncertain sends.
 """
 import argparse
@@ -19,14 +19,15 @@ from task_events import connect, EventError, DEFAULT_DB, NoRedirect
 
 STATUS_URL="https://mokshagoa.com/wp-json/engagement-core/v1/telegram/status"
 PUBLISH_URL="https://mokshagoa.com/wp-json/engagement-core/v1/telegram/publish"
-TARGET="owner_private"
+TARGET="primary"
+EXPECTED_GROUP_ID="-1001827799147"
 class DeliveryError(EventError):pass
 
 def load_config(environ=os.environ):
     path=environ.get("MATRIX_GREC_KEY_FILE","")
-    chat=environ.get("MATRIX_OWNER_TG_CHAT_ID","")
-    if not path or not re.fullmatch(r"[1-9][0-9]{4,19}",chat):
-        raise DeliveryError("OWNER_PRIVATE_DESTINATION_NOT_ENROLLED")
+    chat=environ.get("MATRIX_OWNER_TG_GROUP_ID","")
+    if not path or chat!=EXPECTED_GROUP_ID:
+        raise DeliveryError("OWNER_PRIMARY_GROUP_NOT_APPROVED")
     p=Path(path).expanduser()
     if not p.is_absolute() or p.is_symlink() or not p.is_file():
         raise DeliveryError("APPROVED_SCOPED_KEY_FILE_MISSING")
@@ -44,9 +45,9 @@ def allow_target(status,chat_id):
     if not isinstance(options,list):
         raise DeliveryError("DESTINATION_PREFLIGHT_FAILED")
     matches=[d for d in options if isinstance(d,dict) and d.get("key")==TARGET
-            and d.get("enabled") is True and str(d.get("chat_id"))==chat_id]
+            and d.get("enabled") is True and d.get("level")=="primary" and str(d.get("chat_id"))==EXPECTED_GROUP_ID==chat_id]
     if len(matches)!=1:
-        raise DeliveryError("OWNER_PRIVATE_TARGET_NOT_VERIFIED")
+        raise DeliveryError("PRIMARY_GROUP_TARGET_NOT_VERIFIED")
     return True
 
 def _http(request,opener=None):
@@ -142,7 +143,7 @@ def main():
             config=load_config()
             if args.action=="preflight":
                 preflight(config)
-                output={"status":"owner_private_verified","destination_key":TARGET}
+                output={"status":"primary_group_verified","destination_key":TARGET}
             else:output=send_once(db,config)
     print(json.dumps(output,sort_keys=True))
 if __name__=="__main__":
@@ -151,6 +152,6 @@ if __name__=="__main__":
         print(json.dumps({"status":"blocked","reason":str(exc) if str(exc) in (
            "OWNER_PRIVATE_DESTINATION_NOT_ENROLLED","APPROVED_SCOPED_KEY_FILE_MISSING",
            "SCOPED_KEY_FILE_PERMISSIONS_UNSAFE","SCOPED_KEY_MISSING",
-           "OWNER_PRIVATE_TARGET_NOT_VERIFIED","ENGAGEMENT_CORE_NOT_CONNECTED")
+           "PRIMARY_GROUP_TARGET_NOT_VERIFIED","ENGAGEMENT_CORE_NOT_CONNECTED")
            else type(exc).__name__}))
         sys.exit(2)
