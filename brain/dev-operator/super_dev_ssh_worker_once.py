@@ -30,6 +30,9 @@ def controller_status() -> dict:
         "LANG": "C.UTF-8",
         "PYTHONDONTWRITEBYTECODE": "1",
     }
+    for name in ("XDG_RUNTIME_DIR", "DBUS_SESSION_BUS_ADDRESS"):
+        if os.environ.get(name):
+            env[name] = os.environ[name]
     try:
         run = subprocess.run(
             [str(PYTHON), str(CONTROLLER), "status"],
