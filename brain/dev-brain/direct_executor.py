@@ -223,14 +223,47 @@ def run(w,m,agent=model_action,tester=sandbox):
             receipt("running",steps=i+1)
     return receipt("blocked",reason="step_budget_exhausted",steps=m["max_steps"])
 
+
+def prepare(m, source):
+    """Use only static baseline and independent QA fixtures, never entire repo."""
+    source=Path(source).expanduser().resolve(strict=True)
+    if not source.is_dir() or source.name!="andaz-wp-static-review-20261023":
+        raise GateError("source_checkout_not_approved")
+    original=source/"index.html"
+    if original.is_symlink() or not original.is_file() or original.stat().st_size>90000:
+        raise GateError("source_baseline_unavailable")
+    root=ROOT.expanduser()
+    root.mkdir(mode=0o700,parents=True,exist_ok=True)
+    w=root/m["task_id"]
+    if w.exists():
+        raise GateError("existing_work_requires_review")
+    w.mkdir(mode=0o700)
+    (w/"site").mkdir(mode=0o700)
+    (w/"verification").mkdir(mode=0o700)
+    data=original.read_bytes()
+    (w/"index.html").write_bytes(data)
+    (w/"site"/"index.html").write_bytes(data)
+    fixture=Path(__file__).parent/"verification"/"test_static_site.py"
+    if not fixture.is_file():
+        raise GateError("independent_verification_missing")
+    (w/"verification"/"test_static_site.py").write_bytes(fixture.read_bytes())
+    return {"status":"workspace_prepared","path":str(w),
+            "baseline_sha256":hashlib.sha256(data).hexdigest(),
+            "workers_invoked":False,"brain_run_started":False}
+
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument("mode",choices=["run","status"])
+    parser.add_argument("mode",choices=["prepare","run","status"])
     parser.add_argument("--manifest",required=True)
+    parser.add_argument("--source",default="")
     args=parser.parse_args()
     m=validate(json.loads(Path(args.manifest).read_text()))
     w=ROOT.expanduser()/m["task_id"]
-    if args.mode=="status":
+    if args.mode=="prepare":
+        if not args.source:
+            raise GateError("source_required")
+        print(json.dumps(prepare(m,args.source)))
+    elif args.mode=="status":
         f=w/".brain-run.json"
         print(f.read_text() if f.exists() else json.dumps({"status":"not_started"}))
     else:
