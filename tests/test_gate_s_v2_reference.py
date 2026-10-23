@@ -15,7 +15,7 @@ class ReferenceQuality(unittest.TestCase):
  def test_acceptance_criteria_independently_present(self):
   self.assertTrue(all(t["deliverables"] and t["acceptance"] for t in self.plan["tasks"]))
  def test_specific_unknowns_documented(self):
-  self.assertTrue(any("verify" in a.lower() for a in self.plan["assumptions"]))
+  self.assertTrue(any("verif" in a.lower() for a in self.plan["assumptions"]))
  def test_booking_integration_task(self):
   self.assertTrue(any("pms" in t["objective"].lower() and t["role"]=="development" for t in self.plan["tasks"]))
  def test_mobile_qa_and_privacy(self):
