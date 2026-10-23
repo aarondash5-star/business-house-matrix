@@ -161,3 +161,7 @@ This would restore the previously enabled autonomous dispatcher and is **not** a
 
 **Short continuation prompt:**  
 `Continue Matrix Dev Tool Yard operator-led mode. Read this handover on feat/dev-toolyard-superbrain-control-20261023. Keep bhm-autonomy-controller disabled. Use Dell SSH operations/development lanes directly, preserve v6, execute an approved isolated Dev task, collect receipts and audit. No publish/spend/root changes.`
+
+## Post-release control-lane diagnostic
+
+Read-only Dell systemd receipt `cb30299e-5b10-4847-8390-14f17e159813` showed all three underlying SSH worker system units (`generic-linux-automator.service`, `generic-linux-automator-lane@development.service`, `generic-linux-automator-lane@control.service`) **loaded, active and enabled**. However ChatGPT `linux_control_run` still returned `INVALID_ARGUMENT` and the gateway control heartbeat remained stale. This points to client/gateway command admission or lane routing rather than proving the control worker process is stopped. **No alternate credential/transport bypass was attempted; control command execution remains unverified.**
