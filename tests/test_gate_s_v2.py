@@ -14,6 +14,7 @@ def valid_plan(n=12):
           "deliverables":[f"Reviewed measurable artifact for package {i}"],
           "acceptance":[f"Independent QA confirms work package {i}"],
           "depends_on":[] if i==1 else [f"T{i-1}"],"priority":"P0"})
+    tasks[-1]["depends_on"]=["T11"]
     return {"project":"Andaz mobile website rework",
        "strategy":"Research the real website; plan booking-first staging; verify SEO, accessibility and rollback.",
        "assumptions":["Photos must be verified"],
