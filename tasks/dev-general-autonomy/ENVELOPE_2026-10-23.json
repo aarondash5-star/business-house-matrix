@@ -52,9 +52,9 @@
     "sensitive_external_actions_require_owner": true
   },
   "routing": {
-    "state": "accepted",
+    "state": "blocked",
     "brain_ingress": "Owner-approved Generic Linux SSH plugin → dell-linux operations lane → authenticated local matrix-controller/controller.py submit matrix_dev dev_proposal",
-    "acknowledgement": "SSH receipt f0c9513c-ea44-490a-8b87-c905145b3325 exit 0; controller task 4c47c9e9-1d60-444c-9eed-b78582c21216 delegated to Dev Brain job 01645bcd-d767-46e5-9dec-3f376a3883cd, observed queued at 2026-10-23T09:51:09Z via terminal receipt 15020bd1-b587-4ce0-8f26-91a6d77521df. Intake is proposal-only, not upgrade/source execution.",
+    "acknowledgement": "SSH receipt f0c9513c-ea44-490a-8b87-c905145b3325 exit 0; controller task 4c47c9e9-1d60-444c-9eed-b78582c21216 delegated to Dev Brain job 01645bcd-d767-46e5-9dec-3f376a3883cd, observed queued at 2026-10-23T09:51:09Z via terminal receipt 15020bd1-b587-4ce0-8f26-91a6d77521df. Intake is proposal-only, not upgrade/source execution. Terminal update: Dev Brain job 01645bcd-d767-46e5-9dec-3f376a3883cd returned needs_revision/complete at 2026-10-23T09:56:48Z. Its result.json states result_type=proposals_only, tests_executed=false, repository_changed=false; review.md verdict NEEDS_WORK. Live controller remains certified v6; no runtime implementation.",
     "correlation_id": "dev_universal_runtime_20261023_v1"
   },
   "reporting": {
