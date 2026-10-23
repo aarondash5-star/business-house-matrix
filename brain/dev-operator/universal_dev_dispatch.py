@@ -247,7 +247,11 @@ class LocalModel:
             '{"action":"command","command":"..."} or '
             '{"action":"finish","summary":"..."}. '
             "You may run normal build, coding, lint and test commands INSIDE the "
-            "container. Do not request host/root/SSH, credentials, publishing or "
+            "container. Prefer exact literal file edits using python3 -c and pathlib, "
+            "not brittle sed regex replacements. After an edit, ensure the contents "
+            "actually changed. If feedback says no_source_changes, choose a DIFFERENT "
+            "editing command; do not repeat a no-op. "
+            "Do not request host/root/SSH, credentials, publishing or "
             "production side effects. The independent trusted tests run before final "
             "acceptance. If tests fail, repair source and retry. "
             "Goal: " + request["objective"] + "\n" +
@@ -409,6 +413,8 @@ def execute_job(ledger, ident, key, *, workspace_root, model_factory=LocalModel,
                     except Denied as exc:
                         if str(exc)!="no_source_changes":
                             raise
+                        history.append({"step":step,"error":"no_source_changes",
+                                        "repair_hint":"Last edit had no effect. Inspect exact file and use pathlib literal replacement instead; do not repeat that command."})
                     else:
                         qa_time=int(expires-time.monotonic())
                         if qa_time>2:
