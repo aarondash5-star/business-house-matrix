@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Send event receipts only to enrolled verified Primary group through Engagement Core REST.
+"""Event notifications through Engagement Core only after destination review.
 
-Reuses existing GREC WordPress bot; sends ONLY to the owner-approved Primary group.
-Requires exact Primary destination and a preexisting
-scoped GREC key in an owner-private 0600 local file. No automatic retry of uncertain sends.
+FAIL-CLOSED: the previous `primary` group was confirmed to be the wrong recipient.
+Delivery is disabled until the user supplies the intended group and a uniquely
+verified, enrolled destination key; never use an existing venture destination.
 """
 import argparse
 import json
@@ -19,11 +19,14 @@ from task_events import connect, EventError, DEFAULT_DB, NoRedirect
 
 STATUS_URL="https://mokshagoa.com/wp-json/engagement-core/v1/telegram/status"
 PUBLISH_URL="https://mokshagoa.com/wp-json/engagement-core/v1/telegram/publish"
-TARGET="primary"
-EXPECTED_GROUP_ID="-1001827799147"
+TARGET="unconfigured"
+EXPECTED_GROUP_ID=""
+BLOCKED_KEYS=frozenset(("primary","moksha","andaz","exclusiv"))
+BLOCKED_CHAT_IDS=frozenset(("-1001827799147",))
 class DeliveryError(EventError):pass
 
 def load_config(environ=os.environ):
+    raise DeliveryError("DESTINATION_NOT_VERIFIED_BY_OWNER")
     path=environ.get("MATRIX_GREC_KEY_FILE","")
     chat=environ.get("MATRIX_OWNER_TG_GROUP_ID","")
     if not path or chat!=EXPECTED_GROUP_ID:
@@ -39,6 +42,7 @@ def load_config(environ=os.environ):
     return {"chat_id":chat,"key":key}
 
 def allow_target(status,chat_id):
+    raise DeliveryError("DESTINATION_NOT_VERIFIED_BY_OWNER")
     if not isinstance(status,dict) or status.get("connected") is not True:
         raise DeliveryError("ENGAGEMENT_CORE_NOT_CONNECTED")
     options=status.get("destinations")
@@ -143,14 +147,14 @@ def main():
             config=load_config()
             if args.action=="preflight":
                 preflight(config)
-                output={"status":"primary_group_verified","destination_key":TARGET}
+                output={"status":"destination_not_enrolled","destination_key":TARGET}
             else:output=send_once(db,config)
     print(json.dumps(output,sort_keys=True))
 if __name__=="__main__":
     try:main()
     except (OSError,sqlite3.Error,ValueError) as exc:
         print(json.dumps({"status":"blocked","reason":str(exc) if str(exc) in (
-           "OWNER_PRIVATE_DESTINATION_NOT_ENROLLED","APPROVED_SCOPED_KEY_FILE_MISSING",
+           "DESTINATION_NOT_VERIFIED_BY_OWNER","APPROVED_SCOPED_KEY_FILE_MISSING",
            "SCOPED_KEY_FILE_PERMISSIONS_UNSAFE","SCOPED_KEY_MISSING",
            "PRIMARY_GROUP_TARGET_NOT_VERIFIED","ENGAGEMENT_CORE_NOT_CONNECTED")
            else type(exc).__name__}))
