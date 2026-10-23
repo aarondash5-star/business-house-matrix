@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Business House AI Matrix — Headless SSH-controlled LangGraph pilot.
 
-All model tools disabled. Outputs are proposal artifacts only, never repository edits.
+Legacy queued tasks remain proposal-only. An explicit direct-build command now
+supports isolated Brain-owned file editing and offline tests without workers.
 """
 import argparse
 from contextlib import nullcontext
@@ -320,10 +321,26 @@ def main():
     add.add_argument('--research-query',default='',help='Optional PUBLIC search query; not the private task text')
     rq=cmd.add_parser('research-search');rq.add_argument('query',help='Public documentation query only')
     cmd.add_parser('list');cmd.add_parser('serve');cmd.add_parser('run-once');cmd.add_parser('selftest');cmd.add_parser('doctor')
+    direct=cmd.add_parser('direct-build',help='Opt-in isolated Brain file authoring and QA; no workers')
+    direct.add_argument('phase',choices=['prepare','run','status'])
+    direct.add_argument('--manifest',required=True)
+    direct.add_argument('--source',default='')
     sh=cmd.add_parser('show');sh.add_argument('job_id')
     can=cmd.add_parser('cancel');can.add_argument('job_id')
     args=ap.parse_args()
-    if args.action=='submit':print('JOB_SUBMITTED',enqueue(args.task,args.profile,args.research_query))
+    if args.action=='direct-build':
+        import direct_executor
+        manifest=direct_executor.validate(json.loads(Path(args.manifest).read_text()))
+        workspace=direct_executor.ROOT.expanduser()/manifest['task_id']
+        if args.phase=='prepare':
+            if not args.source:raise ValueError('source_checkout_required')
+            print(json.dumps(direct_executor.prepare(manifest,args.source)))
+        elif args.phase=='run':
+            print(json.dumps(direct_executor.run(workspace,manifest),indent=2))
+        else:
+            status_file=workspace/'.brain-run.json'
+            print(status_file.read_text() if status_file.is_file() else json.dumps({'status':'not_started'}))
+    elif args.action=='submit':print('JOB_SUBMITTED',enqueue(args.task,args.profile,args.research_query))
     elif args.action=='research-search':print(json.dumps(public_research(args.query),ensure_ascii=False,indent=2))
     elif args.action=='list':
         with dbconn() as db:
