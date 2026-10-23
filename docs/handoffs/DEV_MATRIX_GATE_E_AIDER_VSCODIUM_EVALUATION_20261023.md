@@ -31,3 +31,12 @@ External public repository model-generated patch with exact owner-approved SHA/t
 - Aider installation: **PENDING receipt check**.
 - Fresh Aider model-generated multi-file Python benchmark: **NOT CERTIFIED**.
 - No live Gate E canary / merge / production deployment.
+
+
+## 23 Oct 2026 — Actual installation and independent benchmark receipts
+- Dell user-only Aider `0.86.2` **INSTALLED** in `~/.local/share/pipx/venvs/aider-chat-gatee`. Two bounded pip attempts timed out (SSH receipts `d1651067-6fce-4d86-8bb2-f50b139a65a7`, `0cd5f918-9f9c-4095-b7ca-3c20838caf8a`); isolated capped `bhm-gate-e-aider-install-20261023.service` subsequently completed successfully, `ExecMainStatus=0`; verification receipt `a9402276-20bf-45f5-9367-60de25bf2a94`.
+- Public test/spec staged in `~/matrix-gate-e-aider-comparison-20261023` from immutable SHA `fbcea95fd22218aabc5a03be48811b23aa15cc66`; trusted Python test SHA256 `627abdaca57dbf7977acdd7fb8563c76c11b0fcec4de31f4e0982f6c31a2d402` (receipt `1a1be6df-5ef3-4c2d-8360-92f0cebc4212`).
+- First Aider CLI launch failed pre-inference because `/dev/null` is not valid YAML configuration (service exit 2); no generated content. Fresh distinct `bhm-gate-e-aider-qwen2-20261023.service` used **local-only Ollama `qwen3:4b-instruct`** and successfully generated two Python files. Editor had `--no-git`, no auto-test/auto-lint, no command suggestions, telemetry disabled; no remote push/publish. Model job ended exit 0 (terminal receipt `039b9926-4107-43a2-bb92-3a246cce3a48`).
+- Mandatory isolated Bubblewrap doctor **PASS**. Independent unchanged 6-test Python QA **FAILED (5 failures, 3 errors)** due to model-created code correctness errors (missing import, invalid strings accepted); receipt `b5a6d570-3279-4ad0-8391-1a5bde5fb588`; syntax checks passed but `qa_passed=false`. Aider/Qwen is **NOT** proven superior, and **NOT** promoted.
+- Separate staged repair evaluation `bhm-gate-e-aider-qwen-repair1-20261023.service` dispatched with sanitized QA feedback, distinct workspace, 210s/2200MB/100%CPU caps, `NoNewPrivileges=yes`, `Restart=no`, receipt `89b2a225-ddde-42db-a2cc-4dcd0c38d38b`; at time of this entry no terminal repair QA was available. No production change or auto-promotion permitted.
+- Dell certified v6 controller rechecked active, SHA256 `b1ed132245b1bac5fb0cd66b16f1632e457bdeffaea9ac3b300b5cb7b1b9209e` unchanged. Mac worker currently offline, so independent Mac peer certification is pending. No Gate E canary, merge, production deployment, root/security changes, or shared model deletion.
