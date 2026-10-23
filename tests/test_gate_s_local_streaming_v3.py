@@ -20,7 +20,7 @@ class TestLocalStreaming(unittest.TestCase):
   self.assertEqual(p["model"],"qwen3:4b-instruct")
   self.assertTrue(p["stream"])
   self.assertEqual(p["keep_alive"],"20m")
-  self.assertEqual(p["options"]["num_predict"],720)
+  self.assertEqual(p["options"]["num_predict"],1400)
   self.assertEqual(p["options"]["num_ctx"],4096)
   self.assertNotIn("tools",p)
  def test_final_unload(self):
