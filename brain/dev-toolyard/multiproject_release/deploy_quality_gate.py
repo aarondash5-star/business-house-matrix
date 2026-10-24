@@ -100,6 +100,8 @@ def preflight():
         d=Path(temp)
         (d/CONTROLLER).write_text(patch((TARGET/CONTROLLER).read_text()))
         shutil.copy2(HERE/NEW,d/NEW)
+        shutil.copy2(TARGET/"project_registry.py",d/"project_registry.py")
+        shutil.copy2(TARGET/"project_registry_v1.json",d/"project_registry_v1.json")
         for name in (CONTROLLER,NEW):
             compile((d/name).read_text(),str(d/name),"exec")
         _run([sys.executable,str(HERE/"test_quality_gate.py")],timeout=40)
