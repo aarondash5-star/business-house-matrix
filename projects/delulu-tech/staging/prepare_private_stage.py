@@ -58,6 +58,7 @@ def main():
     }
     DEST_ROOT.mkdir(mode=0o700,parents=True,exist_ok=True)
     site_parent=DEST_ROOT/MANIFEST_ID
+    site_dir=site_parent/"site"
     manifest_path=DEST_ROOT/(MANIFEST_ID+".json")
     if site_parent.exists() or manifest_path.exists():
         raise RuntimeError("existing_stage_input_requires_readonly_audit")
@@ -78,7 +79,8 @@ def main():
         finally:
             sys.path.remove(str(CONTROLLER))
         # Place the prepared site atomically; manifest is the final commit marker.
-        work.rename(site_parent)
+        site_parent.mkdir(mode=0o700)
+        work.rename(site_dir)
         manifest_path.write_text(json.dumps(manifest,sort_keys=True,indent=2)+"\n",encoding="utf-8")
         manifest_path.chmod(0o600)
     print(json.dumps({"state":"input_prepared","project":"delulu_tech",
