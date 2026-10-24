@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "projects": [
+    {
+      "project": "moksha_overhaul",
+      "approved": true,
+      "actions": {
+        "website_stage": {
+          "moksha_overhaul_v1": "legacy_moksha"
+        }
+      }
+    },
+    {
+      "project": "pine_mcp_chat",
+      "approved": true,
+      "actions": {
+        "dev_project_build": {
+          "pine_reviewed_patch_v1": "reviewed_patch_v1"
+        }
+      }
+    },
+    {
+      "project": "delulu_tech",
+      "approved": true,
+      "actions": {
+        "website_stage": {
+          "delulu_homepage_v1": "static_v1"
+        },
+        "dev_project_build": {
+          "delulu_homepage_v1": "reviewed_patch_v1"
+        }
+      }
+    },
+    {
+      "project": "andaz_website",
+      "approved": true,
+      "actions": {
+        "dev_project_build": {
+          "andaz_homepage_v1": "reviewed_patch_v1"
+        }
+      }
+    }
+  ]
+}
