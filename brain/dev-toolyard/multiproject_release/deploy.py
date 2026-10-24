@@ -137,6 +137,7 @@ def preflight() -> dict:
             (stage/name).write_text(content,encoding="utf-8")
         for name in NEW:
             shutil.copyfile(HERE/name,stage/name)
+            (stage/name).chmod(0o600)
         for name in ("controller.py","reviewed_patch_runner.py","project_registry.py","project_static_stage.py"):
             compile((stage/name).read_text(),str(stage/name),"exec")
         stage_registry=stage/"project_registry.py"
