@@ -19,67 +19,17 @@ def submit(project,action,brief):
     if action=="dev_docs_fetch":
         pass
 def tick(t):
-    if False:pass
-        elif t["action"]=="dev_general_build":
-            pass
-def status():
-    return {"controller_version":"0.2.2-global-intake-governed",
-            "quality_policy":{"prebuild_owner_admission_required":True}}
-'''
-# The mock controller above is illustrative, so use a syntactically valid
-# anchor-bearing version for compilation.
-FAKE_CONTROLLER = '''
-ALLOWED={
- "dev_project_build":{"department":"Development","mode":"manifest_enrolled_isolated_reviewed_patch_qa"},
-}
-def submit(project,action,brief):
-    if action=="dev_docs_fetch":
-        pass
-def tick(t):
-    if t["action"]=="research_search":
-        pass
-    elif t["action"]=="dev_general_build":
-        pass
-def status():
-    return {"controller_version":"0.2.2-global-intake-governed",
-            "quality_policy":{"prebuild_owner_admission_required":True}}
-'''
-# Patcher anchor follows actual controller's 8-space branch indentation.
-FAKE_CONTROLLER=FAKE_CONTROLLER.replace(
- '    elif t["action"]=="dev_general_build":',
- '        elif t["action"]=="dev_general_build":'
-)
-# To avoid an artificial syntax failure in the staged compilation, synthetic
-# controller fixtures are created by replacing tick() with a real branch chain.
-FAKE_CONTROLLER=FAKE_CONTROLLER.replace(
- '''def tick(t):
-    if t["action"]=="research_search":
-        pass
-        elif t["action"]=="dev_general_build":
-        pass''',
- '''def tick(t):
-    if t["action"]=="research_search":
-        pass
-        elif t["action"]=="dev_general_build":
-            pass'''
-)
-# For compile-validity, the final branch chain requires a parent indentation
-# corresponding to the live method's nested try, not a plain if. Use a try.
-FAKE_CONTROLLER=FAKE_CONTROLLER.replace(
- '''def tick(t):
-    if t["action"]=="research_search":
-        pass
-        elif t["action"]=="dev_general_build":
-            pass''',
- '''def tick(t):
     try:
         if t["action"]=="research_search":
             pass
         elif t["action"]=="dev_general_build":
             pass
     except Exception:
-        pass'''
-)
+        pass
+def status():
+    return {"controller_version":"0.2.2-global-intake-governed",
+            "quality_policy":{"prebuild_owner_admission_required":True}}
+'''
 FAKE_REGISTRY = '''ENGINES = {
     "website_stage": {"legacy_moksha", "static_v1"},
     "dev_project_build": {"reviewed_patch_v1"},
@@ -102,6 +52,7 @@ class PatchTests(unittest.TestCase):
         self.assertIn('release_authorized":False',code)
         self.assertIn('dev_general_build',code)
         self.assertNotIn('shell=True',code)
+        compile(code, "staged_controller.py", "exec")
 
     def test_controller_patch_is_not_reentrant(self):
         code=d.controller_patch(FAKE_CONTROLLER)
