@@ -49,11 +49,25 @@ jobs:
           assert s.count(target) == 1, "Upstream Gradle file changed; review before patching"
           p.write_text(s.replace(target, '// Firebase Google Services disabled for standalone CI prototype'))
           PY
+      - name: Exclude optional Firebase App Check native module from prototype
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("react-native.config.js")
+          s = p.read_text()
+          marker = "  dependencies: {\n"
+          assert s.count(marker) == 1, "Upstream React Native config changed; review required"
+          s = s.replace(marker, marker + "    '@react-native-firebase/app-check': { platforms: { android: null } },\n")
+          p.write_text(s)
+          PY
       - name: Build Android debug APK
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew :app:assembleProdDebug --no-daemon --stacktrace
+          if grep -R -q 'ReactNativeFirebaseAppCheckPackage' app/build/generated/autolinking 2>/dev/null; then
+            echo 'ERROR: Firebase App Check remains autolinked'; exit 1
+          fi
       - name: Upload APK
         if: success()
         uses: actions/upload-artifact@v4
