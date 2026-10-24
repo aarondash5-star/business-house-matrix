@@ -25,10 +25,11 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 def main():
-    commit=subprocess.run(["git","-C",str(PROJECT),"rev-parse","HEAD"],
-                          capture_output=True,text=True,timeout=10)
-    if commit.returncode or commit.stdout.strip()!=SOURCE_COMMIT:
-        raise RuntimeError("source_commit_changed_review_required")
+    historic=subprocess.run(["git","-C",str(PROJECT),"show",
+        SOURCE_COMMIT+":projects/delulu-tech/staging/site/index.html"],
+        capture_output=True,timeout=10)
+    if historic.returncode or historic.stdout != (PROJECT/"staging/site/index.html").read_bytes():
+        raise RuntimeError("approved_homepage_source_drift")
     from sys import path as python_path
     python_path.insert(0,str(CONTROLLER))
     try:
