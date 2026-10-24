@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0B0D13">
+  <title>Delulu Tech — Electric Paradox | Private concept</title>
+  <meta name="description" content="Private concept preview of Delulu Tech's approved Impossible Ribbon identity.">
+  <style>
+    :root{--ink:#0B0D13;--white:#F5F6F2;--volt:#C9FF3D;--violet:#6544EA;--graphite:#252A36;--gray:#A7AEBB}
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;min-width:0;background:var(--ink);color:var(--white);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.55}
+    a{color:inherit}a:focus-visible,button:focus-visible{outline:3px solid var(--volt);outline-offset:5px}
+    button{font:inherit;cursor:pointer}
+    .skip-link{position:absolute;top:-8rem;left:1rem;z-index:20;padding:.75rem 1rem;background:var(--volt);color:var(--ink)}
+    .skip-link:focus{top:1rem}
+    .shell{width:min(1200px,calc(100% - 2.5rem));margin-inline:auto}
+    .nav{height:86px;display:flex;align-items:center;justify-content:space-between;gap:1rem;border-bottom:1px solid rgba(245,246,242,.14)}
+    .brand{font-size:.8rem;line-height:1.1;letter-spacing:.18em;font-weight:850;text-decoration:none}
+    .brand span{display:block;color:var(--gray);font-size:.59rem;letter-spacing:.24em;margin-top:.3rem}
+    .nav-right{display:flex;align-items:center;gap:1.1rem}
+    .nav-right a{text-decoration:none;font-size:.78rem;color:var(--gray)}
+    .nav-right a:hover{color:var(--white)}
+    .skip-button{appearance:none;border:1px solid rgba(245,246,242,.3);background:transparent;color:var(--white);border-radius:999px;padding:.54rem .85rem;font-size:.74rem}
+    .skip-button:hover{border-color:var(--volt)}
+    .hero{min-height:min(780px,calc(100svh - 86px));position:relative;isolation:isolate;display:grid;align-items:center;overflow:hidden;padding:4rem 0 5rem}
+    .hero::before{content:"";position:absolute;z-index:-2;inset:-20%;background:radial-gradient(ellipse at 80% 42%,rgba(101,68,234,.23),transparent 34%),radial-gradient(ellipse at 15% 80%,rgba(37,42,54,.7),transparent 35%);animation:glowIn 2.8s ease-out both}
+    .hero::after{content:"";pointer-events:none;position:absolute;inset:0;z-index:-1;opacity:.16;background:linear-gradient(115deg,transparent 25%,rgba(245,246,242,.07) 26%,transparent 27%);background-size:110px 100%}
+    .eyebrow{display:inline-flex;align-items:center;gap:.85rem;margin:0 0 1rem;color:var(--gray);text-transform:uppercase;letter-spacing:.24em;font-size:.68rem;font-weight:750}
+    .eyebrow::before{content:"";width:1.5rem;height:2px;background:var(--volt)}
+    .hero-inner{width:100%}
+    .logo-stage{position:relative;width:min(950px,100%);margin-inline:auto;aspect-ratio:1730/740;display:grid;place-items:center;overflow:visible}
+    .logo-stage::before{content:"";position:absolute;z-index:-1;top:33%;left:9%;width:82%;height:35%;background:var(--violet);filter:blur(90px);opacity:.25;transform:scaleX(.7);animation:lightSweep 2.4s ease-out both}
+    .logo-stage img{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 36px rgba(245,246,242,.08));animation:ribbonReveal 1.55s cubic-bezier(.2,.7,.2,1) both}
+    .hero-copy{margin:0 auto;text-align:center;max-width:640px;animation:copyReveal .9s 1.2s ease-out both}
+    .hero-copy h1{font-size:clamp(1.2rem,2.7vw,2rem);font-weight:550;letter-spacing:-.03em;margin:0 0 1rem}
+    .hero-copy p{margin:0 auto 1.8rem;max-width:49ch;color:var(--gray);font-size:clamp(.95rem,1.5vw,1.09rem)}
+    .cta{display:inline-flex;align-items:center;justify-content:center;gap:1.2rem;min-height:48px;padding:.8rem 1.4rem;background:var(--volt);border:2px solid var(--volt);border-radius:100px;color:var(--ink);font-weight:780;font-size:.88rem;text-decoration:none;transition:transform .2s,background .2s}
+    .cta:hover{transform:translateY(-2px);background:var(--white);border-color:var(--white)}
+    .cta span{font-size:1.1rem}
+    .identity{padding:5rem 0 6rem;border-top:1px solid rgba(245,246,242,.13)}
+    .section-kicker{color:var(--volt);font-size:.69rem;letter-spacing:.22em;font-weight:780;text-transform:uppercase}
+    .identity h2{font-weight:550;font-size:clamp(2.1rem,5.5vw,4.4rem);line-height:1.05;letter-spacing:-.055em;max-width:15ch;margin:1rem 0 2rem}
+    .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+    .tile{min-width:0;min-height:210px;background:var(--graphite);padding:1.65rem;border:1px solid rgba(245,246,242,.08);border-radius:15px}
+    .tile .number{font:700 .69rem/1.2 ui-monospace,monospace;letter-spacing:.06em;color:var(--volt)}
+    .tile h3{margin:2.6rem 0 .5rem;font-size:1.15rem;font-weight:630}
+    .tile p{margin:0;color:#C2C8D2;font-size:.91rem}
+    footer{padding:1.5rem 0 2.5rem;border-top:1px solid rgba(245,246,242,.13);display:flex;gap:1rem;justify-content:space-between;flex-wrap:wrap;color:var(--gray);font-size:.77rem}
+    @keyframes ribbonReveal{0%{opacity:0;transform:translateY(28px) scale(.96);filter:blur(18px)}60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:none;filter:drop-shadow(0 8px 36px rgba(245,246,242,.08))}}
+    @keyframes lightSweep{0%{transform:translateX(-50%) scaleX(.5);opacity:0}55%{opacity:.35}100%{transform:translateX(15%) scaleX(1);opacity:.18}}
+    @keyframes glowIn{from{opacity:0}to{opacity:1}}
+    @keyframes copyReveal{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+    .motion-finished *, .motion-finished *::before,.motion-finished *::after{animation:none!important;transition:none!important}
+    @media(max-width:700px){.shell{width:min(100% - 1.5rem,520px)}.nav{height:72px}.nav-right{gap:.5rem}.nav-right>a{display:none}.skip-button{padding:.5rem .75rem}.hero{min-height:calc(90svh - 72px);padding:3.4rem 0 4rem}.logo-stage{width:100%;margin:1rem auto 2rem}.hero-copy{padding:0 .3rem}.tiles{grid-template-columns:1fr}.tile{min-height:175px}.tile h3{margin-top:1.7rem}.identity{padding:3.5rem 0}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="shell nav">
+    <a class="brand" href="#top" aria-label="Delulu Tech, back to top">DELULU <span>TECH</span></a>
+    <nav class="nav-right" aria-label="Concept navigation">
+      <a href="#identity">Explore the identity</a>
+      <button class="skip-button" type="button" id="skip-motion" aria-label="Skip intro animation">Skip animation</button>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="shell hero-inner">
+        <p class="eyebrow">Electric Paradox · Identity V1</p>
+        <div class="logo-stage">
+          <img src="../../brand/assets/delulu-tech-mobile-white.svg" alt="Delulu Tech Impossible Ribbon logo" width="1730" height="680" fetchpriority="high">
+        </div>
+        <div class="hero-copy">
+          <h1 id="hero-title">A different way to see what comes next.</h1>
+          <p>Brand identity concept built around the original, approved Impossible Ribbon. A little impossible. Entirely intentional.</p>
+          <a class="cta" href="#identity">Explore the identity <span aria-hidden="true">↘</span></a>
+        </div>
+      </div>
+    </section>
+    <section class="identity shell" id="identity" aria-labelledby="identity-title">
+      <p class="section-kicker">The system</p>
+      <h2 id="identity-title">Minimal at rest. Electric in motion.</h2>
+      <div class="tiles">
+        <article class="tile"><span class="number">01 / FORM</span><h3>Impossible Ribbon</h3><p>The approved black-and-white vector master remains unchanged.</p></article>
+        <article class="tile"><span class="number">02 / COLOR</span><h3>Electric Paradox</h3><p>Midnight Ink, Soft White, a precise Volt Lime accent and restrained Violet depth.</p></article>
+        <article class="tile"><span class="number">03 / MOTION</span><h3>Reveal, then breathe</h3><p>A brief signature entrance resolves into a calm, readable homepage.</p></article>
+      </div>
+    </section>
+  </main>
+  <footer class="shell"><span>Delulu Tech © 2026 · Brand concept V1</span><span>Unpublished prototype · Placeholder copy pending approval</span></footer>
+  <script>
+    (function(){
+      var control=document.getElementById('skip-motion');
+      if(!control)return;
+      control.addEventListener('click',function(){
+        document.body.classList.add('motion-finished');
+        control.disabled=true;
+        control.textContent='Animation skipped';
+      });
+    }());
+  </script>
+</body>
+</html>
