@@ -1,0 +1,14 @@
+:root {
+  --dt-ink: #0B0D13;
+  --dt-white: #F5F6F2;
+  --dt-volt: #C9FF3D;
+  --dt-violet: #6544EA;
+  --dt-graphite: #252A36;
+  --dt-cool-gray: #A7AEBB;
+  --dt-bg: var(--dt-ink);
+  --dt-fg: var(--dt-white);
+  --dt-action-bg: var(--dt-volt);
+  --dt-action-fg: var(--dt-ink);
+  --dt-secondary-bg: var(--dt-violet);
+  --dt-secondary-fg: var(--dt-white);
+}

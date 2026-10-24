@@ -1,0 +1,18 @@
+{
+  "approved_concept": "Option 2 / Impossible Ribbon",
+  "archive": "delulu-tech-logo-v1-freeze.zip",
+  "archive_sha256": "f50f164e40e6a90bfc97a994cf8d0f0de9abb1e15e247115937e31dadb4508d6",
+  "archive_size_bytes": 267361,
+  "source_library_file_id": "libfile_3026b13219bc8191ba9d93166c5bc43f",
+  "source_library_path": "/Ashwakaal/delulu-tech-logo-v1-freeze.zip",
+  "qa_preview_sha256": "ab18d602f51ecf142aca607c2da34581f5fa54a21a14af7015ab740111b2e5c9",
+  "svg_sha256": {
+    "delulu-tech-mobile-black.svg": "90a9f7a01b63f691ae5242901e59a3cea5b31f6209cd77776083d4a28bb769ab",
+    "delulu-tech-mobile-white.svg": "d100714ef9579af8e2e4b3385ad5984dec922e331888539077a66e5d4a1d6368",
+    "delulu-tech-wordmark-black.svg": "5cdb062206460eed10a9da8afe2b9951e637d2960b98761268c5021005f4c4ed",
+    "delulu-tech-wordmark-white.svg": "0c44b56d238d0f57a36b0cc7cfd05c9b4e0d97e40a002ff42657e038b6582f7e"
+  },
+  "palette_document_url": "https://docs.google.com/document/d/1OgWqteDIxV_4ozEKydvQCUUK6B3JPTj4ZZ5F2E_6sb8/edit",
+  "palette_version": "1.0.0",
+  "note": "Monochrome archive stays unchanged; palette approved later and defined separately."
+}
