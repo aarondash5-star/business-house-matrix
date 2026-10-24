@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "task_id": "delulu_tech.brand_site_v1.20261024",
+  "project": "delulu-tech",
+  "receiving_brain": "development",
+  "owner_decision": {
+    "state": "approved",
+    "evidence": "User on 24 Oct 2026 approved Dev scope first, then Matrix Dev Tool Yard via Dell SSH; directed frozen logo and final locks into business-house-matrix as a separate project.",
+    "confirmed_at": "2026-10-24T12:44:49.582Z",
+    "decision_version": 1,
+    "decisions": [
+      "Electric Paradox V1 palette locked",
+      "Impossible Ribbon Option 2 logo frozen",
+      "Git placement in business-house-matrix/projects/delulu-tech",
+      "Private staging and QA scope; no public release"
+    ]
+  },
+  "requested_outcome": "Create a private mobile-first Delulu Tech homepage and browser-native animated brand prototype using the exact frozen vector logo and Electric Paradox design system, with independent QA and documented receipts.",
+  "done_when": [
+    "Verified original SVG/ZIP checksums and preserved geometry",
+    "Private Delulu-only preview with responsive and reduced-motion behavior",
+    "Executed QA receipts and owner-reviewable preview/rollback"
+  ],
+  "scope": {
+    "approved_actions": [
+      "Inspect/reuse approved logo and brand files",
+      "Dev Brain proposal and reviewed project enrollment",
+      "Private isolated static staging and QA after legitimate enrollment"
+    ],
+    "forbidden_actions": [
+      "Public deployment or merge",
+      "Root/sudo permissions changes or guard bypass",
+      "Paid services",
+      "Cross-project data or secret reuse",
+      "Independent direct worker takeover"
+    ],
+    "data_boundary": "projects/delulu-tech only; no Matrix core/Moksha/Andaz/Pine/Shaadi data or credentials",
+    "release_mode": "private_staging_only",
+    "budget_ceiling": "₹0 incremental cash spend"
+  },
+  "authority": {
+    "department_owns_execution": true,
+    "brain_may_delegate_enrolled_workers": true,
+    "super_brain_direct_worker_control": false,
+    "new_permissions_require_owner": true,
+    "sensitive_external_actions_require_owner": true
+  },
+  "routing": {
+    "state": "dispatch_pending",
+    "brain_ingress": "Dell Generic Linux SSH operations -> Matrix controller dev_proposal; controller task 54514fad-b082-411e-8892-d6196d883dff queued, remote_job null",
+    "acknowledgement": null,
+    "correlation_id": "54514fad-b082-411e-8892-d6196d883dff"
+  },
+  "reporting": {
+    "receipt_store": "Dell SSH task a0b4730e-f884-498e-9063-347953566363; controller task 54514fad-b082-411e-8892-d6196d883dff; Git draft PR #18",
+    "owner_review_required": true,
+    "notification_mode": "on_request",
+    "independent_qa_required": true,
+    "rollback_ref": "Source-only branch; no production deployment"
+  },
+  "source_issue": "https://github.com/aarondash5-star/business-house-matrix/pull/18"
+}
