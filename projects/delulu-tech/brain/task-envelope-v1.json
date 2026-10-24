@@ -46,16 +46,17 @@
     "sensitive_external_actions_require_owner": true
   },
   "routing": {
-    "state": "documented_only",
-    "brain_ingress": "Dell Generic Linux SSH fixed Matrix controller",
+    "state": "dispatch_pending",
+    "brain_ingress": "Dell Generic Linux SSH operations -> Matrix controller dev_proposal; controller task 54514fad-b082-411e-8892-d6196d883dff queued, remote_job null",
     "acknowledgement": null,
-    "correlation_id": "delulu_tech.brand_site_v1.20261024"
+    "correlation_id": "54514fad-b082-411e-8892-d6196d883dff"
   },
   "reporting": {
-    "receipt_store": "projects/delulu-tech/receipts/ (planned)",
+    "receipt_store": "Dell SSH task a0b4730e-f884-498e-9063-347953566363; controller task 54514fad-b082-411e-8892-d6196d883dff; Git draft PR #18",
     "owner_review_required": true,
     "notification_mode": "on_request",
     "independent_qa_required": true,
     "rollback_ref": "Source-only branch; no production deployment"
-  }
+  },
+  "source_issue": "https://github.com/aarondash5-star/business-house-matrix/pull/18"
 }
