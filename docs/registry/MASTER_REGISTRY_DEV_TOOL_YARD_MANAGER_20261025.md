@@ -65,3 +65,17 @@ NO-GO: Manager graph scopes Delulu input using its own Matrix manager frozen bri
 **Independent QA status:** generic rootless `sandbox_qa` rejected 2.5 MB PNG/.blend batch `6dcb8d6b-a563-4d05-8b43-723cd5a4f4ad` under its strict Python-only / 256 KB input policy. It was not bypassed. Source/readback checks run on Dell; **separate authenticated human QA still missing**. `quality_gate=evidence_missing`; production `release-check` denied, zero owner release approvals. Original logo SVG and rejected V2 MP4s unchanged; no website publish or merge.
 
 **Release status stays NO-GO**; next: owner design review, actual keyframed 3D composition faithful to frozen SVG, controller-mediated bounded render/review recipe and authenticated independent QA.
+
+## 2026-10-25 — V4 actual frozen-vector animation (newest execution receipt)
+
+**Private technical milestone PASS / global Manager and final design certification NO-GO.** Replaced unfaithful generic-strip V3 *in a new separate private candidate only* by importing the exact frozen Delulu vector path geometry and rendering actual keyframed 3D mesh motion. Original SVG SHA `d100714ef9579af8e2e4b3385ad5984dec922e331888539077a66e5d4a1d6368`; source and earlier media preserved.
+
+- Governed reviewed source/test job `2063f854-eb07-4bfa-a564-817ca5b67ae0`: **13/13 pass**; initial failing typo job retained separately.
+- Blender `logo_vector_keyframed.blend`: 2 imported original path objects, 5,160 vertices, **8 shape-key animation F-curves**, final original Basis restored; SHA `4723578e19fb71e0f6b01e8f535f5440d8dea82dfedce85a8d82ae24c900af2c`.
+- Dell private MP4 `private_frozen_svg_fold_v4_12fps.mp4` SHA `4b3294f4aefc3f6063ceb49fac59228212335104bd354e387b9dd9ba447b68c1`: 49 frames, 12fps, 680×374 H.264, 4.0833 seconds. Source path `~/.local/share/matrix-code-executor/delulu_tech/private-fold-v4/`.
+- Automated independent no-network QA `c21cdc96-ed50-4754-a46d-83b69de427a3`: **8/8 adversarial source tests pass**, known-bad V2 alpha masking still rejected. Not independent human visual signoff.
+- **Private binary media intentionally NOT pushed to GitHub** because `aarondash5-star/business-house-matrix` is public. Only source/test/docs and hashes were synced.
+- Final release `independent_quality_evidence_not_ready`, ten V3 evidence entries missing; no root-managed independent reviewer enrolled. No production release, merger or Delulu website changes.
+
+[Exact verification report](../../brain/dev-toolyard/multiproject_release/DELULU_V4_FROZEN_VECTOR_ANIMATION_PRIVATE_PREVIEW_20261025.md) · [source](../../projects/delulu-tech/private-fold-v4/backend/physical_svg_vector_v4.py) · [adversarial QA test](../../projects/delulu-tech/private-fold-v4/qa/test_vector_v4_adversarial.py).
+
