@@ -79,3 +79,9 @@ NO-GO: Manager graph scopes Delulu input using its own Matrix manager frozen bri
 
 [Exact verification report](../../brain/dev-toolyard/multiproject_release/DELULU_V4_FROZEN_VECTOR_ANIMATION_PRIVATE_PREVIEW_20261025.md) · [source](../../projects/delulu-tech/private-fold-v4/backend/physical_svg_vector_v4.py) · [adversarial QA test](../../projects/delulu-tech/private-fold-v4/qa/test_vector_v4_adversarial.py).
 
+
+## 2026-10-25 — Delulu V4 private owner-review distribution (latest)
+
+**Deliverable:** 49-frame/12fps H.264 master on Dell (`private-fold-v4/private_frozen_svg_fold_v4_12fps.mp4`, SHA `4b3294f4aefc3f6063ceb49fac59228212335104bd354e387b9dd9ba447b68c1`).
+**Private review:** Existing owner-owned private GitHub `aarondash5-star/delulutech` remains private; [draft PR #4](https://github.com/aarondash5-star/delulutech/pull/4) on `review/delulu-v4-owner-20261025`. [Low-res private proxy](https://github.com/aarondash5-star/delulutech/blob/review/delulu-v4-owner-20261025/review-packages/2026-10-25-delulu-v4/delulu-v4-private-review-proxy.mp4) SHA-256 `970244cd3a82252e882b8cdb06d4d183a9608f963b5c4b4c5a3a94eceeac1bd4` and Git blob `f4f53c6a271c05075843c1f5542468e5019540c8` were hash-matched before commit. Master video and .blend were not put in a public repository.
+**Status:** Source build 13/13 and automated rootless static QA 8/8 PASS; genuine independent human review and owner creative acceptance **pending**; `quality_gate=evidence_missing`; production publication/merge NOT approved. Controller unchanged. [Full handoff](../../brain/dev-toolyard/multiproject_release/DELULU_V4_OWNER_PRIVATE_REVIEW_HANDOFF_20261025.md).
