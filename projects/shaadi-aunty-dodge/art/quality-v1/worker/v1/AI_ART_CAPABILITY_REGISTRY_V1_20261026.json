@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "shaadi-aunty-dodge.ai-art-direction.v1",
+  "title": "Dell governed AI art direction",
+  "owner_scope": "shaadi_aunty_dodge",
+  "introduced_ist": "2026-10-26",
+  "reviewed_at_ist": "2026-10-26T02:31:49+05:30",
+  "release_status": "review_only",
+  "lifecycle_status": "deployed_pending_first_vision_cycle",
+  "quality_pin": "SAD-VISUAL-QUALITY-V1",
+  "autonomous_execution": {
+    "local_director_timer": "bhm-shaadi-ai-art-director.timer",
+    "director_schedule": "OnUnitInactiveSec=30min",
+    "fixed_worker_timer": "bhm-shaadi-art-worker.timer",
+    "fixed_worker_schedule": "OnUnitInactiveSec=2min",
+    "manager_observation": "bhm-autonomy-controller.service, approximately 20-second tick",
+    "chatgpt_supervision": "hourly configured conditional task",
+    "max_bounded_edit_cycles": 3,
+    "allowlisted_blender_profiles": [
+      "glasses",
+      "jasmine",
+      "zari"
+    ],
+    "model_runtime": "ollama local loopback 127.0.0.1:11434",
+    "vision_model_requested": "qwen3-vl:2b-instruct",
+    "model_ready_as_of_review": false,
+    "first_vision_cycle_completed": false,
+    "visual_reference_bytes_on_dell_verified": false
+  },
+  "implementation": {
+    "manager": "~/matrix-controller/controller.py",
+    "observer": "~/matrix-controller/manager_governance_v3.py",
+    "worker": "~/matrix-controller/art-worker-v1/worker.py",
+    "director": "~/matrix-controller/art-worker-v1/director_loop.py",
+    "review": "~/matrix-controller/art-worker-v1/ai_art_vision.py",
+    "revisions": "~/matrix-controller/art-worker-v1/ai_art_refine.py",
+    "worker_receipt": "~/matrix-controller/art-worker-v1/latest.json",
+    "director_receipt": "~/matrix-controller/art-worker-v1/director_status.json",
+    "image_artifact_root": "~/shaadi-quality-v1-art-20261025/projects/shaadi-aunty-dodge/art/quality-v1/iterations/20261026-ai-art-director-v1",
+    "portable_blender": "~/shaadi-quality-v1-art-20261025/projects/shaadi-aunty-dodge/art/quality-v1/tools/run_blender_4_5_lts.sh"
+  },
+  "admission": {
+    "task_scope_pinned": true,
+    "script_sha256_pins": true,
+    "production_merge": false,
+    "remote_publish": false,
+    "paid_api": false,
+    "arbitrary_generated_code_execution": false,
+    "unbounded_iteration": false,
+    "artistic_auto_approval": false,
+    "uncertain_job_auto_retry": false
+  },
+  "evidence_baseline": {
+    "character_structural_qa": "5/9 legacy check; remains failed",
+    "wedding_structural_qa": "3/6 legacy check; remains failed",
+    "named_character_glb_clips": [
+      "Idle",
+      "Walk",
+      "Question",
+      "DodgeReaction"
+    ],
+    "named_morphs": [
+      "Blink",
+      "Smile",
+      "JawOpen"
+    ],
+    "glb_technical_export_only": true,
+    "model_visual_review_status": "awaiting_model",
+    "real_android_fps_certified": false
+  },
+  "independently_reusable_features": [
+    "scoped_lease_and_approval",
+    "hash_pinned_allowlisted_recipes",
+    "timer_driven_queued_worker",
+    "ai_vision_critique_with_evidence_hash",
+    "reversible_blender_derivative",
+    "nonproduction_glb_tests",
+    "fail_closed_stalled_job_tracing",
+    "human_release_gate"
+  ],
+  "adoption_rule": "New projects must enroll separate reviewed adapter, recipes, model and quality pin; registry documentation alone grants no execution."
+}
