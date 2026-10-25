@@ -1,7 +1,13 @@
 name: SuperGPT Android frontend debug APK
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - super-gpt/test
+      - super-gpt/production
   push:
+    branches:
+      - main
     paths:
       - '.github/workflows/supergpt-android-debug.yml'
 permissions:
@@ -17,6 +23,8 @@ jobs:
           repository: a-ghorbani/pocketpal-ai
           ref: main
           submodules: recursive
+      - name: Report upstream prototype source revision
+        run: git rev-parse HEAD
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
