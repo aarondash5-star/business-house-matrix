@@ -141,5 +141,25 @@ class GameToolkitTests(unittest.TestCase):
         self.assertFalse(out["game_repository_modified"])
 
 
+    def test_mpfb_fake_success_with_registration_error_is_rejected(self):
+        # A printed marker is not certification if Blender reported a failed add-on register.
+        p = mock.Mock(returncode=0, stdout="MPFB_REGISTERED_OK 4.5.15 LTS", 
+                      stderr="Exception in module register(): Traceback (most recent call last)")
+        with mock.patch.object(m, "validate", return_value={}), \
+             mock.patch.object(m, "_sandbox_command", return_value=["fixed-bwrap"]), \
+             mock.patch.object(m.subprocess, "run", return_value=p):
+            out = m.execute(m.PROJECT, "shaadi_mpfb_verify_v1", self.root)
+        self.assertFalse(out["qa_passed"])
+        self.assertFalse(out["published"])
+
+    def test_mpfb_import_only_marker_is_not_registration(self):
+        p = mock.Mock(returncode=0, stdout="MPFB_MODULE_OK 4.5.15 LTS", stderr="")
+        with mock.patch.object(m, "validate", return_value={}), \
+             mock.patch.object(m, "_sandbox_command", return_value=["fixed-bwrap"]), \
+             mock.patch.object(m.subprocess, "run", return_value=p):
+            out = m.execute(m.PROJECT, "shaadi_mpfb_verify_v1", self.root)
+        self.assertFalse(out["qa_passed"])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
