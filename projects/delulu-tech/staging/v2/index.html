@@ -41,6 +41,7 @@ button{font:inherit;cursor:pointer}
 .logo-film-tall{display:none!important}
 .logo-motion.is-playing video{visibility:visible}
 .logo-motion.is-playing .logo-still{visibility:hidden}
+.logo-motion:not(.is-playing) .logo-still{visibility:visible!important;z-index:2}
 .logo-still{padding:18%;display:grid;place-items:center}
 .logo-still img{width:100%;height:auto;display:block}
 .hero-bottom{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:2.5rem}
@@ -155,12 +156,13 @@ footer{border-top:1px solid rgba(245,246,242,.16);padding:26px 0 40px;color:var(
  const films=[wide,tall];
  // Some headless and mobile decoders clear the video surface on `ended`.
  // Always resolve to the exact approved SVG as the final, persistent logo.
- for(const film of films)film.addEventListener('ended',()=>host.classList.remove('is-playing'));
+ for(const film of films)film.addEventListener('ended',()=>{host.classList.remove('is-playing');film.style.setProperty('display','none','important');});
  let active=null;
- function stop(){for(const film of films){film.pause();film.currentTime=0;}host.classList.remove('is-playing');}
+ function stop(){for(const film of films){film.pause();film.currentTime=0;film.style.setProperty('display','none','important');}host.classList.remove('is-playing');}
  function start(){
    stop();if(reduced.matches){skip.hidden=true;return;}skip.hidden=false;
    active=mobile.matches?tall:wide;
+   active.style.removeProperty('display');
    const tryPlay=active.play();
    if(tryPlay&&typeof tryPlay.then==='function')tryPlay.then(()=>host.classList.add('is-playing')).catch(()=>{host.classList.remove('is-playing')});
  }
