@@ -56,3 +56,9 @@ GitHub Actions runs validation and, after separate cloud identity/configuration 
 - [Live autonomous MVP implementation, QA, and blockers](docs/AUTONOMOUS-MVP-IMPLEMENTATION-2026-10-21.md)
 - [Central durable dispatcher](brain/mvp-controller/controller.py) · [isolated QA](brain/mvp-controller/sandbox.py) · [bounded correction](brain/mvp-controller/repair.py)
 - Dell research/proposal/isolated unit-test and one unattended known-error EVOLUTION correction are verified. Mac public Trends and Groq creative planning are verified. Cross-machine routing, finished reels, safe OSI-approved UI and full department autonomy are still incomplete.
+
+## SuperGPT project (Android-first client)
+
+**Canonical SuperGPT specification:** [project index on super-gpt/dev](https://github.com/aarondash5-star/business-house-matrix/blob/super-gpt/dev/docs/supergpt/README.md) · [architecture and execution plan](https://github.com/aarondash5-star/business-house-matrix/blob/super-gpt/dev/docs/supergpt/PROJECT_PLAN.md) · [release policy](https://github.com/aarondash5-star/business-house-matrix/blob/super-gpt/dev/docs/supergpt/RELEASE_POLICY.md).
+
+Environment branches: [dev](https://github.com/aarondash5-star/business-house-matrix/tree/super-gpt/dev) → [test](https://github.com/aarondash5-star/business-house-matrix/tree/super-gpt/test) → [production](https://github.com/aarondash5-star/business-house-matrix/tree/super-gpt/production). GitHub Actions compilation of an upstream-derived standalone Android prototype is **not** certification of the connected SuperGPT product. Runtime testing, Matrix integration, independent QA and production acceptance remain separately gated. Branch rulesets require separate GitHub-admin verification.
