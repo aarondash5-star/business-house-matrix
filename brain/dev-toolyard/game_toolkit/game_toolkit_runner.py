@@ -126,11 +126,18 @@ def _sandbox_command(recipe: str, root: Path) -> list[str]:
     if recipe == "gltf_cli":
         return cmd + ["/toolkit/node_modules/.bin/gltf-transform", "--version"]
     if recipe == "blender_import":
-        cmd += ["--setenv", "XDG_CONFIG_HOME", "/toolkit/third_party/blender-xdg-config",
+        # Overlay only MPFB's log directory with disposable writable tmpfs.
+        # The pinned extension and every other toolkit file remain read-only.
+        cmd += ["--tmpfs", "/toolkit/third_party/blender-xdg-config/blender/4.5/mpfb/logs",
+                "--setenv", "XDG_CONFIG_HOME", "/toolkit/third_party/blender-xdg-config",
                 "--setenv", "BLENDER_USER_CONFIG", "/toolkit/third_party/blender-config"]
         blender = "/toolkit/third_party/blender/blender-4.5.15-linux-x64/blender"
-        return cmd + [blender, "-b", "--python-expr",
-                      "import bpy,importlib; importlib.import_module('bl_ext.user_default.mpfb'); print('MPFB_MODULE_OK',bpy.app.version_string)"]
+        expr = ("import bpy,importlib; mod='bl_ext.user_default.mpfb'; "
+                "importlib.import_module(mod); "
+                "(bpy.ops.preferences.addon_enable(module=mod) if not bpy.context.preferences.addons.get(mod) else None); "
+                "assert bpy.context.preferences.addons.get(mod), 'MPFB_NOT_REGISTERED'; "
+                "print('MPFB_REGISTERED_OK',bpy.app.version_string)")
+        return cmd + [blender, "-b", "--python-expr", expr]
     raise ToolkitDenied("unknown_sandbox_recipe")
 
 def execute(project: str, manifest: str, root: Path = TOOLKIT) -> dict:
@@ -171,7 +178,11 @@ def execute(project: str, manifest: str, root: Path = TOOLKIT) -> dict:
     elif recipe == "gltf_cli":
         result["qa_passed"] = p.stdout.strip() == "4.5.1"
     elif recipe == "blender_import":
-        result["qa_passed"] = "MPFB_MODULE_OK 4.5.15 LTS" in p.stdout
+        result["qa_passed"] = (
+            "MPFB_REGISTERED_OK 4.5.15 LTS" in p.stdout
+            and "Exception in module register" not in p.stdout + p.stderr
+            and "Traceback (most recent call last)" not in p.stdout + p.stderr
+        )
     result["test_kind"] = "isolated_offline_tool_check"
     return result
 
