@@ -85,3 +85,17 @@ Evidence required each cycle: model ID, actual image/input SHA, chosen recipe an
 - No Cline/Prefect installation, production branch merge, unrestricted tool execution, payment, external media publication, or cross-project worker enrollment from this SOP.
 - Failed quality pin remains failed until both independent evidence and owner visual approval exist.
 - Detailed triage, exact paths and rollback: [Operator Runbook](./AI_ART_DIRECTOR_OPERATIONS_RUNBOOK_20261026.md).
+
+## Operational correction: vision decision schema V2 (verified 2026-10-26)
+The first real local Qwen3-VL image inference and bounded Blender edit **completed**. It produced a spectacles derivative (editable SHA-256 `1cbf7767bc5289e16fadb1af201baf1a40a9a36fd08d43a5d0bd7a9c89b51f88`), four review renders and a glTF export (`25b40673c2691b3c2ba5707e5eb7cb7dfba613f238d70047cdfd64957b29b251`) containing all required named actions/morphs. **Artistic QA still FAILS.**
+
+Independent validation found the first model response was **truncated / nonparseable JSON**. The old selector then picked `glasses` as its default unused recipe. This means the model did evaluate the candidate, but the recipe choice was a bounded deterministic fallback, **not a validated model decision**.
+
+To prevent this from recurring, the director now:
+- Requests schema-constrained JSON using the local Ollama `format` contract.
+- Requires three defects and a valid, non-empty modelling instruction, plus an available `glasses`/`hair`/`sari` priority.
+- Rejects malformed, disallowed or already-consumed priorities; **no fallback recipe** and no blind retry.
+- Sends the list of remaining permitted profiles to the model; a failed structured response remains an explicit review blocker.
+- Maintains original source hashes, script SHA pins, max three allowed profiles, local review-only scope and explicit owner approvals.
+
+The patch passes eight dedicated director contract tests; Manager regression suite passed 27 tests. The **next strict-schema cycle** was running at 02:48 IST and must not be called complete without its own terminal receipt. Visual target reference image bytes remain absent from Dell. This paragraph supersedes the earlier statement that no cycles have yet completed, but does **not** supersede the artist-quality gate.
