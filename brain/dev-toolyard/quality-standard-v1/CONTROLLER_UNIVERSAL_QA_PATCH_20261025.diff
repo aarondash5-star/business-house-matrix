@@ -1,0 +1,30 @@
+--- a/controller.py
++++ b/controller.py
+@@ -153,9 +153,13 @@
+ def receipt(d,job_id,state,output=None,error=None,qa="unverified",remote=None):
+     if state=="completed" and isinstance(output,dict):
+         row=d.execute("SELECT project,action,brief FROM tasks WHERE id=?",(job_id,)).fetchone()
+-        if row is not None and row["action"] in ('website_stage', 'dev_project_build', 'dev_general_build', 'dev_scoped_build', 'pine_chat_stage', 'video_preview'):
+-            from quality_gate import annotate
+-            output=annotate(row["project"],row["brief"],output)
++        if row is not None:
++            if row["action"] in ('website_stage', 'dev_project_build', 'dev_general_build', 'dev_scoped_build', 'pine_chat_stage', 'video_preview'):
++                from quality_gate import annotate
++                output=annotate(row["project"],row["brief"],output)
++            # Universal controller-mediated quality receipt; no self-authorization.
++            from toolyard_qa_standard_v1 import receipt as universal_qa_receipt
++            output=universal_qa_receipt(row["project"],row["action"],row["brief"],output)
+     d.execute("""UPDATE tasks SET status=?,updated=?,output=?,error=?,qa_level=?,
+                  remote_job=COALESCE(?,remote_job) WHERE id=?""",
+               (state,now(),json.dumps(output,ensure_ascii=False)[:30000] if output is not None else None,
+@@ -549,7 +553,9 @@
+                         "prebuild_owner_admission_required":True,
+                         "dispatch_revalidates_admission":True,
+                         "release_preflight_required":True,
+-                        "external_connectors_mediated":False},
++                        "external_connectors_mediated":False,
++                        "universal_qa_receipts_controller_actions":13,
++                        "unmediated_external_tools_certified":False},
+       "counts":groups,"evolution_outcomes":feedback,
+       "tasks":tasks,"paid":False,"auto_publish":False,
+       "allow_shell_injection":False,"sandbox_execution":True}
