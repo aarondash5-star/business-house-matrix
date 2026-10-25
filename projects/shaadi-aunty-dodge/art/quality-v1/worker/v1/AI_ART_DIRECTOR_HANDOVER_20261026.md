@@ -42,3 +42,13 @@ python3 ~/matrix-controller/art-worker-v1/director_loop.py
 2. Run one end-to-end **actual VLM image** critique and bounded Blender revision; verify produced PNGs, editable `.blend`, exported GLB clips/morphs and checksums.
 3. Only if that works, let the 30-minute schedule process remaining owner-allowlisted revisions. If high-fidelity face sculpt still needs a professional foundation, record a blocker rather than cosmetic self-approval.
 4. Transfer real pinned reference images securely to Dell for side-by-side visual comparison; do not publish references to a public Git repo.
+
+## Process governance update (2026-10-26)
+The formal documentation is now split into three reviewable artifacts:
+- [AI Art Direction SOP V1](./AI_ART_DIRECTION_SOP_V1_20261026.md) — canonical intake, bounded critique/revision/QA states and approval boundaries.
+- [AI Art Director Operations Runbook](./AI_ART_DIRECTOR_OPERATIONS_RUNBOOK_20261026.md) — commands, incident recovery, safety and rollback.
+- [Machine-readable capability registry](./AI_ART_CAPABILITY_REGISTRY_V1_20261026.json) — observed deployment and independent onboarding metadata. It grants **no new execution permission**.
+
+**Accuracy correction:** The registered AI Art Director is *bounded*: three fixed Blender revision profiles, followed by independent human-quality review, not an endless, self-certifying artistic process. Timer enabled and script tests passing do not mean the first actual VLM critique is complete. Original pinned references have been verified in ChatGPT Library, but full source pixels are not yet on Dell. As checked at 02:31 IST, the local VLM was still downloading; this is an operational blocker, not a passed result.
+
+Future changes must update the SOP, runbook, registry, hash-pinned executable manifests and test receipts together before claiming a revised certified capability.
