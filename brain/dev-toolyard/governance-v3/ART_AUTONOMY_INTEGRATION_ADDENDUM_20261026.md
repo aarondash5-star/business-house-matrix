@@ -22,12 +22,12 @@ At the Manager integration test gate, **26 existing tests passed**; art director
 - This feature does **not** implement the project-wide “every new tool auto-admitted” rule. The earlier `UNIVERSAL_AUTO_ADAPTER_ADMISSION_HANDOVER_20261026.md` explicitly states universal pre-dispatch interception is **not yet deployed**. Any other project/worker still requires separate registration and owner authorization.
 
 ## Canonical documentation
-- [Formal SOP](../../projects/shaadi-aunty-dodge/art/quality-v1/worker/v1/AI_ART_DIRECTION_SOP_V1_20261026.md)
-- [Operator runbook](../../projects/shaadi-aunty-dodge/art/quality-v1/worker/v1/AI_ART_DIRECTOR_OPERATIONS_RUNBOOK_20261026.md)
-- [Capability registry](../../projects/shaadi-aunty-dodge/art/quality-v1/worker/v1/AI_ART_CAPABILITY_REGISTRY_V1_20261026.json)
-- [Art worker handover](../../projects/shaadi-aunty-dodge/art/quality-v1/worker/v1/AI_ART_DIRECTOR_HANDOVER_20261026.md)
+- [Formal SOP](../../../projects/shaadi-aunty-dodge/art/quality-v1/worker/v1/AI_ART_DIRECTION_SOP_V1_20261026.md)
+- [Operator runbook](../../../projects/shaadi-aunty-dodge/art/quality-v1/worker/v1/AI_ART_DIRECTOR_OPERATIONS_RUNBOOK_20261026.md)
+- [Capability registry](../../../projects/shaadi-aunty-dodge/art/quality-v1/worker/v1/AI_ART_CAPABILITY_REGISTRY_V1_20261026.json)
+- [Art worker handover](../../../projects/shaadi-aunty-dodge/art/quality-v1/worker/v1/AI_ART_DIRECTOR_HANDOVER_20261026.md)
 
-Paths above are relative conceptual references from `brain/dev-toolyard/governance-v3`; use the exact absolute repo paths on GitHub. All documents reside only on an isolated review branch until separately approved.
+Paths above resolve relative to `brain/dev-toolyard/governance-v3` on this branch. All documents reside only on an isolated review branch until separately approved.
 
 ## Safe rollback / pause
 Stopping `bhm-shaadi-ai-art-director.timer` does not stop Matrix Manager, erase job queues or release approval controls. Restoring manager code is handled separately from project-specific art worker scripts. Preserve logs and SHA-256 receipts for all failure investigations.
