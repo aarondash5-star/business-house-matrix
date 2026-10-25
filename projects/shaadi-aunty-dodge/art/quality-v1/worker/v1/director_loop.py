@@ -52,11 +52,9 @@ def run(cmd,env,folder,name,timeout=90):
 def choose(critic,used):
  k=str(critic.get("highest_priority","")).lower()
  ideal={"glasses":"glasses","hair":"jasmine","sari":"zari"}.get(k)
- if ideal and ideal not in used:return ideal
- # Keep unmatched "face" critical as unresolved, do not falsely score it.
- for p in PROFILES:
-  if p not in used:return p
- return None
+ if not ideal:raise RuntimeError("vision_priority_not_allowlisted")
+ if ideal in used:raise RuntimeError("vision_priority_already_exhausted")
+ return ideal
 def verify_enrollment():
  manifest=HERE/"ai_director_enrollment.json"
  if not manifest.is_file() or manifest.is_symlink():
@@ -114,7 +112,8 @@ def main():
    s["state"]="blocked_missing_visual_evidence";save(s);return 6
   s["last_attempt"]=utc();s["state"]="running";save(s)
   try:
-   critique=review(photo,cycle,timeout=270)
+   available=[k for k,v in (("glasses","glasses"),("hair","jasmine"),("sari","zari")) if v not in s["done_profiles"]]
+   critique=review(photo,cycle,timeout=270,allowed=available)
    atomic(dest/"vision_critique.json",critique)
    profile=choose(critique,s["done_profiles"])
    if not profile:raise RuntimeError("no_admissible_revision")
