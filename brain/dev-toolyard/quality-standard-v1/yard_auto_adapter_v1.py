@@ -4,7 +4,7 @@ import ast,hashlib,json,os,re,shutil,subprocess,tempfile
 from pathlib import Path
 from datetime import datetime,timezone
 from toolyard_qa_standard_v1 import VERSION as QAVER,ACTION_PROFILES,REQUIREMENTS
-VERSION="yard-auto-adapter-v1.1.0-20261026"
+VERSION="yard-auto-adapter-v1.2.0-20261026"
 HERE=Path(__file__).resolve().parent
 REGISTRY=HERE/"yard_tool_adapters_v1.json"
 TEMPLATES={"python3":("functional_app","--version"),"node":("functional_app","--version"),
@@ -58,6 +58,21 @@ def discover(which=shutil.which):
             if key in found: continue
             found[key]={"binary":str(script.resolve()),"sha256":sha(script),
                        "inventory":"direct_script_unreviewed"}
+    roots=("matrix-","threejs-","shaadi-","delulu-","wp-manager-","eccrm-","andaz-","moksha-")
+    for workspace in sorted(HERE.parent.iterdir()):
+        if workspace==HERE or workspace.is_symlink() or not workspace.is_dir() or not workspace.name.startswith(roots):
+            continue
+        for directory in (workspace,workspace/"src",workspace/"scripts",workspace/"tools"):
+            if not directory.is_dir() or directory.is_symlink():continue
+            for item in sorted(directory.iterdir()):
+                if item.is_symlink() or not item.is_file() or item.suffix not in (".py",".js",".mjs",".sh"):
+                    continue
+                if item.stat().st_size>1_000_000:continue
+                short=re.sub(r"[^a-z0-9_-]","-",item.stem.lower())[:10]
+                token=hashlib.sha256(str(item).encode()).hexdigest()[:7]
+                key="yard-"+workspace.name[:10]+"-"+short+"-"+token
+                found.setdefault(key,{"binary":str(item.resolve()),"sha256":sha(item),
+                                      "inventory":"yard_workspace_script"})
     return found
 def probe(name,entry):
     if name not in TEMPLATES:return False,"no_reviewed_template"
@@ -102,7 +117,7 @@ def reconcile(old=None,which=shutil.which,prober=probe):
         if "error" in entry:
             items[name]={"state":"quarantined_invalid_binary","operations":[]};continue
         known=name in TEMPLATES
-        safe_script=name.startswith("yard-") and entry.get("inventory")=="direct_script_unreviewed"
+        safe_script=name.startswith("yard-") and entry.get("inventory") in ("direct_script_unreviewed","yard_workspace_script")
         passing,reason=(prober(name,entry) if known else
           syntax_probe(entry) if safe_script else (False,"adapter_needed"))
         profile=TEMPLATES[name][0] if known else script_profile(name) if safe_script else None
@@ -170,7 +185,14 @@ def preflight(name,op,registry=REGISTRY,which=shutil.which):
     if op not in x.get("operations",[]):raise AdapterDenied("no_certified_operation")
     if op=="syntax_probe":
         binary=Path(x["binary"]).resolve(strict=True)
-        if binary.parent not in (HERE,HERE.parent/"managed-tools"):
+        parent=binary.parent
+        direct=parent in (HERE,HERE.parent/"managed-tools")
+        workspace=parent if parent.parent==HERE.parent else parent.parent
+        scoped=(workspace.parent==HERE.parent and
+          workspace.name.startswith(("matrix-","threejs-","shaadi-","delulu-",
+                                     "wp-manager-","eccrm-","andaz-","moksha-")) and
+          parent in (workspace,workspace/"src",workspace/"scripts",workspace/"tools"))
+        if Path(x["binary"]).is_symlink() or not (direct or scoped):
             raise AdapterDenied("script_scope_denied")
     else:
         p=which(name)
