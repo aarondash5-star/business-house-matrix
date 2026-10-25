@@ -1,0 +1,49 @@
+{
+  "url": "localhost only",
+  "width": 390,
+  "height": 844,
+  "HTTP": 200,
+  "qa": {
+    "engine": "three",
+    "renderer": "WebGLRenderer",
+    "version": "186",
+    "webgl2": true,
+    "phase": "ready",
+    "assets": "DEV_ONLY_PLACEHOLDER",
+    "elapsed": 0,
+    "score": 0,
+    "dodges": 0,
+    "hits": 0,
+    "drawcalls": 69,
+    "frames": 0,
+    "avgFPS": 0,
+    "lowFPSFrames": 0,
+    "devicePixelRatio": 1,
+    "artApproved": false,
+    "qualityGate": "SAD-VISUAL-QUALITY-V1",
+    "gateStatus": "BLOCKED",
+    "gateIssues": [
+      "owner_approval:missing",
+      "character:not_certified",
+      "character:unsafe_uri",
+      "character:missing_sha256",
+      "character:missing_provenance",
+      "character:independent_qa_missing",
+      "venue:not_certified",
+      "venue:unsafe_uri",
+      "venue:missing_sha256",
+      "venue:missing_provenance",
+      "venue:independent_qa_missing",
+      "mobile_qa:not_certified"
+    ]
+  },
+  "fields": {
+    "title": "Shaadi Aunty Dodge — Three.js Playable Slice",
+    "bodyWidth": 390,
+    "viewport": 390,
+    "button": "START DODGING"
+  },
+  "errors": [],
+  "artApproved": false,
+  "productionMerged": false
+}
