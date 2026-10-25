@@ -1,36 +1,33 @@
-# Master Registry — Dev Tool Yard Manager v1 (provisional Git entry)
+# Master Registry — Dev Tool Yard Manager (Git provisional)
 
 **Updated:** 2026-10-25 IST  
-**Project:** Business House Matrix `matrix_dev_manager`  
-**Host:** Dell, project-isolated Dev Tool Yard workspace  
-**Release classification:** **INDEPENDENT CERTIFICATION NO-GO / PRIVATE PROTOTYPE ONLY**  
-**Merge/publication:** BLOCKED; no production permissions granted.
+**Owner scope:** `matrix_dev_manager`, Dell-only reviewed Tool Yard implementation  
+**Version:** manager P0 quality governance v2  
+**Status:** **PRIVATE CORRECTIVE BUILD COMPLETE / INDEPENDENT AUTOMATED QA PASSED / PRODUCT CERTIFICATION NO-GO**  
+**Release state:** no owner release approvals, no publishing, no merge.
 
-## Stack and baseline
-- BMad Method v6.12.4, 29 skills; LangGraph 1.2.17; GitHub Spec Kit 1.2.3; uv 0.13.5.
-- Existing Dell controller `0.2.3-shaadi-toolkit-governed` SHA `6c1442395ea1377794045c55ed6424b586161a7e48db706a538063b14deb11a8`.
-- Owner-pinned manager brief admitted `approved_intake`; release approval ledger empty.
-- Initial governed build `dd9ec531-0343-4767-84bd-b059813bed03`: 8 tests passed, technical-only.
+## Core stack
+BMad Method 6.12.4 (29 project-local skills), LangGraph 1.2.17 with SQLite checkpoint adapter 3.1.2, Spec Kit 1.2.3, uv 0.13.5. Frozen owner-approved manifest `manager_quality_governance_v2` retains 12 critical requirements.
 
-## Independent QA result
-- Separate isolated no-network QA suite: `40a179ae-716e-428a-ad52-8671f625165c`, 12 test cases, runner completed successfully, **9 reproduced unsafe behaviors** and 3 confirmed limited controls.
-- Initial QA receipt `2d1d7099-b9d3-4794-9461-b2412f18d29a` was retained `needs_review` due unreadable QA fixture permissions; rerun used a new test-only fixture batch.
-- Sampled real Delulu known-bad four-second H.264/120-frame video, SHA `21def85965218f3361e66c5ab3609fd5642d8ab500670bb3430a4f5cce4642e7`; source `render_motion.py` uses 2D SVG mask/overlays rather than deformable geometry. Proper outcome = creative rejection.
-- Final manager `quality_gate` = `evidence_missing`; local release preflight = `independent_quality_evidence_not_ready`; no independent human product sign-off.
+## Source of truth & audited receipts
+- v1 baseline: [NO-GO nine reproduced vulnerabilities](../handoffs/../registry/../../brain/dev-toolyard/multiproject_release/DEV_YARD_MANAGER_V1_INDEPENDENT_CERT_NO_GO_20261025.md).
+- v2 source and tests: `brain/dev-toolyard/manager_v2/`; Dell source SHA hashes and exact two staged patch digests recorded in report.
+- Governed build `7136a027-d089-402b-a6c7-8e621a8c5f62`: 20/20 tests pass.
+- Hardening build `fc82730f-7ee9-4953-8170-b33bec880da5`: 20/20 tests pass.
+- Isolated independent QA/QC batch `53a37cbb-e483-4ef8-b025-b3b8c2196343`: 16/16 pass; includes comparison against old v1 bypasses.
+- Private SqliteSaver restart and owner handoff verified; spoofed reviewer using self-created trust store rejected; actual known-bad Delulu 2D source+MP4 rejected.
+- Dell controller unchanged at `0.2.3-shaadi-toolkit-governed`, SHA `6c1442395ea1377794045c55ed6424b586161a7e48db706a538063b14deb11a8`.
 
-## P0 certification matrix
-**8 FAIL / 3 PARTIAL / 1 NOT CERTIFIED.**
+## Known remaining blockers / owners
+- `quality_gate=evidence_missing` for all MGR-R01..12; separately authenticated **human** reviewer and actual 3D positive-case evidence pending.
+- Root/security owner must provision root-owned reviewer trust store `/etc/business-house-matrix/independent-qa-trust-v1.json` by separately authorized procedure; **do not self-enroll**.
+- No fully autonomous BMad/Spec Kit method invocation, owner-controlled execution dispatch, or global publishing adapter mediation yet.
+- Controller still `external_connectors_mediated=false`. Thermal/stress/rollback and full security regression not certified.
+- Final artifact+target+time release approval absent; PR must remain draft.
 
-- FAIL: source/RTM fidelity, critical requirement coverage, BMad method execution, durable LangGraph supervision, actual Spec Kit workflow, managed Tool Yard handoff, authenticated independent reviewer and trustworthy visual geometry proof.
-- PARTIAL: isolation/resource/rollback, exact-target local release controls, audit provenance/registry.
-- NOT CERTIFIED: real known-good folding positive artifact.
-- External publishing mediation remains uncovered; controller correctly reports `external_connectors_mediated=false`.
+## Documents
+- [V2 execution / independent QA report](../../brain/dev-toolyard/multiproject_release/DEV_YARD_MANAGER_V2_P0_CORRECTIVE_EXECUTION_20261025.md).
+- [V1 NO-GO baseline](../../brain/dev-toolyard/multiproject_release/DEV_YARD_MANAGER_V1_INDEPENDENT_CERT_NO_GO_20261025.md).
+- [Draft PR #27](https://github.com/aarondash5-star/business-house-matrix/pull/27).
 
-## Decision / next
-Remain PRIVATE, do not merge or publish. Next work cycle is P0 rework of nine independently reproduced bypass/fidelity problems, followed by separate independent human review, real visual good/bad tests, security/cross-project stress, rollback and owner release decision.
-
-**Canonical certification report:** `brain/dev-toolyard/multiproject_release/DEV_YARD_MANAGER_V1_INDEPENDENT_CERT_NO_GO_20261025.md`  
-**PR:** https://github.com/aarondash5-star/business-house-matrix/pull/27  
-**Issue:** https://github.com/aarondash5-star/business-house-matrix/issues/26
-
-This document is a **Git-hosted Master Registry entry**; no claim is made that any other external registry was synchronized.
+This is **Git-hosted provisional registry**, not evidence of a different external Master Registry syncing.
