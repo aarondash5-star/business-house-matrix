@@ -38,6 +38,8 @@ const file='file://'+path.join(site,'index.html');
         bodyFont:getComputedStyle(document.body).fontFamily,
         centerColor:getComputedStyle(section).backgroundColor};
    });
+   await page.screenshot({path:path.join(out,spec.name+'-viewport.png'),fullPage:false});
+   // Full-page captures are supplemental: some headless Chrome builds omit composited video surfaces.
    await page.screenshot({path:path.join(out,spec.name+'.png'),fullPage:true,animations:'disabled'});
    const pass=!metrics.horizontalOverflow&&metrics.logoLoaded&&metrics.linkTargets&&errors.length===0
      &&(spec.reducedMotion==='reduce'?!metrics.videoPlaying:metrics.videoReadyState>=2);
