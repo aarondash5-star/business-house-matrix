@@ -1,0 +1,1 @@
+Dev Yard Manager v2: immutable 12/12 RTM, pinned method evidence, Ed25519 independent QA attestations, no fabricated media proof, private SQLite LangGraph checkpoints, owner-interrupt and Tool Yard preflight; release remains independently gated.
