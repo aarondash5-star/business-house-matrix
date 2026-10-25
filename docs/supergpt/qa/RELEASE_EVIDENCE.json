@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "candidate": "UNASSIGNED",
+  "tested_commit": "",
+  "android_build": {
+    "run_url": "",
+    "artifact_name": "matrix-android-standalone-user-test",
+    "apk_sha256": ""
+  },
+  "android_runtime": {
+    "device_type": "unverified",
+    "android_api": null,
+    "install": "pending",
+    "cold_start": "pending",
+    "crash_scan": "pending",
+    "interaction": "pending",
+    "receipt_url": ""
+  },
+  "independent_qa": {
+    "status": "pending",
+    "reviewer": "",
+    "receipt_url": ""
+  },
+  "owner_acceptance": {
+    "status": "pending",
+    "approval_reference": ""
+  },
+  "known_blockers": [
+    "Dell worker KVM access denied in prior preflight",
+    "Android runtime installation and cold-start not certified",
+    "Full Matrix Brain backend integration not certified"
+  ],
+  "notes": "Do not fill PASSED from prior GitHub build alone. GitHub artifact ZIP SHA256 is not the APK SHA256."
+}
