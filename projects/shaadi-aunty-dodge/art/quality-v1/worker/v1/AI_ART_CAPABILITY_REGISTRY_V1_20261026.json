@@ -4,9 +4,9 @@
   "title": "Dell governed AI art direction",
   "owner_scope": "shaadi_aunty_dodge",
   "introduced_ist": "2026-10-26",
-  "reviewed_at_ist": "2026-10-26T02:31:49+05:30",
+  "reviewed_at_ist": "2026-10-26T02:40:48+05:30",
   "release_status": "review_only",
-  "lifecycle_status": "deployed_pending_first_vision_cycle",
+  "lifecycle_status": "deployed_first_real_vision_cycle_running",
   "quality_pin": "SAD-VISUAL-QUALITY-V1",
   "autonomous_execution": {
     "local_director_timer": "bhm-shaadi-ai-art-director.timer",
@@ -23,9 +23,11 @@
     ],
     "model_runtime": "ollama local loopback 127.0.0.1:11434",
     "vision_model_requested": "qwen3-vl:2b-instruct",
-    "model_ready_as_of_review": false,
+    "model_ready_as_of_review": true,
     "first_vision_cycle_completed": false,
-    "visual_reference_bytes_on_dell_verified": false
+    "visual_reference_bytes_on_dell_verified": false,
+    "model_pull_verified": true,
+    "first_end_to_end_cycle_verified": false
   },
   "implementation": {
     "manager": "~/matrix-controller/controller.py",
@@ -65,8 +67,9 @@
       "JawOpen"
     ],
     "glb_technical_export_only": true,
-    "model_visual_review_status": "awaiting_model",
-    "real_android_fps_certified": false
+    "model_visual_review_status": "first_local_vision_review_running_unverified",
+    "real_android_fps_certified": false,
+    "latest_runtime_receipt": "Live Manager governance_v3.ai_art_director_v1 and art-worker-v1/director_status.json; registry is a snapshot and must not be treated as a live monitor."
   },
   "independently_reusable_features": [
     "scoped_lease_and_approval",
