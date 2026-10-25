@@ -41,3 +41,15 @@ PASS: Real landscape and portrait 4-second H.264 source media **correctly reject
 NO-GO: Manager graph scopes Delulu input using its own Matrix manager frozen brief, not a Delulu-specific RTM. BMad and Spec Kit full role/spec/task invocation absent; foreign-project dispatch stays denied; no true Delulu 3D positive geometry candidate or independent human QA key exists; publication adapters remain uncovered. Owner approval ledger empty; quality gate `evidence_missing`.
 
 **Latest canonical report:** [Delulu final certification challenge](../../brain/dev-toolyard/multiproject_release/DEV_YARD_MANAGER_DELULU_FINAL_CERT_CHALLENGE_20261025.md). Preserve private stage only; PR #27 stays draft, no merging/production/Delulu website changes.
+
+## 2026-10-25 — Latest: Delulu V3 private folded-ribbon exercise
+
+**Development milestone:** Private geometric concept exists; actual Blender 4.0.2 render produced five unique 720×405 frames and an inspectable two-sided .blend scene. New Delulu owner scope `delulu_fold_review_v1` with ten critical requirements is enrolled, old V2 acceptance remains untouched. Manager v3 project-intake guard separately tested (26 passing), not yet wired into global LangGraph production supervisor.
+
+**Proof:** Blender file SHA `5d0960eb45a11e135e3122b05917165900eb852767d76244f5035b0a1b11113b`; 1,638 vertices, 720 front and 720 back faces, 196 edges, three lights; 5 SHA-verified PNGs on Dell only. Reviewed source `projects/delulu-tech/private-fold-v3/render.py`; no original Delulu website changes.
+
+**Build/QA:** source Tool Yard final patch `6b7c0d6b-5f98-4723-a5cc-2439044d74cb`, 6/6 tests. Real host-frame SHA/Blender readback passed. Isolated Python-only QA `31047995-6fb1-466d-b106-4cbfcf734998`, 8/8 receipt-contract tests; strict sandbox rejected earlier 2.5MB non-Python batch as designed. No independently authenticated human visual review.
+
+**Current verdict:** **GEOMETRY VIABILITY PASS; CREATIVE FIDELITY FAIL; GLOBAL MANAGER CERTIFICATION NO-GO.** Final geometric silhouette differs from frozen original `d100714ef9579af8e2e4b3385ad5984dec922e331888539077a66e5d4a1d6368`. New keyframes are a conceptual folded-ribbon study, not accepted Delulu logo animation. Full RTM evidence still missing; publishing unauthorized and blocked.
+
+**Latest handover:** [Delulu physical fold V3 private execution](../../brain/dev-toolyard/multiproject_release/DEV_YARD_MANAGER_DELULU_V3_PRIVATE_FOLD_HANDOVER_20261025.md). Preserve PR #27 draft, original owner requirements and all historical failure receipts.
