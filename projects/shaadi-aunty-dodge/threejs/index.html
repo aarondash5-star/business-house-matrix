@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shaadi Aunty Dodge — Three.js Playable Slice</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif}*{box-sizing:border-box}body{margin:0;overflow:hidden;background:#160b23;color:#ffefd7}
+#stage{position:fixed;inset:0;touch-action:none}canvas{display:block;width:100%;height:100%}
+#hud{position:fixed;top:env(safe-area-inset-top);left:0;right:0;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 16px;font-weight:800;text-shadow:0 2px 6px #210b20;pointer-events:none}
+#hud .score{font-size:1.25rem}#hud .tag{font-size:.6rem;letter-spacing:.1em;border:1px solid #ffe2aa99;padding:6px;border-radius:12px;background:#210d2488}
+#controls{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom));left:0;right:0;display:flex;justify-content:center;gap:12px}
+#controls button{width:68px;height:62px;border-radius:18px;background:#371b49d9;border:2px solid #ffb857aa;color:#ffe4ae;font-size:1.9rem;font-weight:900;touch-action:none;box-shadow:0 5px 15px #0006}
+#controls button:active{background:#78516f}#controls [data-action=roll]{width:98px;font-size:.91rem;letter-spacing:.08em}
+#panel{position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:radial-gradient(ellipse,#200c30b3,#13051cdb);text-align:center}
+#panel[hidden]{display:none}#panel>div{max-width:330px;padding:26px 20px;border-radius:28px;border:1px solid #ffc98c75;background:#241128cc;backdrop-filter:blur(8px)}
+h1{font-size:clamp(2rem,9vw,3.3rem);line-height:1;margin:0 0 14px;color:#ffd889;letter-spacing:-.04em}
+p{line-height:1.48}#play{border:0;border-radius:100px;padding:15px 36px;background:#ffc666;color:#391333;font-size:1.1rem;font-weight:900}
+#captions{position:fixed;bottom:125px;left:16px;right:16px;text-align:center;font-size:clamp(18px,5vw,29px);font-weight:900;text-shadow:0 2px 12px #000,0 0 5px #000;pointer-events:none}
+#captions:empty{display:none}.disclaimer{position:fixed;left:8px;bottom:5px;color:#ffffff9f;font-size:9px;pointer-events:none}
+</style></head><body>
+<div id="stage"></div><div id="hud"><span class="score" id="score">0</span><span class="tag" id="timer">10.0s</span><span class="tag">THREE.JS EXPERIMENT · ART PLACEHOLDER</span></div>
+<div id="captions" aria-live="polite"></div>
+<div id="controls"><button data-action="left" aria-label="Move left">◀</button><button data-action="roll" aria-label="Dodge or roll">DODGE</button><button data-action="right" aria-label="Move right">▶</button></div>
+<div id="panel"><div><h1>Shaadi<br>Aunty Dodge</h1><p>10-second interactive graphics prototype. Dodge Sharma Aunty. This is not approved final character art.</p><button id="play">START DODGING</button><p style="font-size:.8rem;opacity:.8">Use ◀ ▶ and DODGE, or keyboard arrows and Space</p></div></div>
+<div class="disclaimer">Isolated Three.js WebGL2 candidate · G3 release unchanged</div>
+<script type="module" src="./main.js"></script></body></html>

@@ -1,0 +1,28 @@
+{
+  "schema": "shaadi-three-asset-v2",
+  "quality_gate_id": "SAD-VISUAL-QUALITY-V1",
+  "owner_approval": {
+    "approved": false,
+    "receipt": null,
+    "approved_hashes": {"character": null, "venue": null}
+  },
+  "character": {
+    "uri": null,
+    "sha256": null,
+    "certified": false,
+    "license": null,
+    "independent_qa": {"pass": false, "evidence_sha256": null},
+    "required_animations": ["Idle","Walk","Question","DodgeReaction"],
+    "required_morph_targets": ["Blink","Smile","JawOpen"]
+  },
+  "venue": {
+    "uri": null,
+    "sha256": null,
+    "certified": false,
+    "license": null,
+    "independent_qa": {"pass": false, "evidence_sha256": null}
+  },
+  "mobile_qa": {"passed": false, "evidence_sha256": null},
+  "development_placeholder": true,
+  "production_approval": false
+}
