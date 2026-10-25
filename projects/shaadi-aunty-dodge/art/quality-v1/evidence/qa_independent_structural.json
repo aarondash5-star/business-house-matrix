@@ -1,0 +1,90 @@
+{
+  "gate": "SAD-VISUAL-QUALITY-V1",
+  "timestamp_utc": "2026-10-25T17:50:54.013502+00:00",
+  "source_qa": "INDEPENDENT_MECHANICAL_TEST",
+  "creative_qa": "FAIL_NOT_REFERENCE_MATCH",
+  "owner_approval": false,
+  "release_allowed": false,
+  "candidates": {
+    "character": {
+      "file": "sharma_aunty_editable_v1_candidate.blend",
+      "sha256": "a79c710ce01dea50edc32dc2ec2f507faa5a08639ea90a799ceada30b2ff0610",
+      "bytes": 14400848,
+      "checks": {
+        "body_is_real_editable_mesh": {
+          "pass": true,
+          "detail": "19158 vertices"
+        },
+        "armature_editable": {
+          "pass": true,
+          "detail": "53 bones"
+        },
+        "pallu_has_skin_weights": {
+          "pass": true,
+          "detail": "21 weighted groups"
+        },
+        "pallu_deformer": {
+          "pass": true,
+          "detail": "Required armature modifier"
+        },
+        "expression_geometry_available": {
+          "pass": true,
+          "detail": "18 total shape keys"
+        },
+        "eye_aim_blink": {
+          "pass": false,
+          "detail": "Dedicated eyelid/blink and eye aim animation unverified"
+        },
+        "garment_deforms_without_clipping": {
+          "pass": false,
+          "detail": "No posed cloth collision validation"
+        },
+        "facial_likeness": {
+          "pass": false,
+          "detail": "Reference face and mature silhouette visibly not matched"
+        },
+        "provenance_complete": {
+          "pass": false,
+          "detail": "Upstream URLs and hashes for each component not fully reconciled"
+        }
+      },
+      "passed": 5,
+      "total": 9,
+      "certified": false
+    },
+    "wedding": {
+      "file": "grand_wedding_scene_editable_v1_candidate.blend",
+      "sha256": "a23f674064d6dffafc7b3a73b55433d5d1b3a51d06323227ad1fedacc3624435",
+      "bytes": 15557676,
+      "checks": {
+        "scene_editable": {
+          "pass": true,
+          "detail": "1537 separate scene objects"
+        },
+        "both_cameras_present": {
+          "pass": true,
+          "detail": "Native wide and portrait cameras"
+        },
+        "flower_geometry": {
+          "pass": true,
+          "detail": "Modular flower meshes"
+        },
+        "palace_architecture_fidelity": {
+          "pass": false,
+          "detail": "Approved Indian palatial venue not recreated"
+        },
+        "real_mobile_runtime_parity": {
+          "pass": false,
+          "detail": "Interactive Three.js captures unverified"
+        },
+        "provenance_complete": {
+          "pass": false,
+          "detail": "Upstream URLs and hashes for each component not fully reconciled"
+        }
+      },
+      "passed": 3,
+      "total": 6,
+      "certified": false
+    }
+  }
+}
