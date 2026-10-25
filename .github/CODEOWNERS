@@ -1,0 +1,6 @@
+# Review ownership only becomes mandatory with GitHub branch-protection/ruleset enforcement.
+/docs/supergpt/ @aarondash5-star
+/scripts/supergpt/ @aarondash5-star
+/.github/workflows/supergpt-release-gates.yml @aarondash5-star
+/.github/workflows/supergpt-android-debug.yml @aarondash5-star
+/.github/CODEOWNERS @aarondash5-star
