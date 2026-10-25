@@ -8,10 +8,11 @@
 
 1. [Project plan and execution backlog](PROJECT_PLAN.md) — product scope, architecture, work packages, current facts and acceptance criteria.
 2. [Release policy and branch controls](RELEASE_POLICY.md) — dev/test/production gates, reviewer requirements, promotion procedure, rollback.
-3. [Release QA evidence record](qa/RELEASE_EVIDENCE.json) — machine-readable candidate status; **pending means not certified**.
-4. [QA procedure](qa/EVIDENCE_GUIDE.md) — collection and independent-verification protocol.
-5. [CI policy gate](../../scripts/supergpt/release_gate.py) and [CI workflow](../../.github/workflows/supergpt-release-gates.yml).
-6. [Android prototype build workflow](../../.github/workflows/supergpt-android-debug.yml).
+3. [Verified release-gate checkpoint](RELEASE_GATE_STATUS_2026-10-25.md) — real CI receipts and outstanding GitHub administrator enforcement ([Issue #23](https://github.com/aarondash5-star/business-house-matrix/issues/23)).
+4. [Release QA evidence record](qa/RELEASE_EVIDENCE.json) — machine-readable candidate status; **pending means not certified**.
+5. [QA procedure](qa/EVIDENCE_GUIDE.md) — collection and independent-verification protocol.
+6. [CI policy gate](../../scripts/supergpt/release_gate.py) and [CI workflow](../../.github/workflows/supergpt-release-gates.yml).
+7. [Android prototype build workflow](../../.github/workflows/supergpt-android-debug.yml).
 
 ## Authority and inheritance
 
