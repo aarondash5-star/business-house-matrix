@@ -31,3 +31,13 @@ BMad Method 6.12.4 (29 project-local skills), LangGraph 1.2.17 with SQLite check
 - [Draft PR #27](https://github.com/aarondash5-star/business-house-matrix/pull/27).
 
 This is **Git-hosted provisional registry**, not evidence of a different external Master Registry syncing.
+
+## 2026-10-25 — Delulu real-task final certification challenge (latest decision)
+
+**Verdict: NO-GO for global autonomous manager certification.** The owner-requested real Delulu impossible-ribbon animation was used as an actual workflow challenge. Rootless no-network `sandbox_qa` job `25c033bb-f398-4ae9-ba8f-e12df49c3aa3` completed **11/11 diagnostic tests**; these explicitly detected four missing capabilities, not product success. Combined QA batch fingerprint `318fc2f81fbe72016635e256260df5dd9c540e467385037d55aab22615327a4b`.
+
+PASS: Real landscape and portrait 4-second H.264 source media **correctly rejected** for absent physical folds despite technically valid codec/time. Persistent LangGraph checkpoint and later owner handoff stop verified, live controller intact and unauthorized production release denied. Both Delulu media remain byte-identical.
+
+NO-GO: Manager graph scopes Delulu input using its own Matrix manager frozen brief, not a Delulu-specific RTM. BMad and Spec Kit full role/spec/task invocation absent; foreign-project dispatch stays denied; no true Delulu 3D positive geometry candidate or independent human QA key exists; publication adapters remain uncovered. Owner approval ledger empty; quality gate `evidence_missing`.
+
+**Latest canonical report:** [Delulu final certification challenge](../../brain/dev-toolyard/multiproject_release/DEV_YARD_MANAGER_DELULU_FINAL_CERT_CHALLENGE_20261025.md). Preserve private stage only; PR #27 stays draft, no merging/production/Delulu website changes.
