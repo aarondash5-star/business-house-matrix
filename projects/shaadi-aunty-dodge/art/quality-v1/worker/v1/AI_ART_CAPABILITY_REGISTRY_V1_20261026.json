@@ -4,9 +4,9 @@
   "title": "Dell governed AI art direction",
   "owner_scope": "shaadi_aunty_dodge",
   "introduced_ist": "2026-10-26",
-  "reviewed_at_ist": "2026-10-26T02:40:48+05:30",
+  "reviewed_at_ist": "2026-10-26T02:48:42+05:30",
   "release_status": "review_only",
-  "lifecycle_status": "deployed_first_real_vision_cycle_running",
+  "lifecycle_status": "one_end_to_end_cycle_complete_second_strict_validation_running",
   "quality_pin": "SAD-VISUAL-QUALITY-V1",
   "autonomous_execution": {
     "local_director_timer": "bhm-shaadi-ai-art-director.timer",
@@ -24,10 +24,13 @@
     "model_runtime": "ollama local loopback 127.0.0.1:11434",
     "vision_model_requested": "qwen3-vl:2b-instruct",
     "model_ready_as_of_review": true,
-    "first_vision_cycle_completed": false,
+    "first_vision_cycle_completed": true,
     "visual_reference_bytes_on_dell_verified": false,
     "model_pull_verified": true,
-    "first_end_to_end_cycle_verified": false
+    "first_end_to_end_cycle_verified": true,
+    "first_cycle_visual_certified": false,
+    "director_decision_contract": "strict_schema_v2_invalid_model_output_blocks_revision",
+    "second_cycle_strict_json_validation": "running_without_terminal_receipt"
   },
   "implementation": {
     "manager": "~/matrix-controller/controller.py",
@@ -67,9 +70,21 @@
       "JawOpen"
     ],
     "glb_technical_export_only": true,
-    "model_visual_review_status": "first_local_vision_review_running_unverified",
+    "model_visual_review_status": "cycle_01_completed_with_truncated_model_output_and_fixed_recipe_fallback; v2_patched_to_fail_closed; cycle_02_running",
     "real_android_fps_certified": false,
-    "latest_runtime_receipt": "Live Manager governance_v3.ai_art_director_v1 and art-worker-v1/director_status.json; registry is a snapshot and must not be treated as a live monitor."
+    "latest_runtime_receipt": "Live Manager governance_v3.ai_art_director_v1 and art-worker-v1/director_status.json; registry is a snapshot and must not be treated as a live monitor.",
+    "cycle_01_details": {
+      "vision_inference_completed": true,
+      "vision_output_parse_valid": false,
+      "selected_recipe": "glasses",
+      "selection_basis": "pre-v2 deterministic fallback; not an authenticated semantic model selection",
+      "derivative_blend_sha256": "1cbf7767bc5289e16fadb1af201baf1a40a9a36fd08d43a5d0bd7a9c89b51f88",
+      "glb_sha256": "25b40673c2691b3c2ba5707e5eb7cb7dfba613f238d70047cdfd64957b29b251",
+      "clip_morph_tests_passed": true,
+      "artistic_visual_quality_passed": false
+    },
+    "director_contract_tests": "8 passed",
+    "manager_regression_tests": "27 passed at 02:48 IST"
   },
   "independently_reusable_features": [
     "scoped_lease_and_approval",
