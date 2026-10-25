@@ -30,7 +30,22 @@ def model_ready():
   tags=http_json("http://127.0.0.1:11434/api/tags",timeout=6)
   return any(x.get("name")==MODEL for x in tags.get("models",[]))
  except Exception:return False
-def review(image,cycle,timeout=240):
+def parse_vision_report(raw,allowed):
+ try:report=json.loads(raw.strip())
+ except (ValueError,TypeError) as exc:raise RuntimeError("invalid_vision_json") from exc
+ if not isinstance(report,dict):raise RuntimeError("vision_report_not_object")
+ if report.get("highest_priority") not in allowed:raise RuntimeError("vision_priority_unavailable")
+ if not isinstance(report.get("three_critical_defects"),list) or len(report["three_critical_defects"])!=3:
+  raise RuntimeError("vision_defect_count_invalid")
+ for k in ("visible","specific_modelling_instruction"):
+  if not isinstance(report.get(k),str) or len(report[k].strip())<8:
+   raise RuntimeError("vision_report_missing_"+k)
+ return report
+
+def review(image,cycle,timeout=240,allowed=None):
+ allowed=list(allowed or ("glasses","hair","sari"))
+ if not allowed or any(a not in ("glasses","hair","sari") for a in allowed):
+  raise RuntimeError("vision_allowed_set_invalid")
  if not image.is_file() or image.is_symlink():raise ValueError("missing_image")
  if not model_ready():raise RuntimeError("vision_model_not_installed")
  # Give full image (Ollama image encoding is base64). Only local loopback.
@@ -41,18 +56,25 @@ def review(image,cycle,timeout=240):
   +json.dumps(REFERENCE,ensure_ascii=False)+
   ". State missing or wrong visual details concisely. "
   "Return JSON object with keys visible, three_critical_defects, "
-  "highest_priority (one of face,glasses,hair,sari,jewellery), "
+  "highest_priority (exactly one of the available allowed edits: "+",".join(allowed)+"), "
   "specific_modelling_instruction, confidence. "
+  "Describe face and fabric defects even if none of the allowed edits can fix them. "
+  "Three critical defects must be three short strings. Only choose an allowed edit. "
   "No claims of independent quality passing or owner approval.")
  result=http_json("http://127.0.0.1:11434/api/generate",
    {"model":MODEL,"prompt":prompt,"images":[data],"stream":False,
-    "options":{"num_predict":210,"temperature":0.15,"num_ctx":2048},
+    "format":{"type":"object","properties":{
+     "visible":{"type":"string"},
+     "three_critical_defects":{"type":"array","items":{"type":"string"},"minItems":3,"maxItems":3},
+     "highest_priority":{"type":"string","enum":allowed},
+     "specific_modelling_instruction":{"type":"string"},
+     "confidence":{"type":"string"}},
+     "required":["visible","three_critical_defects","highest_priority","specific_modelling_instruction","confidence"],
+     "additionalProperties":False},
+    "options":{"num_predict":420,"temperature":0.1,"num_ctx":3072},
     "keep_alive":"1m"},timeout)
  raw=result.get("response","")
- try:
-  report=json.loads(raw.strip().removeprefix("&#123;").replace("&#123;","{"))
- except (ValueError,TypeError):report={"text_unstructured":raw[:2000],
-                                    "highest_priority":"uncertain"}
+ report=parse_vision_report(raw,allowed)
  report.update({"model":MODEL,"image_sha256":hashlib.sha256(image.read_bytes()).hexdigest(),
   "cycle":cycle,"timestamp_utc":utc(),"pin":PIN,
   "reference_images_loaded":False, "owner_approved":False,
