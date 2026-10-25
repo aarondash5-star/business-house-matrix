@@ -1,0 +1,33 @@
+name: Shaadi Game Toolkit Adapter QA
+on:
+  pull_request:
+    paths:
+      - "brain/dev-toolyard/game_toolkit/**"
+      - ".github/workflows/shaadi-game-toolkit-adapter-ci.yml"
+  push:
+    branches:
+      - "feat/shaadi-game-toolkit-matrix-integration-20261025"
+    paths:
+      - "brain/dev-toolyard/game_toolkit/**"
+      - ".github/workflows/shaadi-game-toolkit-adapter-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  isolated_adapter_unit_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify syntax and protected fixed-action tests
+        run: |
+          python3 -m py_compile             brain/dev-toolyard/game_toolkit/game_toolkit_runner.py             brain/dev-toolyard/game_toolkit/deploy_game_toolkit.py             brain/dev-toolyard/game_toolkit/test_game_toolkit_runner.py             brain/dev-toolyard/game_toolkit/test_deploy_game_toolkit.py
+          python3 -m unittest discover             -s brain/dev-toolyard/game_toolkit             -p 'test_*.py' -v
+      - name: Confirm no runtime game code or controller replaced
+        run: |
+          test ! -e game_toolkit_runner.py
+          test ! -e controller.py
+          echo "Adapter QA only. No Dell, game, cloud or production execution."
