@@ -1,0 +1,32 @@
+name: SuperGPT release policy
+on:
+  pull_request:
+    branches:
+      - super-gpt/test
+      - super-gpt/production
+  push:
+    branches:
+      - super-gpt/dev
+      - super-gpt/test
+      - super-gpt/production
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  policy:
+    name: policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout candidate with history for provenance
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Unit test source/target policy and evidence rules
+        run: python3 -m unittest discover -s scripts/supergpt -p 'test_*.py' -v
+      - name: Enforce SuperGPT promotion and record integrity
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/supergpt/release_gate.py
