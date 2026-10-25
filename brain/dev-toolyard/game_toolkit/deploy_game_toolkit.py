@@ -160,6 +160,13 @@ def preflight(expected_sha: str, target: Path = TARGET) -> dict:
             p = folder / name
             p.write_bytes(raw)
             p.chmod(0o600)
+        # The unchanged quality_gate is a required dependency for the
+        # staged controller's admission-negative selftest. Copy only to the
+        # disposable preflight sandbox; never install/overwrite it.
+        qg=target/"quality_gate.py"
+        if qg.is_symlink() or not qg.is_file():
+            raise RuntimeError("quality_gate_preflight_dependency_missing")
+        (folder/"quality_gate.py").write_bytes(qg.read_bytes())
         run([sys.executable,str(folder/"project_registry.py"),
              "check",PROJECT,ACTION,RECIPES[0]])
         run([sys.executable,str(folder/"controller.py"),"selftest"],timeout=55)
