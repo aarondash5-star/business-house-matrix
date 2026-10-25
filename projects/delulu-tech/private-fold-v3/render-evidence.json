@@ -1,0 +1,72 @@
+{
+  "status": "private_review_only",
+  "frozen_logo_sha256": "d100714ef9579af8e2e4b3385ad5984dec922e331888539077a66e5d4a1d6368",
+  "geometry_derived_from_frozen_svg": false,
+  "does_not_claim_exact_logo_equivalence": true,
+  "blender_version": "4.0.2",
+  "scene_sha256": "5d0960eb45a11e135e3122b05917165900eb852767d76244f5035b0a1b11113b",
+  "frames": [
+    {
+      "name": "01_entry",
+      "sha256": "380d46bf22bb566b1b9f0e2af145ca892cf260652ecc5953b0d79ac1db0b34b3",
+      "vertices": 1638,
+      "faces": 1636,
+      "front_faces": 720,
+      "back_faces": 720,
+      "side_faces": 196,
+      "distinct_depth_values": 2,
+      "thermal_c": 25.0,
+      "type": "physical_ribbon_concept_not_owner_approved"
+    },
+    {
+      "name": "02_first_twist",
+      "sha256": "dfa8aba6c34f296be9db83c41ac2671851df5b1d430d0ebadae82947982c1d2b",
+      "vertices": 1638,
+      "faces": 1636,
+      "front_faces": 720,
+      "back_faces": 720,
+      "side_faces": 196,
+      "distinct_depth_values": 832,
+      "thermal_c": 25.0,
+      "type": "physical_ribbon_concept_not_owner_approved"
+    },
+    {
+      "name": "03_crossing",
+      "sha256": "dfd91ed38bdacc2eeb6c147fee66a4933888c31afcafc54ac2ff78b7fef5cd9a",
+      "vertices": 1638,
+      "faces": 1636,
+      "front_faces": 720,
+      "back_faces": 720,
+      "side_faces": 196,
+      "distinct_depth_values": 965,
+      "thermal_c": 25.0,
+      "type": "physical_ribbon_concept_not_owner_approved"
+    },
+    {
+      "name": "04_depth_climax",
+      "sha256": "39926f680d55d8c4173a3d62dfa14ba2f2efc5a708ff5a1faf4d0aeaa02ce117",
+      "vertices": 1638,
+      "faces": 1636,
+      "front_faces": 720,
+      "back_faces": 720,
+      "side_faces": 196,
+      "distinct_depth_values": 1066,
+      "thermal_c": 25.0,
+      "type": "physical_ribbon_concept_not_owner_approved"
+    },
+    {
+      "name": "05_settled_study",
+      "sha256": "0c349bb9f44e7121c9eb9a7578becc34f767ed84777961bf106a1e4da398d1c4",
+      "vertices": 1638,
+      "faces": 1636,
+      "front_faces": 720,
+      "back_faces": 720,
+      "side_faces": 196,
+      "distinct_depth_values": 1135,
+      "thermal_c": 25.0,
+      "type": "physical_ribbon_concept_not_owner_approved"
+    }
+  ],
+  "release_authorized": false,
+  "owner_accepted": false
+}

@@ -1,0 +1,16 @@
+{
+  "batch_id": "delulu-fold-v3-receipt-qa-r1",
+  "status": "tests_passed",
+  "qa_passed": true,
+  "mode": "rootless_podman_no_network_read_only",
+  "files": 2,
+  "test_files": 1,
+  "source_sha256": "4c57031d0ee6cef5b447e90c00098e81d03dd3c2dee5002c098af213aab6ea42",
+  "elapsed_seconds": 1.98,
+  "output_tail": "CREATIVE_GATE_FAIL: final mesh study not an approved logo match\n\ntest_already_rejected_video_cannot_be_reused (test_fold_evidence_contract.FoldEvidenceContractQA.test_already_rejected_video_cannot_be_reused) ... ok\ntest_frame_set_is_five_distinct_hashes (test_fold_evidence_contract.FoldEvidenceContractQA.test_frame_set_is_five_distinct_hashes) ... ok\ntest_frozen_master_and_scene_sha (test_fold_evidence_contract.FoldEvidenceContractQA.test_frozen_master_and_scene_sha) ... ok\ntest_release_signoff_denied (test_fold_evidence_contract.FoldEvidenceContractQA.test_release_signoff_denied) ... ok\ntest_renderer_not_equivalent_to_logo (test_fold_evidence_contract.FoldEvidenceContractQA.test_renderer_not_equivalent_to_logo) ... ok\ntest_source_is_frozen_and_reviewed (test_fold_evidence_contract.FoldEvidenceContractQA.test_source_is_frozen_and_reviewed) ... ok\ntest_thermal_obs_within_cap (test_fold_evidence_contract.FoldEvidenceContractQA.test_thermal_obs_within_cap) ... ok\ntest_true_mesh_topology_receipt_not_2d_mask (test_fold_evidence_contract.FoldEvidenceContractQA.test_true_mesh_topology_receipt_not_2d_mask) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.001s\n\nOK\n",
+  "tests_executed": true,
+  "source_modified": false,
+  "repository_changed": false,
+  "publish_allowed": false,
+  "paid_access": false
+}

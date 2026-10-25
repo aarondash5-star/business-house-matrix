@@ -1,0 +1,16 @@
+{
+  "batch_id": "mgr-delulu-cert-20261025-r1",
+  "status": "tests_passed",
+  "qa_passed": true,
+  "mode": "rootless_podman_no_network_read_only",
+  "files": 6,
+  "test_files": 1,
+  "source_sha256": "318fc2f81fbe72016635e256260df5dd9c540e467385037d55aab22615327a4b",
+  "elapsed_seconds": 3.12,
+  "output_tail": "CERTIFICATION_BLOCKER: scope node does not bind Delulu project to original brief\nCERTIFICATION_BLOCKER: BMad role invocation not present\nCERTIFICATION_BLOCKER: Spec Kit plan/task execution not present\nCERTIFICATION_BLOCKER: no positive proof accepted without actual independent geometry review\nCONFIRMED_NEGATIVE: renderer Gaussian fold label is a 2D color effect\n\ntest_critical_coverage_is_exact_contract_bound (test_delulu_cert_challenge.DeluluChallenge.test_critical_coverage_is_exact_contract_bound) ... ok\ntest_foreign_project_handoff_denied (test_delulu_cert_challenge.DeluluChallenge.test_foreign_project_handoff_denied) ... ok\ntest_independent_reviewer_must_be_external (test_delulu_cert_challenge.DeluluChallenge.test_independent_reviewer_must_be_external) ... ok\ntest_known_bad_method_rejected (test_delulu_cert_challenge.DeluluChallenge.test_known_bad_method_rejected) ... ok\ntest_missing_early_cross_project_scope_is_blocker (test_delulu_cert_challenge.DeluluChallenge.test_missing_early_cross_project_scope_is_blocker) ... ok\ntest_no_operational_bmad_role_execution (test_delulu_cert_challenge.DeluluChallenge.test_no_operational_bmad_role_execution) ... ok\ntest_no_operational_spec_kit_flow (test_delulu_cert_challenge.DeluluChallenge.test_no_operational_spec_kit_flow) ... ok\ntest_no_trusted_positive_delulu_fixture (test_delulu_cert_challenge.DeluluChallenge.test_no_trusted_positive_delulu_fixture) ... ok\ntest_real_renderer_is_mask_not_geometry (test_delulu_cert_challenge.DeluluChallenge.test_real_renderer_is_mask_not_geometry) ... ok\ntest_renderer_is_exact_known_bad_source (test_delulu_cert_challenge.DeluluChallenge.test_renderer_is_exact_known_bad_source) ... ok\ntest_unrelated_geometry_never_autoapproved (test_delulu_cert_challenge.DeluluChallenge.test_unrelated_geometry_never_autoapproved) ... ok\n\n----------------------------------------------------------------------\nRan 11 tests in 0.006s\n\nOK\n",
+  "tests_executed": true,
+  "source_modified": false,
+  "repository_changed": false,
+  "publish_allowed": false,
+  "paid_access": false
+}

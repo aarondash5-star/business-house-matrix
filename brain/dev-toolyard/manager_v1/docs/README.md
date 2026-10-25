@@ -1,0 +1,1 @@
+Dell Dev Tool Yard Manager v1 uses BMad scoping roles, LangGraph gated graph, and Spec Kit specification payloads. No automated owner/QA approval, publishing, or direct shell dispatch. Original POA P0 independent semantic QA remains mandatory.
