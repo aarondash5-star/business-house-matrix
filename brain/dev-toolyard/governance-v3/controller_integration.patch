@@ -1,0 +1,36 @@
+--- a/controller.py
++++ b/controller.py
+@@ -305,6 +305,12 @@
+ 
+ def tick():
+     if HOME==HERE:
++        try:
++            from manager_governance_v3 import reconcile
++            reconcile(HOME)
++        except Exception as err:
++            print("MANAGER_GOVERNANCE_V3_ERROR",type(err).__name__,flush=True)
++    if HOME==HERE:
+         from yard_auto_adapter_v1 import reconcile_if_due
+         reconcile_if_due()
+     d=connect()
+@@ -554,7 +560,8 @@
+             item["quality_gate_status"]="technical_only_or_legacy_unassessed"
+             item["release_authorized"]=False
+         tasks.append(item)
+-    return {"controller_version":"0.2.3-shaadi-toolkit-governed","host":"dell-linux",
++    from manager_governance_v3 import report as governance_report
++    return {"controller_version":"0.2.4-manager-governance-v3","host":"dell-linux",
+       "capabilities":{k:v["mode"] for k,v in ALLOWED.items()},
+       "quality_policy":{"build_success_is_design_approval":False,
+                         "owner_review_required":True,"auto_promotion":False,
+@@ -564,7 +571,9 @@
+                         "external_connectors_mediated":False,
+                         "universal_qa_receipts_controller_actions":13,
+                          "auto_attach_future_tools_by_default":True,
+-                        "unmediated_external_tools_certified":False},
++                        "unmediated_external_tools_certified":False,
++                         "persistent_event_supervision_v3":True},
++      "governance_v3":governance_report(HOME),
+       "counts":groups,"evolution_outcomes":feedback,
+       "tasks":tasks,"paid":False,"auto_publish":False,
+       "allow_shell_injection":False,"sandbox_execution":True}
