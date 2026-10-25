@@ -1,0 +1,16 @@
+{
+  "batch_id": "yard-v13-enforcement-independent-b-20261026",
+  "status": "tests_passed",
+  "qa_passed": true,
+  "mode": "rootless_podman_no_network_read_only",
+  "files": 4,
+  "test_files": 1,
+  "source_sha256": "5d8041d455f8295cf8d77495bf6b0f2e98f2b134469b75d299b9e8ffee1a2257",
+  "elapsed_seconds": 4.29,
+  "output_tail": "\ntest_auto_reconcile_drift_is_not_reacceptance (test_v13_independent.AdversarialV13.test_auto_reconcile_drift_is_not_reacceptance) ... ok\ntest_default_blocked_route_remains_denied (test_v13_independent.AdversarialV13.test_default_blocked_route_remains_denied) ... ok\ntest_good_bound_route_not_a_release (test_v13_independent.AdversarialV13.test_good_bound_route_not_a_release) ... ok\ntest_ledger_cannot_grant_production (test_v13_independent.AdversarialV13.test_ledger_cannot_grant_production) ... ok\ntest_manager_import_guard_hash (test_v13_independent.AdversarialV13.test_manager_import_guard_hash) ... ok\ntest_source_drift_fail_closed (test_v13_independent.AdversarialV13.test_source_drift_fail_closed) ... ok\ntest_unknown_action_quarantined (test_v13_independent.AdversarialV13.test_unknown_action_quarantined) ... ok\ntest_unreviewed_binding_rejected (test_v13_independent.AdversarialV13.test_unreviewed_binding_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.010s\n\nOK\n",
+  "tests_executed": true,
+  "source_modified": false,
+  "repository_changed": false,
+  "publish_allowed": false,
+  "paid_access": false
+}

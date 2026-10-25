@@ -1,0 +1,30 @@
+--- controller.py.pre-v13
++++ controller.py.v13
+@@ -105,6 +105,9 @@
+         raise ValueError("Brief must be 2-2000 characters")
+     from yard_auto_adapter_v1 import inherit as auto_attach
+     auto_attach(project,action,brief.strip())
++    if action not in BLOCKERS:
++        from yard_execution_guard_v13 import preflight as execution_preflight
++        execution_preflight(project,action,brief.strip())
+     if action=="research_search" and not research_query:research_query=brief
+     if action=="website_stage":
+         from project_registry import enroll_check
+@@ -306,6 +309,8 @@
+ def tick():
+     if HOME==HERE:
+         try:
++            from yard_execution_guard_v13 import manager_preflight
++            manager_preflight()
+             from manager_governance_v3 import reconcile
+             reconcile(HOME)
+         except Exception as err:
+@@ -333,6 +338,8 @@
+     try:
+         from quality_admission import intake_check
+         intake_check(t["project"],t["action"],t["brief"],HOME)
++        from yard_execution_guard_v13 import preflight as execution_preflight
++        execution_preflight(t["project"],t["action"],t["brief"])
+     except ValueError as err:
+         receipt(d,t["id"],"needs_review",None,"Quality intake gate: "+str(err)[:170],"unverified")
+         d.close()

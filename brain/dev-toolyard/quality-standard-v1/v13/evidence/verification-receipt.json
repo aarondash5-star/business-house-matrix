@@ -1,0 +1,22 @@
+{
+  "version": "yard-execution-enforcement-v1.3.0-20261026",
+  "checked_at_utc": "2026-10-25T21:04:48.728287+00:00",
+  "local_regressions_passed": 36,
+  "independent_rootless_passed": 8,
+  "independent_receipt": "/var/lib/generic-linux-automator-exec/matrix-controller/sandbox-receipts/yard-v13-enforcement-independent-b-20261026.json",
+  "controller_actions": 13,
+  "executable_routes": 11,
+  "source_bindings": 20,
+  "registry_tools": 90,
+  "qa_probe_accepted": 90,
+  "quarantined": 0,
+  "direct_ssh_intercepted": false,
+  "production_authorized": false,
+  "review_scope": "automated_technical_only",
+  "artifact_sha256": {
+    "controller.py": "e6834bb2f7765ee0aa26d215a566f70276e4f8c2c87c8730fc781c27dc778836",
+    "yard_auto_adapter_v1.py": "16f54c4ae1d97699786b649e84c94df2abb673b0682a20045d55399399217b79",
+    "yard_execution_guard_v13.py": "7a989c6b484a13a4fdf349d698a6a1bf9e8d9b1afa9684508606bc08c036283e",
+    "yard_exec_bindings_v13.json": "20f68602194af481d48dfaf6bcc406d383f0818f7bd082cf5d92227b24aac64e"
+  }
+}

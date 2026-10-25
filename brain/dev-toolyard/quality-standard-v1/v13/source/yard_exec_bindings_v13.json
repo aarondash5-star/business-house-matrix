@@ -1,0 +1,30 @@
+{
+  "actions_bound": 11,
+  "bindings": {
+    "../.local/share/matrix-dev-brain/brain.py": "72a23bc6982b9a3df42594615b1dc98d2872207ca5281045f83e798ef5a31d7b",
+    "../matrix-searxng/local_search.py": "1d3151696dff351ea9ea1695c4248843f5370e68bb9e529a471733cc01d1d803",
+    "dev_autonomy_task_v4.py": "7ba76fa9280113f7e9e67175c6c92e6f79ec2d576bb8efd3df9aa91e3a9702ef",
+    "game_toolkit_runner.py": "0b53bc8d43defa50b0fea4cd60cf6d0ad24b8c22aefda1d5ddc80492b5e5e5eb",
+    "general-dev-release-v4/agent_loop.py": "0bde24a59f39bde2781c48807ec4e2fc20b3e7b34e09ebeccaab6aa0f5d6d86c",
+    "general-dev-release-v5/agent_loop.py": "0bde24a59f39bde2781c48807ec4e2fc20b3e7b34e09ebeccaab6aa0f5d6d86c",
+    "general-dev-release-v6/agent_loop.py": "c8f67820b1bc216f18a662d9248f790d25e37369d2fd42cde9002ec7578ff5b8",
+    "manager_governance_v3.py": "b6d35870af7e33baba7e792f1906fe848f4bb8615e6e0fc47fe3efcb7bc43e79",
+    "mcp_tool_router.py": "978111c92528df8b4cfcc6a4d3419d11bd47a4393764c7ad75c56813abfcb074",
+    "pine_chat_stage.py": "007dfe03755ca4c0d3263b54087f8e41b3e130917419e685387cb2f522c6ac27",
+    "project_registry.py": "b67464c7726a1210a2423c8f7a8279f2dcf135ac150c57cb56effd7ad453a036",
+    "project_static_stage.py": "8241f982dc0b0e32f41f52601b818602106b5a6a4c77302fc5325c2db0758c7a",
+    "quality_admission.py": "713a1fa5132a2225f361eea613a41d3fc2099917e5c954e066a124f0d24ffd8e",
+    "quality_gate.py": "818befec577db7330e183d7e20f8c4e32d102b813675067e8f48793ef06f3c44",
+    "repair.py": "382a13f10c2b1b2578bb73ae63774c4337b6aadce363d01f627dd34841cf8c30",
+    "reviewed_patch_runner.py": "855cdb1774134c332638da67ad6fd972719257f2e86c0f425fe25c3255b877d4",
+    "sandbox.py": "832d30363b1a7d6cac9b738497190d13ed7bfc1b00374db7dda2f98db513dddb",
+    "site_staging.py": "3765d744ae206cc32c51d6e24be56a29a58ed3103d785c478b7f97651e5e97db",
+    "toolyard_qa_standard_v1.py": "72cf039354320221928f148290b526af83480dbf4b82315a7e12107d333b92ea",
+    "yard_auto_adapter_v1.py": "16f54c4ae1d97699786b649e84c94df2abb673b0682a20045d55399399217b79"
+  },
+  "external_paths_certified": false,
+  "independent_human_review": false,
+  "production_live": false,
+  "review": "technical_hash_and_syntax_only",
+  "version": "yard-execution-enforcement-v1.3.0-20261026"
+}

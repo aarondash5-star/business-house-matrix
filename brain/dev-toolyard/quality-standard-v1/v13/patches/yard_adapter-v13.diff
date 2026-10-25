@@ -1,0 +1,21 @@
+--- yard_auto_adapter_v1.py.pre-v13
++++ yard_auto_adapter_v1.py.v13
+@@ -116,6 +116,18 @@
+     for name,entry in now.items():
+         if "error" in entry:
+             items[name]={"state":"quarantined_invalid_binary","operations":[]};continue
++        # V1.3: discovery is not re-certification. Changed source remains
++        # quarantined until independently reviewed and explicitly rebound.
++        prior=old.get(name,{})
++        if prior.get("sha256") and prior["sha256"]!=entry.get("sha256"):
++            items[name]={**prior,"state":"quarantined_source_drift",
++                "pending_sha256":entry.get("sha256"),"proof":"review_required_for_hash_drift",
++                "operations":[],"production_live":False,
++                "unbounded_execution_permitted":False}
++            continue
++        if prior.get("state")=="quarantined_source_drift":
++            items[name]={**prior,"operations":[],"production_live":False}
++            continue
+         known=name in TEMPLATES
+         safe_script=name.startswith("yard-") and entry.get("inventory") in ("direct_script_unreviewed","yard_workspace_script")
+         passing,reason=(prober(name,entry) if known else
