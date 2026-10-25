@@ -53,3 +53,15 @@ NO-GO: Manager graph scopes Delulu input using its own Matrix manager frozen bri
 **Current verdict:** **GEOMETRY VIABILITY PASS; CREATIVE FIDELITY FAIL; GLOBAL MANAGER CERTIFICATION NO-GO.** Final geometric silhouette differs from frozen original `d100714ef9579af8e2e4b3385ad5984dec922e331888539077a66e5d4a1d6368`. New keyframes are a conceptual folded-ribbon study, not accepted Delulu logo animation. Full RTM evidence still missing; publishing unauthorized and blocked.
 
 **Latest handover:** [Delulu physical fold V3 private execution](../../brain/dev-toolyard/multiproject_release/DEV_YARD_MANAGER_DELULU_V3_PRIVATE_FOLD_HANDOVER_20261025.md). Preserve PR #27 draft, original owner requirements and all historical failure receipts.
+
+## 2026-10-25 — Delulu V3 recovery and private dimensional candidate (latest)
+
+**Governed recovery:** Delulu `dev_project_build/delulu_fold_review_v1` job `c02f4a2b-c73a-437e-b1c5-f32bff1fbe0c` **COMPLETED** with **6/6 tests passed**. Source/test patch used exact SHA `expected_sha256` preconditions; prior denied tasks preserved. No controller permissions changed.
+
+**Private Blender study rendered:** Dell task `c9fbeb1e-fbf4-4ceb-b23f-a7d3499e4969` (Blender 4.0.2, separate bounded development lane) produced 5 actual 720×405 PNGs, editable final-state `.blend` SHA `8be6974b79f05f331f2460ab3ed4fbc338914dabda154135538836e8b0efb54b`, and receipt JSON. Confirmed mesh has 1,638 vertices, 1,636 faces, front/back/edge materials, camera and 3 lights. Keyframe *stills* exist; **no animation F-curves**. The study does **not** match the exact approved Impossible Ribbon SVG visual; design and owner QA remain NO-GO.
+
+**Review links:** [Private five-keyframe preview](../../projects/delulu-tech/private-fold-v3/review/review_strip.jpg) (SHA `1bfd20f25ba36aebf31d5679c457ea115484d815f4495468a1ea05b467960c54`); [source](../../projects/delulu-tech/private-fold-v3/backend/private_fold_keyframes.py); [full receipt](../../brain/dev-toolyard/multiproject_release/DELULU_V3_BLENDER_PRIVATE_RENDER_RECOVERY_20261025.md).
+
+**Independent QA status:** generic rootless `sandbox_qa` rejected 2.5 MB PNG/.blend batch `6dcb8d6b-a563-4d05-8b43-723cd5a4f4ad` under its strict Python-only / 256 KB input policy. It was not bypassed. Source/readback checks run on Dell; **separate authenticated human QA still missing**. `quality_gate=evidence_missing`; production `release-check` denied, zero owner release approvals. Original logo SVG and rejected V2 MP4s unchanged; no website publish or merge.
+
+**Release status stays NO-GO**; next: owner design review, actual keyframed 3D composition faithful to frozen SVG, controller-mediated bounded render/review recipe and authenticated independent QA.
