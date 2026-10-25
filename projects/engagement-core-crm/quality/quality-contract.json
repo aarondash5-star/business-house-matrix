@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "project": "engagement_core_crm",
+  "manifest": "crm_wireframe_g1_v1",
+  "profile": "creative_web",
+  "brief_sha256": "c1743553515178b9c7cb9c2608aca12ca6f7c23a15ba625cf2fec9ad2b4cefe1",
+  "criteria": [
+    {
+      "id": "crm_g1_r01",
+      "kind": "brief_trace",
+      "required": true,
+      "acceptance": "Exact owner-approved G0/G1 intent and canonical Engagement Core spec SHA retained; no omitted S01-S15 screen, no silent simplification."
+    },
+    {
+      "id": "crm_g1_r02",
+      "kind": "brief_trace",
+      "required": true,
+      "acceptance": "Fifteen screens retain distinct information architectures and WordPress backend ownership contracts; no real channel claim."
+    },
+    {
+      "id": "crm_g1_r03",
+      "kind": "visual_sequence",
+      "required": true,
+      "acceptance": "All 15 wireframes and five design states are represented in actual, inspectable screenshots, not source-only claims."
+    },
+    {
+      "id": "crm_g1_r04",
+      "kind": "visual_sequence",
+      "required": true,
+      "acceptance": "Inbox to Conversation to Customer 360 and Pipeline to Deal to Task navigations operate in a real browser."
+    },
+    {
+      "id": "crm_g1_r05",
+      "kind": "responsive",
+      "required": true,
+      "acceptance": "Actual browser checks at 320, 360, 375, 390, 414, 768, 800, 1024 and 1440 pixels show no document overflow."
+    },
+    {
+      "id": "crm_g1_r06",
+      "kind": "responsive",
+      "required": true,
+      "acceptance": "Mobile bottom navigation, adaptive desktop sidebar, customer context and stage changes have intentional touch and keyboard paths."
+    },
+    {
+      "id": "crm_g1_r07",
+      "kind": "accessibility",
+      "required": true,
+      "acceptance": "Controls have accessible names, visible focus and a working keyboard path; impossible or inactive backend actions are marked design-only."
+    },
+    {
+      "id": "crm_g1_r08",
+      "kind": "accessibility",
+      "required": true,
+      "acceptance": "Empty, loading, error and denied states disclose real recovery path and do not discard drafts silently."
+    },
+    {
+      "id": "crm_g1_r09",
+      "kind": "brief_trace",
+      "required": true,
+      "acceptance": "Tabler MIT provenance preserved with local assets, unapproved paid assets/API integrations forbidden, and CRM data remains WordPress-owned."
+    },
+    {
+      "id": "crm_g1_r10",
+      "kind": "independent_review",
+      "required": true,
+      "acceptance": "A design/art director independent of the author reviews actual screenshot evidence for hierarchy, spacing, contrast, mobile ergonomics and semantics; a model may critique but never self-approve."
+    },
+    {
+      "id": "crm_g1_r11",
+      "kind": "independent_review",
+      "required": true,
+      "acceptance": "Creative quality and owner approval remain pending until separately confirmed by the owner after a complete visual walkthrough; automated test success is not acceptance."
+    },
+    {
+      "id": "crm_g1_r12",
+      "kind": "brief_trace",
+      "required": true,
+      "acceptance": "Existing working PR #74, original WordPress CRM data, baseline 27 UI and 16 backend synthetic tests, rollback refs and production remain untouched."
+    },
+    {
+      "id": "crm_g1_r13",
+      "kind": "brief_trace",
+      "required": true,
+      "acceptance": "CRM-specific bounded continuous review must not repurpose the Shaadi AI art director or its data; current Manager V3 is observation-only."
+    },
+    {
+      "id": "crm_g1_r14",
+      "kind": "independent_review",
+      "required": true,
+      "acceptance": "Unknown project, wrong branch, swapped artifact, mismatched pinned brief and missing owner approval deny the controlled build; a no-release verdict is mandatory."
+    }
+  ]
+}
