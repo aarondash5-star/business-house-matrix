@@ -153,6 +153,9 @@ footer{border-top:1px solid rgba(245,246,242,.16);padding:26px 0 40px;color:var(
  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
  const mobile=window.matchMedia('(max-width:650px)');
  const films=[wide,tall];
+ // Some headless and mobile decoders clear the video surface on `ended`.
+ // Always resolve to the exact approved SVG as the final, persistent logo.
+ for(const film of films)film.addEventListener('ended',()=>host.classList.remove('is-playing'));
  let active=null;
  function stop(){for(const film of films){film.pause();film.currentTime=0;}host.classList.remove('is-playing');}
  function start(){
