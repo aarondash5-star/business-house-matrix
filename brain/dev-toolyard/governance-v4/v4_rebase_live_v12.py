@@ -24,6 +24,8 @@ V13 = "yard-execution-enforcement-v1.3.0-20261026"
 V14 = "yard-execution-enforcement-v1.4.0-20261027"
 REBASED_ADAPTER_VERSION = "yard-auto-adapter-v1.2.2-v4-bounded-20261027"
 REBASED_ADAPTER_SHA = "2ea43e8953c59726f510b6db9a8d0127a64efd7acb0fb824db5c70cb130a8837"
+REBASED_ENFORCEMENT_SHA = "664d4681747282561755dd34201210ce19306e15beeb506c8c02a024bf7ae644"
+REBASED_LEDGER_CANONICAL_SHA = "81edd213acfd4c66359d1a217a62c392c283358e972a7ea87b4948687fc5012f"
 
 class RebaseDenied(ValueError):
     pass
@@ -172,11 +174,16 @@ def render_guard_and_ledger(original_guard: bytes, ledger_bytes: bytes,
                  "VERSION='"+V14+"'","enforcement_version")
     gate=exactly(gate,old_core,new_core,"guard_core_modules")
     ast.parse(gate,filename="yard_execution_guard_v14.py")
+    if sha(gate.encode("utf-8"))!=REBASED_ENFORCEMENT_SHA:
+        raise RebaseDenied("rebased_v14_enforcement_digest_drift")
     new_ledger={**ledger,"version":V14,"bindings":{
         **ledger["bindings"],
         "yard_auto_adapter_v1.py":sha(rebased_adapter),
         "adapter_guard_v4.py":REVIEWED_V4_GUARD_SHA,
     }}
+    ledger_canonical=(json.dumps(new_ledger,sort_keys=True,separators=(",",":"))+"\n").encode("utf-8")
+    if sha(ledger_canonical)!=REBASED_LEDGER_CANONICAL_SHA:
+        raise RebaseDenied("rebased_v14_ledger_digest_drift")
     return {
         "mode":"SOURCE_REBASE_ONLY",
         "host":"dell-linux",
