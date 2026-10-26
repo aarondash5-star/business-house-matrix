@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "release": "matrix_v4_controller_v14_rebased_v12_20261027",
+  "host": "dell-linux",
+  "project": "matrix_dev_manager",
+  "type": "source_only_review_candidate",
+  "production": false,
+  "spend": false,
+  "base_reconstruction": {
+    "reviewed_v4_sha256": "116f435279bbe7e0cc8281ab513e319926b846ab6ae25752bccc3fc6746fb773",
+    "live_current_adapter_sha256": "adad20add5e247c515c48d8e2d0c61f2b91e2238d489ed8b4c2e674c845d1abe",
+    "reconstruction_hash_verified_by_ci": true
+  },
+  "old_live_pins": {
+    "controller.py": "e6834bb2f7765ee0aa26d215a566f70276e4f8c2c87c8730fc781c27dc778836",
+    "yard_auto_adapter_v1.py": "adad20add5e247c515c48d8e2d0c61f2b91e2238d489ed8b4c2e674c845d1abe",
+    "yard_execution_guard_v13.py": "7a989c6b484a13a4fdf349d698a6a1bf9e8d9b1afa9684508606bc08c036283e",
+    "yard_exec_bindings_v13.json": "9c084832984c1471a22079cc606daccd0a49b78c942ddfee0800a800176c43a9"
+  },
+  "new_pins": {
+    "yard_auto_adapter_v1.py": "2ea43e8953c59726f510b6db9a8d0127a64efd7acb0fb824db5c70cb130a8837",
+    "adapter_guard_v4.py": "90f0a62cc6cfaf1458f0684363ffb9288c900ba0ade707908da0877447249e30",
+    "yard_execution_guard_v13.py": "664d4681747282561755dd34201210ce19306e15beeb506c8c02a024bf7ae644",
+    "yard_exec_bindings_v14.json": "81edd213acfd4c66359d1a217a62c392c283358e972a7ea87b4948687fc5012f"
+  },
+  "ledger_serialization": "utf8_json_sort_keys_compact_with_trailing_lf",
+  "source_binding_count": 21,
+  "allowed_replacements": [
+    "yard_auto_adapter_v1.py",
+    "adapter_guard_v4.py",
+    "yard_execution_guard_v13.py",
+    "yard_exec_bindings_v14.json"
+  ],
+  "backup": [
+    "yard_auto_adapter_v1.py",
+    "yard_execution_guard_v13.py",
+    "yard_exec_bindings_v13.json"
+  ],
+  "guard_written_last": true,
+  "approval": {
+    "owner_approval_recorded": true,
+    "otp_verified": false,
+    "release_signature_verified": false,
+    "owner_public_key_pinned": false,
+    "pr_independent_reviewed": false
+  },
+  "runtime": {
+    "activation_runner_certified": false,
+    "host_rollback_tested": false,
+    "canary_verified": false,
+    "deployed": false
+  },
+  "status": "SOURCE_REBASED_AND_PINNED__DO_NOT_INSTALL",
+  "notes": "This manifest is not an owner signature and is intentionally non-deployable. Supabase owner-auth and fixed-purpose runner remain absent. Dell SSH read-only receipt a0c34b4e-5a12-47bb-a2c9-7ad280a34887 independently derived guard and ledger hashes."
+}
