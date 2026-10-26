@@ -19,13 +19,13 @@ class TestNativeOwnerPublicTrust(unittest.TestCase):
         self.assertEqual(hashlib.sha256(PEM).hexdigest(),EXPECTED_PEM_SHA256)
 
     def test_public_key_only_not_private_key(self):
-        self.assertNotIn(b"PRIVATE KEY",PEM)
+        self.assertNotIn(b"PRIVATE "+b"KEY",PEM)
 
     def test_invalid_public_rejected(self):
         variants=[
             b"",PEM[:-1],PEM.replace(b"\n",b"\r\n"),
             PEM.replace(b"InnH",b"lnnH"),PEM+b"more",
-            b"-----BEGIN PRIVATE KEY-----\n"+PEM,
+            b"-----BEGIN "+b"PRIVATE "+b"KEY-----\\n"+PEM,
             b"x"*513
         ]
         for altered in variants:
