@@ -13,7 +13,7 @@ const OWNER_PORTAL_ORIGIN="https://matrix-owner-key-preview.vercel.app";
 const HEADERS={"content-type":"application/json","cache-control":"no-store","x-content-type-options":"nosniff","referrer-policy":"no-referrer"};
 function reply(code:number,body:Record<string,unknown>,origin=""){
  const headers=new Headers(HEADERS);
- if(origin) {headers.set("access-control-allow-origin",origin);headers.set("vary","Origin");headers.set("access-control-allow-headers","authorization,content-type");headers.set("access-control-allow-methods","POST,OPTIONS");}
+ if(origin) {headers.set("access-control-allow-origin",origin);headers.set("vary","Origin");headers.set("access-control-allow-headers","authorization,apikey,content-type");headers.set("access-control-allow-methods","POST,OPTIONS");}
  return new Response(JSON.stringify(body),{status:code,headers});
 }
 async function ownerSession(req:Request):Promise<string|null>{
@@ -58,7 +58,7 @@ Deno.serve(async req=>{
   if(req.method==="OPTIONS"){
    if(!origin||origin!==permitted)return reply(403,{state:"ORIGIN_DENIED"});
    const h=new Headers(HEADERS);h.set("access-control-allow-origin",origin);
-   h.set("access-control-allow-headers","authorization,content-type");
+   h.set("access-control-allow-headers","authorization,apikey,content-type");
    h.set("access-control-allow-methods","POST,OPTIONS");h.set("vary","Origin");
    return new Response(null,{status:204,headers:h});
   }
