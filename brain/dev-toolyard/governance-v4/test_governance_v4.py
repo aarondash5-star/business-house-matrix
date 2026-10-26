@@ -67,6 +67,9 @@ class Fixture(unittest.TestCase):
     def test_missing_requirement(self):
         self.item["requirements"]=[]
         self.assertEqual(self.result()["stage"],"intake")
+    def test_forged_brief_quote_denied(self):
+        self.item["requirements"][0]["source_quote"]="This line was never in the brief"
+        self.assertEqual(self.result()["blockers"],["critical_quote_not_in_original_brief"])
     def test_weak_critical_requirement(self):
         self.item["requirements"][0]["nonnegotiable"]=False
         self.assertIn("weakened",self.result()["blockers"][0])
