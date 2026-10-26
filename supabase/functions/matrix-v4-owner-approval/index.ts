@@ -49,7 +49,9 @@ function config(){
   &&/^[0-9a-f]{64}$/.test(expected);
  return {uid,email,commit,url,pub,service,privateKey,pem,expected,allowedOrigin,
    ready:env("MATRIX_V4_OWNER_APPROVAL_ENABLED")==="true"&&
-      env("MATRIX_V4_RELEASE_SIGNER_ENABLED")==="true"&&!!enrolled};
+      env("MATRIX_V4_RELEASE_SIGNER_ENABLED")==="true"&&
+      env("MATRIX_V4_EMAIL_TEMPLATE_VERIFIED")==="true"&&
+      env("MATRIX_V4_OWNER_REDIRECT_VERIFIED")==="true"&&!!enrolled};
 }
 type Cfg=ReturnType<typeof config>;
 async function api(c:Cfg,route:string,init:RequestInit={},service=false){
@@ -95,7 +97,7 @@ async function issue(c:Cfg,req:Request){
  if(inserted.length!==1)throw new Error("challenge_insert_failure");
  // This emails the OWNER ONLY, using the existing Auth template. The template
  // must independently be certified to contain BOTH Token and ConfirmationURL.
- const sent=await api(c,"/auth/v1/otp",{method:"POST",body:JSON.stringify({
+ const sent=await api(c,"/auth/v1/otp?redirect_to="+encodeURIComponent(c.allowedOrigin+"/owner-release/confirm"),{method:"POST",body:JSON.stringify({
   email:c.email,create_user:false
  })});
  if(!sent.ok)return respond(503,{state:"EMAIL_DELIVERY_UNVERIFIED"});
@@ -162,9 +164,12 @@ async function complete(c:Cfg,req:Request,kind:"otp"|"link"){
   "&owner_uid=eq."+encodeURIComponent(c.uid)+"&status=eq.pending&select=*&limit=1");
  if(rows.length!==1)return respond(409,{state:"NOT_PENDING"});
  const row=rows[0];
- if(new Date(String(row.expires_at)).getTime()<=Date.now() ||
+ if(new Date(String(row.expires_at)).getTime()-Date.now()<=10000 ||
    row.host_id!==HOST||row.project_name!==PROJECT||row.source_commit!==c.commit||
    row.nonce_sha256!==await hash(nonce))return respond(409,{state:"CHALLENGE_REJECTED"});
+ const manifest=canonical({host:HOST,project:PROJECT,release:RELEASE,source_commit:c.commit,
+  old_pins:OLD_PINS,new_pins:NEW_PINS,production:false,spend:false});
+ if(row.manifest_sha256!==await hash(manifest))return respond(409,{state:"MANIFEST_DRIFT"});
  const verified=kind==="otp" ?
    !!(await owner(c,bearer(req)))&&await verifyCode(c,req,String(body.code??"")):
    await linkedIdentity(c,req,row);
@@ -202,7 +207,10 @@ Deno.serve(async(req)=>{
  const cors=origin&&origin===cfg.allowedOrigin?origin:"";
  try{
   if(req.method==="OPTIONS")
-   return cors?respond(204,{},cors):respond(403,{state:"ORIGIN_DENIED"});
+   return cors?new Response(null,{status:204,headers:{...header,
+    "access-control-allow-origin":cors,"access-control-allow-headers":"authorization,content-type",
+    "access-control-allow-methods":"POST,OPTIONS","vary":"Origin"}}):
+    respond(403,{state:"ORIGIN_DENIED"});
   if(origin && !cors)return respond(403,{state:"ORIGIN_DENIED"});
   if(req.method!=="POST")return respond(404,{state:"NOT_FOUND"});
   if(!cfg.ready)return respond(503,{
