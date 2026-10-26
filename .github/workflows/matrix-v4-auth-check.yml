@@ -1,0 +1,25 @@
+name: Matrix V4 owner approval TypeScript check
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/matrix-v4-owner-approval/**'
+      - '.github/workflows/matrix-v4-auth-check.yml'
+  push:
+    branches:
+      - feat/v4-rebased-signer-otp-runner-20261027
+    paths:
+      - 'supabase/functions/matrix-v4-owner-approval/**'
+      - '.github/workflows/matrix-v4-auth-check.yml'
+permissions:
+  contents: read
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Check owner approval function without network imports
+        run: deno check --no-remote supabase/functions/matrix-v4-owner-approval/index.ts
