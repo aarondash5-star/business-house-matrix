@@ -46,7 +46,7 @@ APPROVAL_FIELDS = frozenset((
     "release_id", "expires_utc", "production", "spend", "max_activations",
 ))
 _RELEASE_ID = re.compile(r"^v4-controller-20261026-[a-z0-9]{12,40}$")
-_APPROVED_CODES = frozenset(("preflight", "stage", "activate", "rollback"))
+_APPROVED_CODES = frozenset(("preflight", "stage"))
 MAX_DOCUMENT = 8192
 
 class BrokerDenied(ValueError):
