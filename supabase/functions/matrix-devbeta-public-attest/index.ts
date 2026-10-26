@@ -9,6 +9,7 @@ const anon=Deno.env.get("SUPABASE_ANON_KEY")??"";
 const service=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")??"";
 const HOST="dell-linux";
 const PROJECT="matrix_dev_manager";
+const OWNER_PORTAL_ORIGIN="https://matrix-owner-key-preview.vercel.app";
 const HEADERS={"content-type":"application/json","cache-control":"no-store","x-content-type-options":"nosniff","referrer-policy":"no-referrer"};
 function reply(code:number,body:Record<string,unknown>,origin=""){
  const headers=new Headers(HEADERS);
@@ -49,9 +50,9 @@ Deno.serve(async req=>{
  try{
   const route=new URL(req.url).pathname.split("/").pop();
   const origin=req.headers.get("origin")??"";
-  // Until the dedicated HTTPS owner UI is reviewed, allow only direct non-browser
-  // authenticated calls. No wildcard CORS and no caller-chosen redirect.
-  const permitted=Deno.env.get("MATRIX_V4_OWNER_ORIGIN")??"";
+  // Explicit fixed origin for this public-proof portal. No generic browser origins,
+  // dynamic caller-supplied redirects, or release-signing capability.
+  const permitted=OWNER_PORTAL_ORIGIN;
   if(origin && (!permitted||origin!==permitted))return reply(403,{state:"ORIGIN_DENIED"});
   if(req.method==="OPTIONS"){
    if(!origin||origin!==permitted)return reply(403,{state:"ORIGIN_DENIED"});
@@ -60,14 +61,20 @@ Deno.serve(async req=>{
    h.set("access-control-allow-methods","POST,OPTIONS");h.set("vary","Origin");
    return new Response(null,{status:204,headers:h});
   }
-  if(req.method!=="POST"||route!=="derive-public")return reply(404,{state:"NOT_FOUND"});
+  if(req.method!=="POST"||!["derive-public","owner-session"].includes(route))return reply(404,{state:"NOT_FOUND"});
   if(req.headers.get("content-type")?.split(";")[0]!=="application/json")
    return reply(415,{state:"JSON_REQUIRED"});
   const body=await req.json();
   if(!body||Object.keys(body).sort().join(",")!=="host_id,project"||
     body.host_id!==HOST||body.project!==PROJECT)
    return reply(400,{state:"SCOPE_DENIED"});
-  if(!(await ownerSession(req)))return reply(403,{state:"OWNER_AUTH_REQUIRED"});
+  if(!(await ownerSession(req)))return reply(403,{state:"OWNER_AUTH_REQUIRED"},origin);
+  // Auth-only review is independent of DEV_BETA private-key enrollment.
+  if(route==="owner-session")return reply(200,{
+   state:"VERIFIED_EXISTING_OWNER",host:HOST,project:PROJECT,
+   email_confirmed:true,approval_challenge_created:false,
+   release_signed:false,host_trust_installed:false,can_activate:false
+  },origin);
   const pub=deriveOnlyPublic();
   return reply(200,{state:"PUBLIC_KEY_DERIVED_AND_PROVED",key_id:"DEV_BETA",
    host:HOST,project:PROJECT,...pub,release_signed:false,host_trust_installed:false,can_activate:false},origin);
