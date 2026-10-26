@@ -233,7 +233,6 @@ class Ledger:
                 "UPDATE tasks SET state=?,stage_idx=?,corrections=?,version=version+1,"
                 "last_receipt=?,lease=NULL,updated=? WHERE task_id=?",
                 (new_state, target, corrections, receipt["receipt_id"], int(time.time()), task_id))
-            )
             self._event(row, reason, {"receipt_id": receipt["receipt_id"],
                                       "next_stage_idx": target, "state": new_state}, version + 1)
             return {"task_id": task_id, "state": new_state, "stage_idx": target,
