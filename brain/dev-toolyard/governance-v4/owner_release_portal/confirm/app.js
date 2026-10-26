@@ -5,6 +5,17 @@ const AUTH="https://saczglesalubroyaucqe.supabase.co";
 const PUBLISHABLE="sb_publishable_QWn0aEO4-fHulmZaUacbIQ_1ejYsDXY";
 const el=id=>document.getElementById(id);
 let jwt="",verifiedPublic=null;
+const EXPECTED_OWNER_PUBLIC_SHA256="1eee3d266eb1d362b9c7f36d0301b831a8a527828682505ff286d2738606eec1";
+async function matchExactOwnerPublic(pub,claimedSha){
+ // The server already did the Ed25519 private-key possession proof.
+ // Independently hash the exact public PEM returned over HTTPS, fail closed.
+ if(typeof pub!=="string"||typeof claimedSha!=="string")return false;
+ if(!/^-----BEGIN PUBLIC KEY-----\n[A-Za-z0-9+/]{59}=\n-----END PUBLIC KEY-----\n$/.test(pub))return false;
+ const bytes=new TextEncoder().encode(pub);
+ const digest=new Uint8Array(await crypto.subtle.digest("SHA-256",bytes));
+ const actual=Array.from(digest,x=>x.toString(16).padStart(2,"0")).join("");
+ return actual===EXPECTED_OWNER_PUBLIC_SHA256&&actual===claimedSha;
+}
 const cleanFragment=()=>{
  const fragment=window.location.hash.replace(/^#/,"");
  if(!fragment)return null;
@@ -78,11 +89,16 @@ el("derive").addEventListener("click",async()=>{
   if(!r.ok||r.json.state!=="PUBLIC_KEY_DERIVED_AND_PROVED"){
    status(`Attestation not certified (HTTP ${r.status}). Release signing remains disabled.`);return;
   }
+  if(!(await matchExactOwnerPublic(r.json.public_pem,r.json.fingerprint_sha256))){
+   verifiedPublic=null;el("result").hidden=true;
+   status("KEY MISMATCH: Supabase derived public PEM does not match the owner-approved fingerprint. No release authority granted.");
+   return;
+  }
   verifiedPublic={public_pem:r.json.public_pem,fingerprint_sha256:r.json.fingerprint_sha256};
   el("pem").textContent=verifiedPublic.public_pem;
   el("fingerprint").textContent=verifiedPublic.fingerprint_sha256;
   el("result").hidden=false;
-  status("DEV_BETA public-key possession verified by Supabase. No release signed. Dell remains unchanged.");
+  status("DEV_BETA PUBLIC KEY MATCH: Supabase proved private-key possession and browser independently matched the owner-approved PEM fingerprint. No release signed; Dell unchanged.");
  }catch{status("Could not verify keypair. Check approved origin and owner session.")}
  finally{el("derive").disabled=!jwt;}
 });
