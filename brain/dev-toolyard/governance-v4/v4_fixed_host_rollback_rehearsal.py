@@ -86,11 +86,11 @@ def rehearse(target:Path,staged:Path,backup:Path,old_pins:dict,new_pins:dict,
                                     not 0<=fault_after<=len(CANDIDATE)):
         raise RehearsalDenied("invalid_injected_fault")
     ensure_sandbox(target,staged,backup)
+    if list(backup.iterdir()):
+        raise RehearsalDenied("backup_dir_must_be_empty")
     originals={name:check_file(target/name,old_pins[name]) for name in ORIGINAL}
     future={name:check_file(staged/name,new_pins[name]) for name in CANDIDATE}
     # Backups taken and read back BEFORE first staged file replacement.
-    if list(backup.iterdir()):
-        raise RehearsalDenied("backup_dir_must_be_empty")
     applied=[]
     lock=backup/"exclusive-rehearsal.lock"
     fd=os.open(lock,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600)
