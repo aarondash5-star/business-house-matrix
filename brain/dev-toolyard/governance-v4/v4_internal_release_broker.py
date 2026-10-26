@@ -19,7 +19,7 @@ from pathlib import Path
 import re
 import stat
 import subprocess
-from typing import Callable, Any
+from typing import Any
 
 from v4_source_binding_review import (
     render_candidate, inspect_candidate, ReleaseDenied, digest,
@@ -95,7 +95,7 @@ def _load_approval(path: Path) -> tuple[dict, bytes]:
     except (TypeError, ValueError, AttributeError) as e:
         raise BrokerDenied("invalid_release_expiry") from e
     now = datetime.now(timezone.utc)
-    if expiry.tzinfo is None or not now < expiry <= now.replace(year=now.year + 1):
+    if expiry.tzinfo is None or not now < expiry <= (now + __import__("datetime").timedelta(hours=1)):
         raise BrokerDenied("release_expired_or_unbounded")
     return payload, source
 
@@ -168,8 +168,7 @@ class BrokerPaths:
         if self.journal.is_symlink():
             raise BrokerDenied("journal_symlink_denied")
 
-def assess(paths: BrokerPaths, mode: str = "preflight",
-           signature_verifier: Callable[[bytes, Path, Path], bool] = verify_signature) -> dict:
+def assess(paths: BrokerPaths, mode: str = "preflight") -> dict:
     if mode not in _APPROVED_CODES:
         raise BrokerDenied("invalid_fixed_action")
     paths.validate()
@@ -178,7 +177,7 @@ def assess(paths: BrokerPaths, mode: str = "preflight",
     if approval["v14_gate_sha256"] != reviewed["manifest"]["new_source_hashes"]["yard_execution_guard_v13.py"]:
         raise BrokerDenied("approval_candidate_gate_mismatch")
     # The owner signature verification happens AFTER pin checks, BEFORE all mutation.
-    if signature_verifier(encoded, paths.signature, paths.allowed_signers) is not True:
+    if verify_signature(encoded, paths.signature, paths.allowed_signers) is not True:
         raise BrokerDenied("independent_owner_signature_missing")
     state = {"release_id":approval["release_id"],"mode":mode,"host":HOST,
              "source_bound":True,"authenticated_owner_release":True,
