@@ -64,9 +64,9 @@ class TestRebasedReleaseVerification(unittest.TestCase):
         p.parent.is_symlink.return_value=False
         p.stat.return_value=SimpleNamespace(st_uid=0,st_mode=0o644,st_nlink=1)
         p.parent.stat.return_value=SimpleNamespace(st_uid=0,st_mode=0o755)
-        with patch("v4_rebased_release_verify.read_private",return_value=expected):
+        with patch("v4_rebased_release_verify.Path",return_value=p), patch("v4_rebased_release_verify.read_private",return_value=expected):
             self.assertEqual(owner_trust(p),expected)
-        with patch("v4_rebased_release_verify.read_private",return_value=self.public):
+        with patch("v4_rebased_release_verify.Path",return_value=p), patch("v4_rebased_release_verify.read_private",return_value=self.public):
             with self.assertRaisesRegex(RebasedReleaseDenied,"owner_public_fingerprint_mismatch"):
                 owner_trust(p)
 
