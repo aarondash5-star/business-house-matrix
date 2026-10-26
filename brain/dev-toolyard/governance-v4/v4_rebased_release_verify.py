@@ -134,6 +134,8 @@ def verify_detached(payload:bytes,signature_b64:str,public_pem:bytes)->bool:
         except InvalidSignature as e:
             raise RebasedReleaseDenied("signature_invalid") from e
         return True
+    except RebasedReleaseDenied:
+        raise
     except (ValueError,TypeError) as e:
         raise RebasedReleaseDenied("invalid_signature_encoding") from e
 
