@@ -12,7 +12,7 @@ const PROJECT="matrix_dev_manager";
 const HEADERS={"content-type":"application/json","cache-control":"no-store","x-content-type-options":"nosniff","referrer-policy":"no-referrer"};
 function reply(code:number,body:Record<string,unknown>,origin=""){
  const headers=new Headers(HEADERS);
- if(origin) {headers.set("access-control-allow-origin",origin);headers.set("vary","Origin");}
+ if(origin) {headers.set("access-control-allow-origin",origin);headers.set("vary","Origin");headers.set("access-control-allow-headers","authorization,content-type");headers.set("access-control-allow-methods","POST,OPTIONS");}
  return new Response(JSON.stringify(body),{status:code,headers});
 }
 async function ownerSession(req:Request):Promise<boolean>{
@@ -47,13 +47,20 @@ function deriveOnlyPublic() {
 }
 Deno.serve(async req=>{
  try{
-  if(req.method!=="POST"||new URL(req.url).pathname.split("/").pop()!=="derive-public")
-   return reply(404,{state:"NOT_FOUND"});
+  const route=new URL(req.url).pathname.split("/").pop();
   const origin=req.headers.get("origin")??"";
   // Until the dedicated HTTPS owner UI is reviewed, allow only direct non-browser
   // authenticated calls. No wildcard CORS and no caller-chosen redirect.
   const permitted=Deno.env.get("MATRIX_V4_OWNER_ORIGIN")??"";
   if(origin && (!permitted||origin!==permitted))return reply(403,{state:"ORIGIN_DENIED"});
+  if(req.method==="OPTIONS"){
+   if(!origin||origin!==permitted)return reply(403,{state:"ORIGIN_DENIED"});
+   const h=new Headers(HEADERS);h.set("access-control-allow-origin",origin);
+   h.set("access-control-allow-headers","authorization,content-type");
+   h.set("access-control-allow-methods","POST,OPTIONS");h.set("vary","Origin");
+   return new Response(null,{status:204,headers:h});
+  }
+  if(req.method!=="POST"||route!=="derive-public")return reply(404,{state:"NOT_FOUND"});
   if(req.headers.get("content-type")?.split(";")[0]!=="application/json")
    return reply(415,{state:"JSON_REQUIRED"});
   const body=await req.json();
