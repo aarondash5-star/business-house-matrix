@@ -3,12 +3,14 @@ on:
   pull_request:
     paths:
       - 'supabase/functions/matrix-v4-owner-approval/**'
+      - 'supabase/functions/matrix-devbeta-public-attest/**'
       - '.github/workflows/matrix-v4-auth-check.yml'
   push:
     branches:
       - feat/v4-rebased-signer-otp-runner-20261027
     paths:
       - 'supabase/functions/matrix-v4-owner-approval/**'
+      - 'supabase/functions/matrix-devbeta-public-attest/**'
       - '.github/workflows/matrix-v4-auth-check.yml'
 permissions:
   contents: read
@@ -22,4 +24,6 @@ jobs:
         with:
           deno-version: v2.x
       - name: Check owner approval function without network imports
-        run: deno check --no-remote supabase/functions/matrix-v4-owner-approval/index.ts
+        run: |
+          deno check --no-remote supabase/functions/matrix-v4-owner-approval/index.ts
+          deno check --no-remote supabase/functions/matrix-devbeta-public-attest/index.ts
