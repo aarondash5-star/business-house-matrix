@@ -4,14 +4,16 @@ from copy import deepcopy
 from datetime import datetime,timedelta,timezone
 import secrets
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
+from types import SimpleNamespace
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives import serialization
 
 from v4_rebased_release_verify import (
     canonical,parse_payload,verify_detached,verified_release,
-    RebasedReleaseDenied,HOST,PROJECT,RELEASE,OLD_PINS,NEW_PINS,KEY_ID
+    RebasedReleaseDenied,HOST,PROJECT,RELEASE,OLD_PINS,NEW_PINS,KEY_ID,
+    owner_trust,OWNER_PEM_SHA256
 )
 
 REVIEWED_TEST_SHA="a"*40
@@ -49,6 +51,24 @@ class TestRebasedReleaseVerification(unittest.TestCase):
         b=self.encoded();d=parse_payload(b,REVIEWED_TEST_SHA,self.now)
         self.assertEqual(d["host"],HOST)
         self.assertTrue(verify_detached(b,self.sign(b),self.public))
+
+    def test_only_exact_owner_public_key_can_be_installed_as_trust(self):
+        expected=(b"-----BEGIN PUBLIC KEY-----\\n"
+            b"MCowBQYDK2VwAyEAqKeblk/QLUfkDouPOhJSNV1InnH06lYY8esP8JYDMTE=\\n"
+            b"-----END PUBLIC KEY-----\\n")
+        import hashlib
+        self.assertEqual(hashlib.sha256(expected).hexdigest(),OWNER_PEM_SHA256)
+        p=MagicMock()
+        p.is_symlink.return_value=False
+        p.is_file.return_value=True
+        p.parent.is_symlink.return_value=False
+        p.stat.return_value=SimpleNamespace(st_uid=0,st_mode=0o644,st_nlink=1)
+        p.parent.stat.return_value=SimpleNamespace(st_uid=0,st_mode=0o755)
+        with patch("v4_rebased_release_verify.read_private",return_value=expected):
+            self.assertEqual(owner_trust(p),expected)
+        with patch("v4_rebased_release_verify.read_private",return_value=self.public):
+            with self.assertRaisesRegex(RebasedReleaseDenied,"owner_public_fingerprint_mismatch"):
+                owner_trust(p)
 
     def test_no_actual_review_sha_means_denial(self):
         with self.assertRaisesRegex(RebasedReleaseDenied,"independent_review"):
