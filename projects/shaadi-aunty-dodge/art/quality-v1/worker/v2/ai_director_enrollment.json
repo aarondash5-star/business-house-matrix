@@ -1,0 +1,29 @@
+{
+  "project": "shaadi_aunty_dodge",
+  "quality_pin": "SAD-VISUAL-QUALITY-V1",
+  "model": "qwen3-vl:2b-instruct",
+  "owner_task": "autonomous AI art direction on Dell isolated WIP",
+  "reference_images_original_sha256": {
+    "turnaround": "936b282ebcb1fb9ca5ef47b0ed1b3b471191bb654aa4c2f6925a469dbb667d3b",
+    "mandap": "6802cc9c839fcb6be65da162eed9b4ea9028b938bac4007155597bb412e9760a",
+    "runway": "5ccb9756a43706f19bd208fdebe3723a252d86e91473771c04510145db2bfd5d"
+  },
+  "reference_images_loaded_locally": true,
+  "review_only": true,
+  "paid_models": false,
+  "release_authorized": false,
+  "allowlisted_revision_profiles": [
+    "glasses",
+    "jasmine",
+    "zari"
+  ],
+  "pinned_scripts": {
+    "director_loop.py": "ffba0663f738a567755cc6bed13d47a2d85eadc87e84db025ba97c78597aa28c",
+    "ai_art_refine.py": "8f86ecda012d430676bfdd3254d33ff905fa80c67c065e5d1ef43713b1f60f93",
+    "ai_art_vision.py": "7c6e4438cf68e43e559217f166382322b74cec916f68cf178e4810c4a752489f",
+    "render_study.py": "3c0d7b2782bdf8047d0613de5219773ac129d8a1738dc7a6f58e0b79ad2d3e61",
+    "export_verify.py": "341a57288d47c3e540eda5ebbf5036fa51de026a14d494ce5e63fffaec419748"
+  },
+  "revision_contract": "strict_schema_v2_no_fallback_on_unstructured_model_response",
+  "revision_contract_date": "2026-10-26"
+}
