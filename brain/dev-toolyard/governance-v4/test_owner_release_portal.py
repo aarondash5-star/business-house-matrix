@@ -47,6 +47,20 @@ class OwnerPortalSecurityTests(unittest.TestCase):
         for path in ("/sign-release", "/activate", "/root", "/ssh/", "/matrix-v4-owner-approval"):
             self.assertNotIn(path,self.js)
 
+    def test_live_owner_session_verified_before_unlock(self):
+        self.assertIn("/matrix-devbeta-public-attest/owner-session",self.js)
+        self.assertIn('r.json.state!=="VERIFIED_EXISTING_OWNER"',self.js)
+        self.assertIn('jwt="";el("derive").disabled=true',self.js)
+        self.assertIn('el("reviewPanel").hidden=false',self.js)
+
+    def test_feedback_is_ui_only_never_release_approval(self):
+        self.assertIn("/matrix-devbeta-public-attest/review",self.js)
+        self.assertIn('UI_REVIEW_RECORDED',self.js)
+        self.assertIn('id="uiAccept"',self.html)
+        self.assertIn('id="uiNeeds"',self.html)
+        self.assertIn("This is a UI review only",self.html)
+        self.assertNotIn("/matrix-v4-owner-approval",self.js)
+
     def test_email_fixture_not_live_and_both_methods(self):
         for part in ("{{ .Token }}", "{{ .TokenHash }}", "{{ .RedirectTo }}",
                      "DO NOT DEPLOY", "click"):
