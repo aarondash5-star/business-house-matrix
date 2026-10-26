@@ -95,7 +95,7 @@ def render_candidate(original_gate: bytes, original_adapter: bytes,
         "rollback_pins":{
           "yard_auto_adapter_v1.py":OLD_ADAPTER_SHA,
           GUARD_FILE:V13_GATE_SHA,
-          LEDGER_V13:digest(json.dumps(old_policy,sort_keys=True).encode("utf-8")),
+          "original_ledger_canonical_sha256":digest(json.dumps(old_policy,sort_keys=True).encode("utf-8")),
         },
         "manifest":{
           "schema":1,
