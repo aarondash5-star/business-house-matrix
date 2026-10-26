@@ -16,18 +16,19 @@ function reply(code:number,body:Record<string,unknown>,origin=""){
  if(origin) {headers.set("access-control-allow-origin",origin);headers.set("vary","Origin");headers.set("access-control-allow-headers","authorization,content-type");headers.set("access-control-allow-methods","POST,OPTIONS");}
  return new Response(JSON.stringify(body),{status:code,headers});
 }
-async function ownerSession(req:Request):Promise<boolean>{
+async function ownerSession(req:Request):Promise<string|null>{
  const authorization=req.headers.get("authorization")??"";
- if(!/^Bearer [A-Za-z0-9._-]{30,8000}$/.test(authorization)||!sbUrl.startsWith("https://")||!anon||!service)return false;
+ if(!/^Bearer [A-Za-z0-9._-]{30,8000}$/.test(authorization)||!sbUrl.startsWith("https://")||!anon||!service)return null;
  const [id,auth]=await Promise.all([
   fetch(sbUrl+"/rest/v1/matrix_v4_owner_registry?host_id=eq.dell-linux&project_name=eq.matrix_dev_manager&identity_enrolled=eq.true&release_signing_enabled=eq.false&select=owner_uid,owner_email&limit=2",
    {headers:{apikey:service,authorization:"Bearer "+service},signal:AbortSignal.timeout(5000)}),
   fetch(sbUrl+"/auth/v1/user",{headers:{apikey:anon,authorization},signal:AbortSignal.timeout(5000)})
  ]);
- if(!id.ok||!auth.ok)return false;
+ if(!id.ok||!auth.ok)return null;
  const rows=await id.json(),user=await auth.json();
- return Array.isArray(rows)&&rows.length===1&&rows[0].owner_uid===user.id
+ const verified=Array.isArray(rows)&&rows.length===1&&rows[0].owner_uid===user.id
   &&rows[0].owner_email===user.email&&!!user.email_confirmed_at;
+ return verified?String(user.id):null;
 }
 function deriveOnlyPublic() {
  const b64=Deno.env.get("DEV_BETA_ED25519_PRIVATE_PKCS8_B64")??"";
@@ -61,14 +62,32 @@ Deno.serve(async req=>{
    h.set("access-control-allow-methods","POST,OPTIONS");h.set("vary","Origin");
    return new Response(null,{status:204,headers:h});
   }
-  if(req.method!=="POST"||!["derive-public","owner-session"].includes(route))return reply(404,{state:"NOT_FOUND"});
+  if(req.method!=="POST"||!["derive-public","owner-session","review"].includes(route))return reply(404,{state:"NOT_FOUND"});
   if(req.headers.get("content-type")?.split(";")[0]!=="application/json")
    return reply(415,{state:"JSON_REQUIRED"});
   const body=await req.json();
-  if(!body||Object.keys(body).sort().join(",")!=="host_id,project"||
-    body.host_id!==HOST||body.project!==PROJECT)
-   return reply(400,{state:"SCOPE_DENIED"});
-  if(!(await ownerSession(req)))return reply(403,{state:"OWNER_AUTH_REQUIRED"},origin);
+  if(!body||typeof body!=="object"||Array.isArray(body)||
+    body.host_id!==HOST||body.project!==PROJECT)return reply(400,{state:"SCOPE_DENIED"},origin);
+  const exactKeys=Object.keys(body).sort().join(",");
+  if(route==="review" ? exactKeys!=="decision,host_id,notes,project" : exactKeys!=="host_id,project")
+   return reply(400,{state:"INVALID_FIELDS"},origin);
+  const verifiedUid=await ownerSession(req);
+  if(!verifiedUid)return reply(403,{state:"OWNER_AUTH_REQUIRED"},origin);
+  if(route==="review"){
+   if(!["ui_acceptable","needs_changes"].includes(body.decision)||
+      typeof body.notes!=="string"||body.notes.length>500)
+      return reply(400,{state:"INVALID_REVIEW"},origin);
+   const inserted=await fetch(sbUrl+"/rest/v1/matrix_v4_owner_ui_reviews",{
+    method:"POST",headers:{apikey:service,authorization:"Bearer "+service,
+      "content-type":"application/json",prefer:"return=minimal"},
+    body:JSON.stringify({owner_uid:verifiedUid,host_id:HOST,project_name:PROJECT,
+      decision:body.decision,notes:body.notes,release_approved:false}),
+    signal:AbortSignal.timeout(5000)
+   });
+   if(!inserted.ok)return reply(503,{state:"REVIEW_STORE_UNAVAILABLE"},origin);
+   return reply(200,{state:"UI_REVIEW_RECORDED",host:HOST,project:PROJECT,
+     release_approved:false,release_signed:false,can_activate:false},origin);
+  }
   // Auth-only review is independent of DEV_BETA private-key enrollment.
   if(route==="owner-session")return reply(200,{
    state:"VERIFIED_EXISTING_OWNER",host:HOST,project:PROJECT,
