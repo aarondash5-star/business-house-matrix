@@ -36,14 +36,14 @@ function respond(code:number,body:Record<string,unknown>,origin=""){
  return new Response(JSON.stringify(body),{status:code,headers:h});
 }
 function config(){
- const uid=env("MATRIX_V4_OWNER_UID"),email=env("MATRIX_V4_OWNER_EMAIL");
+ const uid="",email=""; // Replaced by server-only owner registry lookup.
  const commit=env("MATRIX_V4_REVIEWED_COMMIT");
  const url=env("SUPABASE_URL"),pub=env("SUPABASE_ANON_KEY"),service=secret("SUPABASE_SERVICE_ROLE_KEY");
  const privateKey=secret("DEV_BETA_ED25519_PRIVATE_PKCS8_B64");
  const pem=env("MATRIX_V4_OWNER_PUBLIC_PEM");
  const expected=env("MATRIX_V4_OWNER_PUBLIC_SHA256");
  const allowedOrigin=env("MATRIX_V4_OWNER_ORIGIN");
- const enrolled=/^[a-f0-9-]{36}$/.test(uid)&&email.includes("@")&&/^[a-f0-9]{40}$/.test(commit)
+ const enrolled=/^[a-f0-9]{40}$/.test(commit)
   &&/^https:\/\/[a-zA-Z0-9.-]+$/.test(allowedOrigin)
   &&url.startsWith("https://")&&pub&&service&&privateKey&&pem
   &&/^[0-9a-f]{64}$/.test(expected);
@@ -59,6 +59,23 @@ async function api(c:Cfg,route:string,init:RequestInit={},service=false){
  const headers={"apikey":token,"authorization":"Bearer "+token,
    "content-type":"application/json","cache-control":"no-store",...(init.headers??{})};
  return await fetch(c.url+route,{...init,headers,signal:AbortSignal.timeout(8000)});
+}
+async function enrolledOwner(c:Cfg):Promise<Cfg|null>{
+ // Read one exact host/project registry row using service credentials;
+ // never accept an email or UID supplied by the browser or worker.
+ const path="/rest/v1/matrix_v4_owner_registry?host_id=eq.dell-linux"+
+   "&project_name=eq.matrix_dev_manager&identity_enrolled=eq.true"+
+   "&release_signing_enabled=eq.false&select=owner_uid,owner_email&limit=2";
+ const res=await api(c,path,{method:"GET"},true);
+ if(!res.ok)return null;
+ const rows=await res.json();
+ if(!Array.isArray(rows)||rows.length!==1)return null;
+ const record=rows[0];
+ if(!plain(record)||Object.keys(record).sort().join(",")!=="owner_email,owner_uid")return null;
+ const uid=String(record.owner_uid),email=String(record.owner_email);
+ if(!/^[a-f0-9-]{36}$/.test(uid)||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)
+    ||email!==email.toLowerCase())return null;
+ return {...c,uid,email};
 }
 async function database(c:Cfg,method:string,filter:string,payload?:unknown){
  const response=await api(c,"/rest/v1/"+BASE+filter,{
@@ -202,7 +219,7 @@ async function complete(c:Cfg,req:Request,kind:"otp"|"link"){
  });
 }
 Deno.serve(async(req)=>{
- const cfg=config();
+ let cfg=config();
  const origin=req.headers.get("origin")??"";
  const cors=origin&&origin===cfg.allowedOrigin?origin:"";
  try{
@@ -216,6 +233,9 @@ Deno.serve(async(req)=>{
   if(!cfg.ready)return respond(503,{
    state:"DISABLED",owner_enrolled:false,release_signing_enabled:false
   },cors);
+  const ownerCfg=await enrolledOwner(cfg);
+  if(!ownerCfg)return respond(503,{state:"DISABLED",reason:"owner_registry_unavailable"},cors);
+  cfg=ownerCfg;
   if(!String(req.headers.get("content-type")??"").startsWith("application/json"))
    return respond(415,{state:"JSON_REQUIRED"},cors);
   const route=new URL(req.url).pathname.split("/").pop();
