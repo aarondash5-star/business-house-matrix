@@ -174,5 +174,42 @@ class BrokerTests(unittest.TestCase):
         with self.assertRaises(b.BrokerDenied):
             b.verify_signature(b._canonical(self.approval),self.sig,self.signers)
 
+    def test_signed_fixture_can_stage_exact_backup_without_live_writes(self):
+        original=(self.live/"yard_auto_adapter_v1.py").read_bytes()
+        gate=(self.live/"yard_execution_guard_v13.py").read_bytes()
+        with mock.patch.object(b, "verify_signature", return_value=True):
+            result=b.stage_signed_release(self.paths)
+        self.assertEqual(result["status"],"candidate_staged")
+        self.assertFalse(result["host_write_authorized"])
+        self.assertEqual((self.live/"yard_auto_adapter_v1.py").read_bytes(),original)
+        self.assertEqual((self.live/"yard_execution_guard_v13.py").read_bytes(),gate)
+        staged=self.journal/(self.approval["release_id"]+".candidate")
+        self.assertEqual((staged/"v13-yard_auto_adapter_v1.py").read_bytes(),original)
+        self.assertEqual((staged/"v13-yard_execution_guard_v13.py").read_bytes(),gate)
+        self.assertEqual((staged/"v14-yard_auto_adapter_v1.py").read_bytes(),
+                         (self.src/"yard_auto_adapter_v1_patched.py").read_bytes())
+        self.assertTrue((self.journal/(self.approval["release_id"]+".reserved")).exists())
+        self.assertTrue((staged/"stage-audit.json").is_file())
+        self.assertFalse((self.live/"yard_exec_bindings_v14.json").exists())
+
+    def test_staged_release_cannot_replay(self):
+        with mock.patch.object(b,"verify_signature",return_value=True):
+            b.stage_signed_release(self.paths)
+            with self.assertRaisesRegex(b.BrokerDenied,"single_use_release_already_claimed"):
+                b.stage_signed_release(self.paths)
+
+    def test_stage_never_uses_unverified_signer(self):
+        with self.assertRaises(b.BrokerDenied):
+            b.stage_signed_release(self.paths)
+        self.assertFalse(any(self.journal.iterdir()))
+
+    def test_stage_fails_closed_if_live_old_source_modified(self):
+        path=self.live/"yard_auto_adapter_v1.py"
+        path.write_bytes(path.read_bytes()+b"#drift")
+        with mock.patch.object(b,"verify_signature",return_value=True):
+            with self.assertRaises(b.ReleaseDenied):
+                b.stage_signed_release(self.paths)
+        self.assertFalse(any(self.journal.iterdir()))
+
 if __name__=="__main__":
     unittest.main()
