@@ -3,6 +3,8 @@ from pathlib import Path
 import ast
 import json
 import os
+import sys
+import types
 import tempfile
 import types
 import unittest
@@ -11,7 +13,7 @@ from unittest import mock
 from v4_rebase_live_v12 import (
     RebaseDenied,reconstruct_live_unchanged,rebase_current_live,
     sha,PREVIOUS_REVIEWED_V4_SHA,CURRENT_LIVE_ADAPTER_SHA,
-    REBASED_ADAPTER_VERSION,render_guard_and_ledger
+    REBASED_ADAPTER_VERSION,REBASED_ADAPTER_SHA,render_guard_and_ledger
 )
 
 HERE=Path(__file__).resolve().parent
@@ -35,6 +37,76 @@ class RebaseTests(unittest.TestCase):
         self.assertNotEqual(self.actual,self.rebased)
         ast.parse(self.rebased)
         self.assertIn(REBASED_ADAPTER_VERSION.encode(),self.rebased)
+
+    def test_frozen_file_matches_exact_rebased_sha(self):
+        frozen=(HERE/"yard_auto_adapter_v12_rebased_v14.py").read_bytes()
+        self.assertEqual(sha(self.rebased),REBASED_ADAPTER_SHA)
+        self.assertEqual(sha(frozen),REBASED_ADAPTER_SHA)
+        self.assertEqual(frozen,self.rebased)
+
+    def adapter(self, dirname):
+        qa=types.ModuleType("toolyard_qa_standard_v1")
+        qa.VERSION="test-qa-v1"
+        qa.ACTION_PROFILES={}
+        qa.REQUIREMENTS={}
+        guarded=types.ModuleType("adapter_guard_v4")
+        code=(HERE/"adapter_guard.py").read_text()
+        exec(compile(code,str(HERE/"adapter_guard.py"),"exec"),guarded.__dict__)
+        modules={"toolyard_qa_standard_v1":qa,"adapter_guard_v4":guarded}
+        with mock.patch.dict(sys.modules,modules):
+            scope={"__name__":"adapter_test_only","__file__":str(dirname/"yard_auto_adapter_v1.py")}
+            exec(compile(self.rebased,str(dirname/"yard_auto_adapter_v1.py"),"exec"),scope)
+            return scope,modules
+
+    def test_guarded_load_and_save_with_real_v4_guard(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);scope,modules=self.adapter(root)
+            f=root/"registry.json"
+            tools={"test-qa":{"operations":["probe_version"],"state":"accepted_qa_probe_only",
+                              "production_live":False,"unbounded_execution_permitted":False}}
+            payload={"schema":1,"tools":tools}
+            f.write_text(json.dumps(payload))
+            f.chmod(0o600)
+            with mock.patch.dict(sys.modules,modules):
+                self.assertEqual(scope["load"](f),tools)
+                self.assertEqual(scope["save"](payload,f),f)
+                self.assertEqual(scope["load"](f),tools)
+                self.assertTrue((root/"yard-adapter-manifests-v1"/"test-qa.json").is_file())
+
+    def test_invalid_registry_operations_fail_both_paths(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);scope,modules=self.adapter(root)
+            f=root/"registry.json";payload={"schema":1,"tools":{
+                "test-qa":{"operations":["root_shell"],"state":"accepted_qa_probe_only"}}}
+            f.write_text(json.dumps(payload));f.chmod(0o600)
+            with mock.patch.dict(sys.modules,modules):
+                with self.assertRaisesRegex(scope["AdapterDenied"],"registry_untrusted_operations"):
+                    scope["load"](f)
+                with self.assertRaisesRegex(scope["AdapterDenied"],"registry_save_bound_rejected"):
+                    scope["save"](payload,root/"new-registry.json")
+            self.assertFalse((root/"new-registry.json").exists())
+
+    def test_513_tools_denied_preserving_v12_ceiling(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);scope,modules=self.adapter(root)
+            f=root/"registry.json"
+            tools={"qa-tool-"+str(i):{"operations":[],"state":"accepted_qa_probe_only"} for i in range(513)}
+            p={"schema":1,"tools":tools}
+            f.write_text(json.dumps(p));f.chmod(0o600)
+            with mock.patch.dict(sys.modules,modules):
+                with self.assertRaisesRegex(scope["AdapterDenied"],"registry_too_many_tools"):
+                    scope["load"](f)
+                with self.assertRaisesRegex(scope["AdapterDenied"],"registry_too_many_tools"):
+                    scope["save"](p,root/"new-registry.json")
+
+    def test_mutable_registry_is_denied(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);scope,modules=self.adapter(root)
+            f=root/"registry.json";f.write_text(json.dumps({"schema":1,"tools":{}}))
+            f.chmod(0o666)
+            with mock.patch.dict(sys.modules,modules):
+                with self.assertRaisesRegex(scope["AdapterDenied"],"registry_mutable"):
+                    scope["load"](f)
 
     def test_original_live_capacity_preserved(self):
         for marker in (b"REGISTRY_MAX_BYTES=1_048_576",b"REGISTRY_MAX_TOOLS=512",
