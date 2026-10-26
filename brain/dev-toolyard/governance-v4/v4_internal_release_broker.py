@@ -199,6 +199,63 @@ def ensure_replay_free(paths: BrokerPaths, release_id: str) -> bool:
         raise BrokerDenied("single_use_release_already_claimed")
     return True
 
+def stage_signed_release(paths: BrokerPaths) -> dict:
+    """Create only PRIVATE, source-pinned stage/backup files; never edit live host.
+
+    A genuine independent owner signature and an exclusive O_EXCL reservation
+    are required. Interrupted reservations remain reserved; do NOT replay.
+    """
+    import os
+    import shutil
+    info = assess(paths, mode="stage")
+    release_id = info["release_id"]
+    ensure_replay_free(paths, release_id)
+    reservation = paths.journal / (release_id + ".reserved")
+    try:
+        fd = os.open(reservation, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+    except FileExistsError as e:
+        raise BrokerDenied("single_use_release_already_claimed") from e
+    with os.fdopen(fd, "w", encoding="utf-8") as stream:
+        stream.write(json.dumps({"release_id":release_id,"status":"reserved",
+                                 "host_write_authorized":False},sort_keys=True)+"\n")
+        stream.flush(); os.fsync(stream.fileno())
+    # Never delete the reservation automatically on failures or uncertain outcomes.
+    target = paths.journal / (release_id + ".candidate")
+    target.mkdir(mode=0o700)
+    if target.is_symlink():
+        raise BrokerDenied("candidate_symlink")
+    reviewed = source_review(paths.live, paths.source)
+    old_ledger = _read(paths.live / "yard_exec_bindings_v13.json", 35000)
+    originals = {
+        "v13-yard_auto_adapter_v1.py": _read(paths.live / "yard_auto_adapter_v1.py", 30000),
+        "v13-yard_execution_guard_v13.py": _read(paths.live / "yard_execution_guard_v13.py", 30000),
+        "v13-yard_exec_bindings_v13.json": old_ledger,
+    }
+    staged = {
+        "v14-yard_auto_adapter_v1.py": reviewed["source"]["yard_auto_adapter_v1.py"],
+        "v14-adapter_guard_v4.py": reviewed["source"]["adapter_guard_v4.py"],
+        "v14-yard_execution_guard_v13.py": reviewed["source"]["yard_execution_guard_v13.py"],
+        "v14-yard_exec_bindings_v14.json": _canonical(reviewed["candidate_ledger"]),
+    }
+    receipts = {}
+    for name, data in {**originals, **staged}.items():
+        path = target / name
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW
+        fd = os.open(path, flags, 0o600)
+        with os.fdopen(fd, "wb") as out:
+            out.write(data)
+            out.flush(); os.fsync(out.fileno())
+        receipts[name] = hashlib.sha256(data).hexdigest()
+    audit = {"release_id":release_id, "status":"candidate_staged",
+             "source_sha256":receipts,"host_write_authorized":False,
+             "old_controller_untouched":True,"production":False}
+    final = target / "stage-audit.json"
+    fd = os.open(final, flags, 0o600)
+    with os.fdopen(fd, "wb") as out:
+        out.write(_canonical(audit));out.flush();os.fsync(out.fileno())
+    return audit
+
+
 def status(live: Path, source: Path) -> dict:
     # Safe even without signed owner approval; never creates files.
     try:
@@ -212,7 +269,7 @@ def status(live: Path, source: Path) -> dict:
 if __name__=="__main__":
     import argparse
     p=argparse.ArgumentParser(description="Internal V4 source-bound release broker (no general shell)")
-    p.add_argument("command", choices=("status","preflight"))
+    p.add_argument("command", choices=("status","preflight","stage"))
     a=p.parse_args()
     # CLI reads the exact existing controlled source locations. It NEVER
     # has an activate/swap operation until a separately reviewed host runner is approved.
@@ -220,6 +277,20 @@ if __name__=="__main__":
     if a.command=="status":
         print(json.dumps(status(home/"matrix-controller",
              home/"yard-v4-corrective-20261026"/"brain/dev-toolyard/governance-v4"),sort_keys=True))
+    elif a.command=="stage":
+        paths=BrokerPaths(
+            home/"matrix-controller",
+            home/"yard-v4-corrective-20261026"/"brain/dev-toolyard/governance-v4",
+            home/".matrix-release-authorizations"/"v4-owner-release.json",
+            home/".matrix-release-authorizations"/"v4-owner-release.json.sig",
+            Path("/etc/matrix-internal-release/allowed_signers"),
+            home/".matrix-release-journal")
+        try:
+            print(json.dumps(stage_signed_release(paths),sort_keys=True))
+        except (BrokerDenied, ReleaseDenied, ValueError, OSError, subprocess.SubprocessError) as exc:
+            print(json.dumps({"state":"blocked","reason":type(exc).__name__+
+                                ":"+str(exc)[:130],"live_promotion":False},sort_keys=True))
+            raise SystemExit(3)
     else:
         print(json.dumps({"state":"blocked","reason":"independent_release_approval_and_host_runner_not_enrolled",
                           "live_promotion":False},sort_keys=True))
