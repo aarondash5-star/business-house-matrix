@@ -71,5 +71,25 @@ el("copy").addEventListener("click",async()=>{
  await navigator.clipboard.writeText(verifiedPublic.public_pem+"\nSHA256(PEM)="+verifiedPublic.fingerprint_sha256);
  status("Only public-key material copied. No private key was accessed by the browser.");
 });
+// A custom GoTrue email-link template can deliver a token_hash here.
+// Do not consume it on page load: email link scanners may prefetch GET URLs.
+const query=new URLSearchParams(window.location.search);
+let pendingHash=query.get("token_hash")??"";
+if(query.has("token_hash"))history.replaceState(null,"",window.location.pathname);
+if(/^[A-Za-z0-9._-]{20,512}$/.test(pendingHash)&&query.get("type")==="email"){
+ el("confirmLink").hidden=false;
+ status("Email link received. Press Confirm email link to verify it with Supabase. No release action will run.");
+}else pendingHash="";
+el("confirmLink").addEventListener("click",async()=>{
+ if(!pendingHash)return;
+ el("confirmLink").disabled=true;status("Verifying the email link through Supabase...");
+ try{
+  const r=await api("/auth/v1/verify",{type:"email",token_hash:pendingHash});
+  pendingHash="";
+  el("confirmLink").hidden=true;
+  if(r.ok&&typeof r.json.access_token==="string")unlock(r.json.access_token);
+  else status("Supabase did not verify this email link. Request another link/code.");
+ }catch{pendingHash="";el("confirmLink").hidden=true;status("Link verification unavailable. Request another code.");}
+});
 const linkToken=cleanFragment();
 if(linkToken)unlock(linkToken);
