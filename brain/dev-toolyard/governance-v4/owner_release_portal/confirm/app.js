@@ -1,6 +1,6 @@
 "use strict";
 // This PUBLIC Supabase publishable key is designed for browser clients.
-// No owner UUID, private key, service_role, admin password or OTP is embedded.
+// No owner identifiers, privileged credentials or secret signing material are embedded.
 const AUTH="https://saczglesalubroyaucqe.supabase.co";
 const PUBLISHABLE="sb_publishable_QWn0aEO4-fHulmZaUacbIQ_1ejYsDXY";
 const el=id=>document.getElementById(id);
