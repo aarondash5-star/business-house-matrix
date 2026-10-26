@@ -51,5 +51,20 @@
     "deployed": false
   },
   "status": "SOURCE_REBASED_AND_PINNED__DO_NOT_INSTALL",
-  "notes": "This manifest is not an owner signature and is intentionally non-deployable. Supabase owner-auth and fixed-purpose runner remain absent. Dell SSH read-only receipt a0c34b4e-5a12-47bb-a2c9-7ad280a34887 independently derived guard and ledger hashes."
+  "notes": "This manifest is not an owner signature and is intentionally non-deployable. Supabase owner-auth and fixed-purpose runner remain absent. Dell SSH read-only receipt a0c34b4e-5a12-47bb-a2c9-7ad280a34887 independently derived guard and ledger hashes.",
+  "dev_beta_public_candidate": {
+    "key_id": "DEV_BETA",
+    "algorithm": "Ed25519",
+    "canonical_format": "SPKI PEM with LF and terminal newline",
+    "owner_supplied_pem_sha256": "1eee3d266eb1d362b9c7f36d0301b831a8a527828682505ff286d2738606eec1",
+    "owner_supplied_pem_syntax_verified": true,
+    "fingerprint_calculation_verified": true,
+    "supabase_owner_review_status": "ui_acceptable",
+    "supabase_owner_review_is_release_approval": false,
+    "supabase_derive_public_http200_observed": true,
+    "independent_response_bytes_compared_to_owner_pem": false,
+    "root_host_public_trust_enrolled": false,
+    "release_signing_authorized": false,
+    "evidence": "Owner supplied correct canonical Ed25519 SPKI public PEM; Auth owner-session and derive-public endpoint HTTP 200 observed, but exact server response bytes not exported to an independently verified comparison. Repo policy forbids tracked .pem files; keep only fingerprint in source."
+  }
 }
