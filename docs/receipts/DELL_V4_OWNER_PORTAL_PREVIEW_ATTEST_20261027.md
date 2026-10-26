@@ -1,0 +1,31 @@
+# Dell V4 — Owner Auth Portal Preview + DEV_BETA Public Key Attestation Gate
+
+Date: 27 October 2026 IST
+Owner recipient: already enrolled in Supabase Auth and private owner registry; **email/UID deliberately omitted from this public document**.
+Scope: `dell-linux` + `matrix_dev_manager` only, **not** Mac/Pine/Ashwakaal or other tenants.
+Source: Draft PR #37, `feat/v4-rebased-signer-otp-runner-20261027`.
+Status: **PRIVATE PORTAL READY FOR VISUAL QA / REAL AUTH NOT CERTIFIED / OWNER KEYPAIR NOT YET PROVED / V4 NOT LIVE**.
+
+## Verified platform work
+
+1. Existing Supabase project `saczglesalubroyaucqe` remains shared with unrelated apps, and existing Auth user is verified and bound by RLS/FORCE-RLS to one Dell-only `matrix_v4_owner_registry` row, `release_signing_enabled=false`. Challenge ledger has **zero entries**.
+2. **New** `matrix-devbeta-public-attest` Edge Function, version 1, status `ACTIVE`, `verify_jwt=true`, source verified against GitHub `supabase/functions/matrix-devbeta-public-attest/index.ts`. Uses a validated pre-existing owner JWT and the restricted server-owned registry; derives **only the public SPKI PEM** from the existing server-held Ed25519 PKCS8 key with `node:crypto`, signs/verifies a random *internal, non-release* challenge, and returns only public PEM and SHA256(PEM). Does not output private key or challenge signature; no deployment actions. **Endpoint has not been invoked with a real owner JWT**, so no keypair match is claimed.
+3. New dedicated Vercel project `matrix-owner-key-preview` under owner team `karanbizweb360-3479`, hobby plan. SSO protection `enabled=true`, `deploymentType=all`, independently confirmed by project readback. Deployment ID `dpl_FCpYPQWeyQtuBStN4vW3NZKj9Wzq`, state `READY`, hostname `matrix-owner-key-preview.vercel.app`. Vercel reported deployment target **production** and assigned its default project alias; the *application itself* is solely a protected staging interface, not a live controller or approved owner release. No custom domain. Do not confuse deployment target with Dell V4 live certification.
+4. Portal source: `brain/dev-toolyard/governance-v4/owner_release_portal/confirm/{index.html,app.js}`; static mobile-first, strict CSP, no remote scripts, no localStorage/sessionStorage, credentials in memory only, login fragment stripped on load, code or click-to-confirm token hash, public-only attestation endpoint, no signer or SSH actions. The **publishable** Supabase Auth client key is intentionally public; no service_role / PKCS8 key, owner UUID/email, release JWT/OTP or privileged credentials in public Git. Vercel deployment source files were populated from the reviewed GitHub files and files exist in Vercel deployment.
+5. An example single-email template including both `{{ .Token }}` and `{{ .TokenHash }}` is in `docs/fixtures/MATRIX_V4_OWNER_EMAIL_TEMPLATE_REVIEW_ONLY.html`. It is **NOT deployed**. The existing shared Magic Link template has not been read or changed via Supabase Admin; user-defined conditional content must preserve all other apps. The click-to-confirm link pattern avoids consuming token hashes on email-link prefetch GET.
+6. GitHub `Matrix V4 owner approval TypeScript check` passed (including new public-only attester Deno typecheck). `Matrix V4 owner portal static checks` passed (Node JS parse + 7 safety checks). `Matrix source validation` passed with **274 passed, 63 skipped, 50 subtests passed** at source commit `e0053c38426cecf4d3936628f6e2099bcc0ef004`.
+7. No Supabase template mutation, redirect-allowlist mutation, email delivery, real OTP, actual DEV_BETA derived public proof, privileged Dell SSH, new root trust key, signed release, real on-host rollback, canary or V4 deployment occurred in this implementation.
+
+## Exact blockers to first real email and key proof
+
+A. In the existing project Supabase Auth dashboard, **read and back up** current Magic Link email template before any changes: https://supabase.com/dashboard/project/saczglesalubroyaucqe/auth/templates . Confirm `{{ .Token }}` and `{{ .ConfirmationURL }}` or `{{ .TokenHash }}` and preserve current contents for all other applications. The management connector lacks a supported Auth-template read/write action, and there is no authenticated Supabase administrator web-browser profile. Do not claim template inspection.
+B. Decide a single owner-controlled **final HTTPS callback hostname** and explicitly add it to the Auth redirect URL allowlist: https://supabase.com/dashboard/project/saczglesalubroyaucqe/auth/url-configuration . The currently protected Vercel URL can be used for non-authenticated visual QA, but **no production code/link testing until callback and SSO behavior have been checked together**. Vercel Auth on all deployments may block redirect/callback unless owner first logs into Vercel; test without changing protection globally.
+C. Ensure Auth outgoing email is deliverable to the existing verified owner address (Supabase default sender restrictions may require authorized org membership or custom SMTP); no paid option introduced or SMTP settings changed.
+D. With a legitimate new owner Supabase Auth JWT, call `POST /functions/v1/matrix-devbeta-public-attest/derive-public`, inspect response, cryptographically revalidate derived public PEM and SHA256, then **independently** enroll the exact PEM on Dell via an owner-native privileged trust path. No private key exported.
+E. Complete independent release review commit, signed source-bound V4 payload, fixed-purpose Dell activation/rollback runner and bounded canary. The service `matrix-v4-owner-approval` v2 remains separately **disabled**; this public-key portal does not enable it or sign V4 releases.
+
+## Status labels
+
+`VERIFIED_OWNER_REGISTRY / PRIVATE_VERCEL_PORTAL_READY / DEV_BETA_PUBLIC_ATTEST_API_DEPLOYED_NOT_EXERCISED / AUTH_TEMPLATE_NOT_AUDITED / AUTH_REDIRECT_NOT_ALLOWLISTED / ZERO_REAL_OTP / ZERO_RELEASE_SIGNATURE / DELL_V3_PRESERVED`.
+
+Open Source / Reuse / Cost Gate: Existing Supabase GoTrue Auth (open source), `node:crypto`, Vercel hobby-hosted static HTML/JS, existing GitHub CI; no new paid subscription, key generation, third-party service, or credential transfer. If Vercel preview restrictions prevent a safe owner OTP callback, do not bypass SSO; prefer a dedicated owner-controlled, authenticated domain.
