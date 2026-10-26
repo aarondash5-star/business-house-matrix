@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "policy_id": "dev-beta-owner-release-trust-v1",
+  "key_identifier": "DEV_BETA_ED25519_PRIVATE_PKCS8_B64",
+  "key_type": "Ed25519",
+  "key_storage": "supabase_edge_secret_owner_controlled",
+  "owner_authorization": "owner_explicitly_approved_2026-10-26",
+  "private_key_must_remain_server_side": true,
+  "public_key_pem": null,
+  "public_key_sha256": null,
+  "host_public_key_trust_installed": false,
+  "signature_test_passed": false,
+  "signing_endpoint_verified": false,
+  "otp_or_link_owner_verified": false,
+  "host_activation_certified": false,
+  "status": "PENDING_KEYPAIR_ATTESTATION",
+  "enabled": false,
+  "issue_signatures": false,
+  "allow_host_activation": false,
+  "hosts": [
+    {
+      "host_id": "dell-linux",
+      "allowed_project": "matrix_dev_manager",
+      "scope": "dev_internal_release_only",
+      "release": "matrix_v4_controller_v14",
+      "production": false,
+      "requires_independent_rollback": true,
+      "authenticated_approval_required": true
+    },
+    {
+      "host_id": "mac-linux",
+      "allowed_project": "matrix_dev_manager",
+      "scope": "dev_internal_release_only",
+      "release": "separately_manifested_after_host_canary",
+      "production": false,
+      "requires_independent_rollback": true,
+      "authenticated_approval_required": true
+    }
+  ],
+  "forbidden_projects": [
+    "pine_engineer_beta",
+    "staycore",
+    "andaz",
+    "moksha_customer_data",
+    "ashwakaal_support_channels"
+  ],
+  "expires_after_minutes": 5,
+  "replay_policy": "one_time_nonce_plus_host_specific_journal",
+  "notes": "Do not infer shared host privileges from a shared owner key. Do not import a screenshot-transcribed public key or expose Edge function secrets. This policy is disabled until independently verified public/private key match and reviewed activation/rollback gates."
+}
