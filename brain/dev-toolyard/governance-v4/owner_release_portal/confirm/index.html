@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src https://saczglesalubroyaucqe.supabase.co; form-action 'none'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; upgrade-insecure-requests">
+<title>Dev Matrix — owner key verification</title>
+<style>
+:root{color-scheme:dark;font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;background:#0e141c;color:#f4f6fa}
+body{margin:0}main{max-width:650px;padding:24px 20px 60px;margin:auto}
+h1{font-size:clamp(25px,5vw,34px);margin:12px 0}h2{font-size:19px}
+p{color:#b7c3d5}.eyebrow{font-size:12px;font-weight:700;letter-spacing:0.12em;color:#98bdff}
+.card{border:1px solid #334257;border-radius:15px;background:#17202d;padding:20px;margin:20px 0}
+label{display:block;font-weight:600;margin:16px 0 7px;font-size:14px}
+input{background:#0d1620;color:#f3f7ff;border:1px solid #60708a;border-radius:9px;padding:13px;font:inherit;width:100%;box-sizing:border-box}
+button{font:600 15px system-ui;border:0;border-radius:9px;padding:13px 17px;color:#0f1b29;background:#9ac2ff;cursor:pointer;min-height:44px}
+button.secondary{background:#28384e;color:#f2f5fa;border:1px solid #55708e}
+button:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.note{background:#252e3e;border-left:3px solid #e7bd77;padding:12px 14px;border-radius:8px}
+pre{white-space:pre-wrap;word-break:break-all;font:13px/1.5 ui-monospace,monospace;background:#0a111b;padding:13px;border-radius:8px}
+small{color:#aab8cf}.state{border-radius:9px;padding:10px 12px;background:#25374d;color:#e2eeff;margin-top:16px}
+[hidden]{display:none!important}
+</style><script defer src="./app.js"></script></head>
+<body><main>
+<div class="eyebrow">BUSINESS HOUSE MATRIX • DELL RELEASE</div>
+<h1>Owner identity & public-key verification</h1>
+<p>Verify the existing Supabase email account and inspect the public Ed25519 key held by the independent release signer.</p>
+<div class="note"><strong>Safety boundary:</strong> This page cannot sign a release, authorize root actions, or deploy Dell V4. Never enter an administrator password or SSH private key here. Do not share the emailed code with ChatGPT.</div>
+<section class="card"><h2>1. Email authentication</h2>
+<p>The existing Supabase email template determines whether you receive a link, a code, or both. This page does not change that shared template.</p>
+<label for="email">Verified owner email</label><input type="email" id="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
+<div class="actions"><button id="send" type="button">Send Supabase sign-in email</button></div>
+<label for="code">Enter the emailed code (if supplied)</label><input id="code" inputmode="numeric" autocomplete="one-time-code" placeholder="Email code" pattern="[0-9]{6,8}" maxlength="8">
+<div class="actions"><button type="button" id="verify">Verify code</button></div><div class="actions"><button type="button" id="confirmLink" class="secondary" hidden>Confirm email link</button></div>
+<small>For a link, open it on this approved HTTPS origin. The page clears authentication fragments from the address bar immediately.</small></section>
+<section class="card"><h2>2. Review live authentication</h2>
+<p id="identityStatus">Owner session has not been verified yet.</p>
+<div id="reviewPanel" hidden>
+<p>Review the sign-in flow and mobile layout here. This is a UI review only—not a controller release approval.</p>
+<label for="reviewNotes">Feedback (optional)</label>
+<textarea id="reviewNotes" maxlength="500" rows="3" placeholder="Describe any changes needed" style="width:100%;box-sizing:border-box;border-radius:9px;background:#0d1620;color:#f3f7ff;border:1px solid #60708a;padding:12px;font:inherit"></textarea>
+<div class="actions"><button type="button" id="uiAccept">UI acceptable</button>
+<button type="button" id="uiNeeds" class="secondary">Needs changes</button></div>
+</div></section>
+<section class="card"><h2>3. DEV_BETA public-key proof</h2>
+<p>After signing in, request a public-only attestation. The private key never leaves Supabase.</p>
+<button id="derive" type="button" disabled>Verify DEV_BETA keypair</button>
+<div id="result" hidden><p><strong>Fingerprint (SHA-256 of PEM)</strong></p><pre id="fingerprint"></pre>
+<p><strong>Public PEM</strong></p><pre id="pem"></pre><div class="actions"><button class="secondary" id="copy" type="button">Copy public PEM + fingerprint</button></div></div></section>
+<div id="status" class="state" role="status" aria-live="polite">Not authenticated. No signing or deployment performed.</div>
+</main></body></html>
