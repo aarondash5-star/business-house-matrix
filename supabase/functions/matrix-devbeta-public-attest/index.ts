@@ -49,7 +49,7 @@ function deriveOnlyPublic() {
 }
 Deno.serve(async req=>{
  try{
-  const route=new URL(req.url).pathname.split("/").pop();
+  const route=new URL(req.url).pathname.split("/").pop()??"";
   const origin=req.headers.get("origin")??"";
   // Explicit fixed origin for this public-proof portal. No generic browser origins,
   // dynamic caller-supplied redirects, or release-signing capability.
