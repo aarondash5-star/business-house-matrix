@@ -13,7 +13,7 @@
   "signing_endpoint_verified": false,
   "otp_or_link_owner_verified": false,
   "host_activation_certified": false,
-  "status": "PENDING_KEYPAIR_ATTESTATION",
+  "status": "SOURCE_AND_DISABLED_ATTESTATION_DEPLOYED_KEYPAIR_PROOF_BLOCKED",
   "enabled": false,
   "issue_signatures": false,
   "allow_host_activation": false,
@@ -46,5 +46,29 @@
   ],
   "expires_after_minutes": 5,
   "replay_policy": "one_time_nonce_plus_host_specific_journal",
-  "notes": "Do not infer shared host privileges from a shared owner key. Do not import a screenshot-transcribed public key or expose Edge function secrets. This policy is disabled until independently verified public/private key match and reviewed activation/rollback gates."
+  "notes": "Do not infer shared host privileges from a shared owner key. Do not import a screenshot-transcribed public key or expose Edge function secrets. This policy is disabled until independently verified public/private key match and reviewed activation/rollback gates.",
+  "public_evidence_image": {
+    "file_kind": "user_supplied_screenshot_only",
+    "visually_transcribed_fingerprint": "1eee3d266eb1d362b9c7f36d0301b831a8a527828682505ff286d2738606eec7",
+    "visually_transcribed_spki_candidate": "MCowBQYDK2VwAyEAqKeblk/QLUfKDouPOhJSNV1nnH06lYY8gsP8JYDMTE=",
+    "candidate_base64_characters": 59,
+    "expected_ed25519_spki_base64_characters": 60,
+    "key_bytes_confirmed": false,
+    "fingerprint_confirmed": false,
+    "acceptable_for_trust_pinning": false,
+    "note": "Source image is blurred; do not repair missing characters by guessing. The screenshot-derived candidate failed exact fingerprint validation. Obtain original copied PEM/fingerprint through trusted owner channel or independently derive matching public evidence without exporting private secret."
+  },
+  "attestation_service": {
+    "provider": "Supabase Edge Functions",
+    "project_ref": "saczglesalubroyaucqe",
+    "slug": "matrix-devbeta-attest",
+    "version": 1,
+    "live_source_checked": true,
+    "requires_valid_jwt": true,
+    "owner_uid_enrolled": false,
+    "public_key_enrolled": false,
+    "attestation_enabled": false,
+    "release_signing_capability": false,
+    "host_activation_capability": false
+  }
 }
