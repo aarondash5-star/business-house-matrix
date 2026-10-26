@@ -43,13 +43,18 @@ def render_candidate(original_gate: bytes, original_adapter: bytes,
     ):
         demand(payload, expected, reason)
     if not isinstance(pinned_ledger, dict) or set(pinned_ledger) != {
-        "version", "production_live", "external_paths_certified", "bindings"
+        "version", "production_live", "external_paths_certified", "bindings",
+        "actions_bound", "independent_human_review", "review"
     }:
         raise ReleaseDenied("invalid_existing_ledger")
     old = pinned_ledger["bindings"]
     if (pinned_ledger["version"] != V13 or
         pinned_ledger["production_live"] is not False or
         pinned_ledger["external_paths_certified"] is not False or
+        pinned_ledger["independent_human_review"] is not False or
+        pinned_ledger["review"] != "technical_hash_and_syntax_only" or
+        type(pinned_ledger["actions_bound"]) is not int or
+        pinned_ledger["actions_bound"] != 11 or
         not isinstance(old, dict) or
         old.get("yard_auto_adapter_v1.py") != OLD_ADAPTER_SHA):
         raise ReleaseDenied("untrusted_existing_policy")
@@ -78,10 +83,8 @@ def render_candidate(original_gate: bytes, original_adapter: bytes,
     result = dict(old)
     result["yard_auto_adapter_v1.py"] = V4_ADAPTER_SHA
     result["adapter_guard_v4.py"] = V4_GUARD_SHA
-    policy = {"version":V14, "production_live":False,
-              "external_paths_certified":False,"bindings":result}
-    old_policy = {"version":V13,"production_live":False,
-                  "external_paths_certified":False,"bindings":dict(old)}
+    policy = {**pinned_ledger, "version":V14, "bindings":result}
+    old_policy = {**pinned_ledger, "bindings":dict(old)}
     return {
         "review_only":True,
         "authorization":"owner_signed_release_action_missing",
