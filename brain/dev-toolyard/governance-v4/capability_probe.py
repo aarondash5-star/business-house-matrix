@@ -36,7 +36,8 @@ def probe(name,which=shutil.which):
     path=which(name)
     if not path:return result | {"reason":"binary_missing"}
     p=Path(path)
-    if p.is_symlink(): return result | {"reason":"binary_symlink_requires_review"}
+    if p.is_symlink() and not any(str(p).startswith(root) for root in ROOTS):
+        return result | {"reason":"binary_symlink_requires_review"}
     try:
         real=p.resolve(strict=True)
         if not any(str(real).startswith(root) for root in ROOTS) or not real.is_file() or real.stat().st_size>MAX_BINARY:
