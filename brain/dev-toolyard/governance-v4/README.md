@@ -58,3 +58,15 @@ Golden Rule 0: reuse Python stdlib, SQLite, Playwright, Bubblewrap, Manager V3 a
     python3 -m unittest discover -s brain/dev-toolyard/governance-v4 -p 'test_*v4.py' -q
     python3 brain/dev-toolyard/governance-v4/adapter_guard.py /var/lib/generic-linux-automator-exec/matrix-controller/yard_tool_adapters_v1.json
     python3 brain/dev-toolyard/governance-v4/capability_probe.py python3 git node
+
+## 26 October 2026 — Stage 2 isolated live canary certification (newer checkpoint)
+
+**Status:** ONE WORKFLOW VERIFIED in a **separate rootless controller**; this **does NOT promote the protected shared controller or activate arbitrary Dev Matrix jobs**.
+
+- One authenticated Dell development-lane task `v4-stage2-canary-20261026` executed the sole pre-enrolled V4 adapter `python3 --version` probe, terminal SSH receipt `f0243456-8c15-4363-b1c2-af3cf1d8e118`, exit code 0.
+- Separate SQLite DB independently verified one `completed` row, `attempts=1`; second invocation returned `reused:true` without duplicate probe execution, receipt `7ca96caa-da89-4de3-8d5e-bc5ed1ffd52b`.
+- New isolated canary controller 14/14 negative tests PASS; existing shared V1.3 guard 9/9 PASS; stage 1 V4+old adapter baseline 63/63 PASS. No shared controller, adapter, registry or SSH gateway change. Original Driver build remains queued/attempts=0.
+- Source code pinned `f19d0cb9bf921cbf2aa9a936e92d9c98af973aab`. Documentation and full proof: [V4 Stage 2 Single Workflow Certificate](../../docs/receipts/V4_STAGE2_SINGLE_WORKFLOW_CERT_20261026.md).
+- **Remaining NO-GO:** protected shared controller V4 promotion, long-running separately signed Dev Brain ingress, multi-task routing, full Lane Driver activation, Mac parity and production publishing. An idle SSH lane itself does not establish such rights.
+
+This addendum supersedes only the older statement that *no V4 Stage 2 single-workflow canary* had been executed; it does not supersede the security denial on **shared live controller promotion**.
