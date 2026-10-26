@@ -22,11 +22,11 @@ PROJECT = "matrix_dev_manager"
 SERVICE = "bhm-autonomy-controller.service"
 EXPECTED_NAMES = {
     "controller.py": "e6834bb2f7765ee0aa26d215a566f70276e4f8c2c87c8730fc781c27dc778836",
-    "yard_auto_adapter_v1.py": "16f54c4ae1d97699786b649e84c94df2abb673b0682a20045d55399399217b79",
+    "yard_auto_adapter_v1.py": "adad20add5e247c515c48d8e2d0c61f2b91e2238d489ed8b4c2e674c845d1abe",
     "yard_execution_guard_v13.py": "7a989c6b484a13a4fdf349d698a6a1bf9e8d9b1afa9684508606bc08c036283e",
-    "yard_exec_bindings_v13.json": "20f68602194af481d48dfaf6bcc406d383f0818f7bd082cf5d92227b24aac64e",
+    "yard_exec_bindings_v13.json": "9c084832984c1471a22079cc606daccd0a49b78c942ddfee0800a800176c43a9",
 }
-# Exact values above are the original PR #33 V1.4 migration candidate pins.
+# Exact values above are the reviewed rebased V1.4 candidate pins.
 # A different live adapter or ledger is NOT automatically accepted. It needs
 # a new candidate review, independently tested source and a new signed manifest.
 TRUST = Path("/etc/matrix-internal-release/allowed_signers")
