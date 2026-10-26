@@ -23,6 +23,7 @@ REVIEWED_V4_GUARD_SHA = "90f0a62cc6cfaf1458f0684363ffb9288c900ba0ade707908da0877
 V13 = "yard-execution-enforcement-v1.3.0-20261026"
 V14 = "yard-execution-enforcement-v1.4.0-20261027"
 REBASED_ADAPTER_VERSION = "yard-auto-adapter-v1.2.2-v4-bounded-20261027"
+REBASED_ADAPTER_SHA = "2ea43e8953c59726f510b6db9a8d0127a64efd7acb0fb824db5c70cb130a8837"
 
 class RebaseDenied(ValueError):
     pass
@@ -138,6 +139,8 @@ def render_guard_and_ledger(original_guard: bytes, ledger_bytes: bytes,
         raise RebaseDenied("live_ledger_digest_drift")
     if sha(v4_guard)!=REVIEWED_V4_GUARD_SHA:
         raise RebaseDenied("reviewed_v4_guard_digest_drift")
+    if sha(rebased_adapter)!=REBASED_ADAPTER_SHA:
+        raise RebaseDenied("rebased_v14_adapter_digest_drift")
     try:
         ledger=json.loads(ledger_bytes)
     except (ValueError,UnicodeError) as exc:
