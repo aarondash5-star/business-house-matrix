@@ -102,6 +102,7 @@ def evaluate(root: Path, manifest: dict) -> dict:
             return blocked("intake","brief_source_hash_drift")
     except (OSError,GateDenied):
         return blocked("intake","brief_unavailable")
+    brief_text=path.read_text(encoding="utf-8",errors="replace")
     reqs=manifest.get("requirements")
     if not isinstance(reqs,list) or not (1<=len(reqs)<=200):
         return blocked("intake","requirements_matrix_missing")
@@ -116,6 +117,8 @@ def evaluate(root: Path, manifest: dict) -> dict:
             return blocked("intake","requirement_identifier_invalid")
         if rid in ids or r["nonnegotiable"] is not True or not isinstance(r["source_quote"],str) or len(r["source_quote"].strip())<8:
             return blocked("intake","weakened_or_duplicate_requirement")
+        if r["source_quote"].strip() not in brief_text:
+            return blocked("intake","critical_quote_not_in_original_brief")
         if not isinstance(r["acceptance"],str) or len(r["acceptance"].strip())<15:
             return blocked("intake","acceptance_not_testable")
         if not isinstance(r["evidence_type"],str) or r["evidence_type"] not in ("functional","visual","security","performance","negative","source"):
