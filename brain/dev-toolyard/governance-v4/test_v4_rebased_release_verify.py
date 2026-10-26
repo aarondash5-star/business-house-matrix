@@ -53,9 +53,9 @@ class TestRebasedReleaseVerification(unittest.TestCase):
         self.assertTrue(verify_detached(b,self.sign(b),self.public))
 
     def test_only_exact_owner_public_key_can_be_installed_as_trust(self):
-        expected=(b"-----BEGIN PUBLIC KEY-----\\n"
-            b"MCowBQYDK2VwAyEAqKeblk/QLUfkDouPOhJSNV1InnH06lYY8esP8JYDMTE=\\n"
-            b"-----END PUBLIC KEY-----\\n")
+        expected=(b"-----BEGIN PUBLIC KEY-----\n"
+            b"MCowBQYDK2VwAyEAqKeblk/QLUfkDouPOhJSNV1InnH06lYY8esP8JYDMTE=\n"
+            b"-----END PUBLIC KEY-----\n")
         import hashlib
         self.assertEqual(hashlib.sha256(expected).hexdigest(),OWNER_PEM_SHA256)
         p=MagicMock()
