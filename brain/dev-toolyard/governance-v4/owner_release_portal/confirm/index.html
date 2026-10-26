@@ -31,7 +31,16 @@ small{color:#aab8cf}.state{border-radius:9px;padding:10px 12px;background:#25374
 <label for="code">Enter the emailed code (if supplied)</label><input id="code" inputmode="numeric" autocomplete="one-time-code" placeholder="Email code" pattern="[0-9]{6,8}" maxlength="8">
 <div class="actions"><button type="button" id="verify">Verify code</button></div><div class="actions"><button type="button" id="confirmLink" class="secondary" hidden>Confirm email link</button></div>
 <small>For a link, open it on this approved HTTPS origin. The page clears authentication fragments from the address bar immediately.</small></section>
-<section class="card"><h2>2. DEV_BETA public-key proof</h2>
+<section class="card"><h2>2. Review live authentication</h2>
+<p id="identityStatus">Owner session has not been verified yet.</p>
+<div id="reviewPanel" hidden>
+<p>Review the sign-in flow and mobile layout here. This is a UI review only—not a controller release approval.</p>
+<label for="reviewNotes">Feedback (optional)</label>
+<textarea id="reviewNotes" maxlength="500" rows="3" placeholder="Describe any changes needed" style="width:100%;box-sizing:border-box;border-radius:9px;background:#0d1620;color:#f3f7ff;border:1px solid #60708a;padding:12px;font:inherit"></textarea>
+<div class="actions"><button type="button" id="uiAccept">UI acceptable</button>
+<button type="button" id="uiNeeds" class="secondary">Needs changes</button></div>
+</div></section>
+<section class="card"><h2>3. DEV_BETA public-key proof</h2>
 <p>After signing in, request a public-only attestation. The private key never leaves Supabase.</p>
 <button id="derive" type="button" disabled>Verify DEV_BETA keypair</button>
 <div id="result" hidden><p><strong>Fingerprint (SHA-256 of PEM)</strong></p><pre id="fingerprint"></pre>
