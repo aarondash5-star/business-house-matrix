@@ -60,7 +60,8 @@ class BrokerTests(unittest.TestCase):
         self.doc.chmod(0o600)
 
     def assess(self):
-        return b.assess(self.paths,signature_verifier=lambda d,s,t: True)
+        with mock.patch.object(b, "verify_signature", return_value=True):
+            return b.assess(self.paths)
 
     def test_candidate_has_exact_21_source_pins(self):
         r=b.source_review(self.live,self.src)
@@ -150,7 +151,8 @@ class BrokerTests(unittest.TestCase):
         wrong=b.BrokerPaths(self.live.parent/"andaz-controller",self.src,
                             self.doc,self.sig,self.signers,self.journal)
         with self.assertRaises(b.BrokerDenied):
-            b.assess(wrong,signature_verifier=lambda d,s,t:True)
+            with mock.patch.object(b, "verify_signature", return_value=True):
+                b.assess(wrong)
 
     def test_private_journal_requires_no_replay(self):
         self.assertTrue(b.ensure_replay_free(self.paths,self.approval["release_id"]))
@@ -160,7 +162,7 @@ class BrokerTests(unittest.TestCase):
 
     def test_disabled_cli_command_scope(self):
         with self.assertRaisesRegex(b.BrokerDenied,"invalid_fixed_action"):
-            b.assess(self.paths,mode="arbitrary_exec",signature_verifier=lambda d,s,t:True)
+            b.assess(self.paths,mode="arbitrary_exec")
 
     def test_status_never_issues_authorization(self):
         s=b.status(self.live,self.src)
