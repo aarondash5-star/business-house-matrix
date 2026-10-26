@@ -29,6 +29,7 @@ KEY_ID = "DEV_BETA"
 # review freezes an exact 40-character SHA in a root-owned release policy.
 SIGNATURE_ALGORITHM = "Ed25519"
 OWNER_PEM_FILE = "/etc/matrix-internal-release/dev_beta_owner_public.pem"
+OWNER_PEM_SHA256 = "1eee3d266eb1d362b9c7f36d0301b831a8a527828682505ff286d2738606eec1"
 SCOPE_KEYS = frozenset((
     "schema","key_id","algorithm","host","project","release","source_commit",
     "old_pins","new_pins","release_id","issued_utc","expires_utc",
@@ -72,6 +73,8 @@ def owner_trust(pem:Path)->bytes:
     data=read_private(p,1024)
     if not data.startswith(b"-----BEGIN PUBLIC KEY-----\n") or not data.endswith(b"-----END PUBLIC KEY-----\n"):
         raise RebasedReleaseDenied("trust_not_spki_pem")
+    if sha256(data).hexdigest()!=OWNER_PEM_SHA256:
+        raise RebasedReleaseDenied("owner_public_fingerprint_mismatch")
     return data
 
 def parse_payload(encoded:bytes, reviewed_commit:str|None, now:datetime|None=None)->dict:
