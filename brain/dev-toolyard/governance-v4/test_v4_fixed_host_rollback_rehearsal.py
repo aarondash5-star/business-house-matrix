@@ -45,7 +45,7 @@ class TestFixedHostRehearsal(unittest.TestCase):
                     sub=Path(d);t=sub/"live";t.mkdir();s=sub/"stage";s.mkdir();b=sub/"backup";b.mkdir()
                     for name,data in self.orig.items(): (t/name).write_bytes(data);(t/name).chmod(0o600)
                     for name,data in self.next.items(): (s/name).write_bytes(data);(s/name).chmod(0o600)
-                    r=rehearse(t,s,b,self.old_pins,self.new_pins,fail_after=fail)
+                    r=rehearse(t,s,b,self.old_pins,self.new_pins,fault_after=fail)
                     self.assertEqual(r.status,"TEMP_FILES_RESTORED")
                     self.assertTrue(r.restored_verified)
                     self.assertEqual({p.name for p in t.iterdir()},set(ORIGINAL))
