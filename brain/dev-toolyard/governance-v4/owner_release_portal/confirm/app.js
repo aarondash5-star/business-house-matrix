@@ -15,7 +15,27 @@ const cleanFragment=()=>{
  return access&&/^[A-Za-z0-9._-]{30,8000}$/.test(access)?access:null;
 };
 function status(message){el("status").textContent=message;}
-function unlock(token){jwt=token;el("derive").disabled=false;status("Authenticated with Supabase. Public-key verification is available. No release approved.");}
+async function unlock(token){
+ // Never trust a token or a decoded JWT claim on the client by itself.
+ // Verify the existing owner identity against the private registry on Supabase.
+ jwt="";el("derive").disabled=true;el("reviewPanel").hidden=true;
+ status("Checking the authenticated owner's identity against Supabase...");
+ try{
+  const r=await api("/functions/v1/matrix-devbeta-public-attest/owner-session",{
+   host_id:"dell-linux",project:"matrix_dev_manager"
+  },token);
+  if(!r.ok||r.json.state!=="VERIFIED_EXISTING_OWNER"){
+   el("identityStatus").textContent="The session was not verified as the enrolled owner.";
+   status("Owner authentication not verified. Release signing remains disabled.");return;
+  }
+  jwt=token;el("derive").disabled=false;el("reviewPanel").hidden=false;
+  el("identityStatus").textContent="Verified existing owner. You can review the authentication UI here.";
+  status("Supabase owner authentication confirmed. No release signed or deployed.");
+ }catch{
+  el("identityStatus").textContent="Owner session verification unavailable.";
+  status("Authentication check failed; no release action is possible.");
+ }
+}
 async function api(path,body,token=""){
  const headers={"content-type":"application/json","apikey":PUBLISHABLE};
  if(token)headers.authorization="Bearer "+token;
@@ -91,5 +111,23 @@ el("confirmLink").addEventListener("click",async()=>{
   else status("Supabase did not verify this email link. Request another link/code.");
  }catch{pendingHash="";el("confirmLink").hidden=true;status("Link verification unavailable. Request another code.");}
 });
+async function submitUiReview(decision){
+ if(!jwt)return;
+ if(!["ui_acceptable","needs_changes"].includes(decision))return;
+ el("uiAccept").disabled=true;el("uiNeeds").disabled=true;
+ status("Saving UI feedback to the owner-only review register...");
+ try{
+  const r=await api("/functions/v1/matrix-devbeta-public-attest/review",{
+    host_id:"dell-linux",project:"matrix_dev_manager",decision,
+    notes:el("reviewNotes").value.trim().slice(0,500)
+  },jwt);
+  if(r.ok&&r.json.state==="UI_REVIEW_RECORDED"){
+   status("UI review recorded. This does not authorize signing or Dell deployment.");
+  }else status("UI review could not be saved. Authentication and release remain separate.");
+ }catch{status("UI review submission unavailable.")}
+ finally{el("uiAccept").disabled=false;el("uiNeeds").disabled=false;}
+}
+el("uiAccept").addEventListener("click",()=>submitUiReview("ui_acceptable"));
+el("uiNeeds").addEventListener("click",()=>submitUiReview("needs_changes"));
 const linkToken=cleanFragment();
 if(linkToken)unlock(linkToken);
