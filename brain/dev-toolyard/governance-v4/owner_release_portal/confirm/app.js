@@ -1,0 +1,75 @@
+"use strict";
+// This PUBLIC Supabase publishable key is designed for browser clients.
+// No owner UUID, private key, service_role, admin password or OTP is embedded.
+const AUTH="https://saczglesalubroyaucqe.supabase.co";
+const PUBLISHABLE="sb_publishable_QWn0aEO4-fHulmZaUacbIQ_1ejYsDXY";
+const el=id=>document.getElementById(id);
+let jwt="",verifiedPublic=null;
+const cleanFragment=()=>{
+ const fragment=window.location.hash.replace(/^#/,"");
+ if(!fragment)return null;
+ // Strip auth credentials from navigation history immediately; never log them.
+ history.replaceState(null,"",window.location.pathname);
+ const parsed=new URLSearchParams(fragment);
+ const access=parsed.get("access_token");
+ return access&&/^[A-Za-z0-9._-]{30,8000}$/.test(access)?access:null;
+};
+function status(message){el("status").textContent=message;}
+function unlock(token){jwt=token;el("derive").disabled=false;status("Authenticated with Supabase. Public-key verification is available. No release approved.");}
+async function api(path,body,token=""){
+ const headers={"content-type":"application/json","apikey":PUBLISHABLE};
+ if(token)headers.authorization="Bearer "+token;
+ const response=await fetch(AUTH+path,{method:"POST",headers,body:JSON.stringify(body),
+  cache:"no-store",credentials:"omit",referrerPolicy:"no-referrer"});
+ const json=await response.json().catch(()=>({}));
+ return {ok:response.ok,status:response.status,json};
+}
+el("send").addEventListener("click",async()=>{
+ const email=el("email").value.trim();
+ if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){status("Enter your verified email.");return;}
+ el("send").disabled=true;status("Requesting an existing-account email from Supabase...");
+ try{
+  const redirect=window.location.origin+window.location.pathname;
+  const r=await api("/auth/v1/otp?redirect_to="+encodeURIComponent(redirect),{
+    email,create_user:false
+  });
+  status(r.ok?"Check your inbox. Use the code or sign-in link supplied by Supabase.":`Supabase email request was not accepted (HTTP ${r.status}). Check email configuration or delivery limits.`);
+ }catch{status("Email request could not be completed.")}
+ finally{el("send").disabled=false;}
+});
+el("verify").addEventListener("click",async()=>{
+ const email=el("email").value.trim(),code=el("code").value.trim();
+ if(!/^[0-9]{6,8}$/.test(code)||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){status("Enter the owner email and numeric code.");return;}
+ el("verify").disabled=true;status("Verifying the code with Supabase...");
+ try{
+  const r=await api("/auth/v1/verify",{type:"email",email,token:code});
+  if(r.ok&&typeof r.json.access_token==="string")unlock(r.json.access_token);
+  else status("The email code was not verified by Supabase.");
+ }catch{status("Code verification was unavailable.")}
+ finally{el("verify").disabled=false;el("code").value="";}
+});
+el("derive").addEventListener("click",async()=>{
+ if(!jwt)return;
+ el("derive").disabled=true;status("Checking the DEV_BETA public key through the owner-restricted attestation service...");
+ try{
+  const r=await api("/functions/v1/matrix-devbeta-public-attest/derive-public",{
+   host_id:"dell-linux",project:"matrix_dev_manager"
+  },jwt);
+  if(!r.ok||r.json.state!=="PUBLIC_KEY_DERIVED_AND_PROVED"){
+   status(`Attestation not certified (HTTP ${r.status}). Release signing remains disabled.`);return;
+  }
+  verifiedPublic={public_pem:r.json.public_pem,fingerprint_sha256:r.json.fingerprint_sha256};
+  el("pem").textContent=verifiedPublic.public_pem;
+  el("fingerprint").textContent=verifiedPublic.fingerprint_sha256;
+  el("result").hidden=false;
+  status("DEV_BETA public-key possession verified by Supabase. No release signed. Dell remains unchanged.");
+ }catch{status("Could not verify keypair. Check approved origin and owner session.")}
+ finally{el("derive").disabled=!jwt;}
+});
+el("copy").addEventListener("click",async()=>{
+ if(!verifiedPublic)return;
+ await navigator.clipboard.writeText(verifiedPublic.public_pem+"\nSHA256(PEM)="+verifiedPublic.fingerprint_sha256);
+ status("Only public-key material copied. No private key was accessed by the browser.");
+});
+const linkToken=cleanFragment();
+if(linkToken)unlock(linkToken);
