@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer"><title>Matrix Owner Release • Email OTP Demo</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1018;--panel:#151d2a;--muted:#a0adbf;--border:#2f4055;--accent:#9ec5ff;--good:#90d5b2;--warn:#ffcc9c}
+*{box-sizing:border-box}body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:#f2f5fc;margin:0;line-height:1.5}
+main{max-width:750px;margin:auto;padding:24px 16px 76px}.eyebrow{font-weight:700;color:var(--accent);font-size:12px;letter-spacing:.14em}
+h1{font-size:clamp(26px,5vw,38px);letter-spacing:-.035em;margin:9px 0 10px}h2{font-size:19px;margin:0 0 12px}
+p{margin:0 0 12px;color:var(--muted)}.banner{border:1px solid #705d32;background:#302819;border-radius:10px;padding:12px 15px;color:#ffe2a3;margin:20px 0}
+.card{border:1px solid var(--border);background:var(--panel);border-radius:16px;padding:19px;margin:16px 0}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 20px}.tag{padding:4px 10px;border:1px solid var(--border);border-radius:99px;color:#bbcae0;font-size:12px}
+dl{display:grid;grid-template-columns:110px 1fr;gap:9px;font-size:14px;margin:0}dt{color:var(--muted)}dd{margin:0;overflow-wrap:anywhere}
+label{display:block;color:#dae5f5;font-weight:600;margin:0 0 8px;font-size:13px}
+input{width:100%;border:1px solid #627186;background:#0e1621;color:#f2f6ff;font-size:19px;letter-spacing:.19em;padding:12px;border-radius:10px}
+button{background:var(--accent);color:#102033;border:0;border-radius:10px;font:600 15px system-ui;padding:12px 17px;cursor:pointer;min-height:44px}
+button.secondary{background:#243449;color:#e3eeff;border:1px solid #50647e}button:disabled{cursor:not-allowed;opacity:.45}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.inbox{background:#0c1420;border:1px dashed #6b829c;border-radius:12px;padding:15px}
+.inbox .code{font-size:24px;font-weight:700;letter-spacing:.18em;color:#fff}.hidden{display:none}
+#status{margin-top:14px;min-height:38px;padding:9px 12px;background:#263344;border-radius:9px;color:#e4edfa}
+#status[data-tone="good"]{background:#1c4136;color:#d2f8e8}#status[data-tone="warn"]{background:#413225;color:#ffe6c3}
+ol{padding-left:22px;margin:0}li{padding:7px 0;color:#dbe6f6}li small{display:block;color:var(--muted)}
+a{color:var(--accent)}.foot{margin-top:14px;color:#8fa0ba;font-size:12px}
+@media(max-width:480px){dl{grid-template-columns:89px 1fr}.card{padding:15px}}
+</style></head>
+<body><main>
+<div class="eyebrow">BUSINESS HOUSE MATRIX • OWNER RELEASE</div>
+<h1>Email approval demo</h1>
+<p>Simulated single-email approval with both a one-time passcode and a clickable link. Verify using either method. The other method is invalidated.</p>
+<div class="banner" role="alert"><strong>DEMO ONLY.</strong> No real email is sent, no Supabase authentication occurs, no signature is issued, and no Dell or Mac controller can be changed by this page.</div>
+<div class="tags"><span class="tag">Mobile-first</span><span class="tag">One-time use</span><span class="tag">5-minute window</span><span class="tag">Fail closed</span></div>
+<section class="card" aria-label="Release details"><h2>1. Review release request</h2>
+<dl><dt>Host</dt><dd>dell-linux</dd><dt>Project</dt><dd>matrix_dev_manager</dd><dt>Candidate</dt><dd>V4 / controller V1.4</dd><dt>Scope</dt><dd>Development controller, no production publishing or spending</dd><dt>Signature</dt><dd>Required after authenticating owner</dd><dt>Rollback</dt><dd>Independent certification required</dd></dl>
+<div class="actions"><button id="send" type="button">Generate simulated email</button><button id="restart" class="secondary" type="button">Reset demo</button></div></section>
+<section id="email-panel" class="card hidden" aria-label="Simulated email"><h2>2. Simulated owner inbox</h2>
+<p>One mock email containing both options. In a real setup, Supabase Auth would send the message to the enrolled owner address.</p>
+<div class="inbox"><p style="font-weight:700;color:#e1eaf9">Subject: Confirm Dell Dev Matrix V4 release</p><p>One-time code:</p><div id="mock-code" class="code" aria-label="Demo code"></div>
+<div class="actions"><button id="link" class="secondary" type="button">Open simulated approval link</button></div></div>
+<p id="expiry" class="foot">Expires in 05:00</p></section>
+<section id="code-panel" class="card hidden"><h2>3. Verify with code</h2><label for="code">Six-digit code from the simulated email</label>
+<input id="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off" placeholder="000000" aria-describedby="code-help">
+<p id="code-help" class="foot">For this local demonstration, copy the code shown above.</p>
+<div class="actions"><button id="verify" type="button">Verify one-time code</button></div></section>
+<section class="card"><h2>4. Approval outcome</h2><div id="status" role="status" aria-live="polite" data-tone="warn">No verification attempted. No release approved.</div>
+<p class="foot">Successful demo authentication is not a cryptographic release signature. Host activation remains blocked until independent signing, trust, QA, and rollback gates are satisfied.</p></section>
+<section class="card"><h2>Pending production gates</h2><ol>
+<li>Enrol an exact, verified owner Supabase Auth user identity <small>Recipient email and verified owner UUID still need server-side binding</small></li>
+<li>Audit shared Supabase email template and sender <small>Both {{ .Token }} and {{ .ConfirmationURL }} in one email; confirm no other app breaks</small></li>
+<li>Build server-owned challenge + atomic one-time consumption <small>Enforce owner, immutable manifest, 5-minute expiry, rate limits and replay rejection</small></li>
+<li>Verify DEV_BETA public key and private-key possession <small>Photograph transcription is not an acceptable trust anchor</small></li>
+<li>Issue and verify independently signed source-bound release receipt <small>Email authentication is not itself a release signature</small></li>
+<li>Enrol per-host trust and QA the Dell activation + rollback operator <small>Mac is separately gated; original controller remains live</small></li>
+<li>Complete independent review, negative tests, single-lane canary and readback <small>Draft source PRs are not deployment receipts</small></li>
+</ol></section>
+<p class="foot">Technical basis: Supabase Auth email passwordless flow (\`signInWithOtp\`, \`verifyOtp\`) and Email Templates. This offline mock never contacts Supabase.</p>
+</main><script>
+"use strict";
+const byId=x=>document.getElementById(x);
+const state={code:null,expires:0,consumed:false,interval:null,attempts:0};
+function status(message,tone){byId("status").textContent=message;byId("status").dataset.tone=tone||"warn";}
+function visible(id,show){byId(id).classList.toggle("hidden",!show);}
+function clearClock(){if(state.interval!==null)clearInterval(state.interval);state.interval=null;}
+function expire(){if(!state.code||state.consumed)return;const remaining=Math.max(0,state.expires-Date.now());
+ byId("expiry").textContent="Expires in "+String(Math.floor(remaining/60000)).padStart(2,"0")+":"+String(Math.floor((remaining%60000)/1000)).padStart(2,"0");
+ if(remaining===0){clearClock();state.code=null;byId("verify").disabled=true;byId("link").disabled=true;status("Demo challenge expired. Start a new request.","warn");}}
+function makeCode(){const bytes=new Uint32Array(1);crypto.getRandomValues(bytes);return String(bytes[0]%1000000).padStart(6,"0");}
+function generate(){clearClock();state.code=makeCode();state.expires=Date.now()+300000;state.consumed=false;state.attempts=0;
+ byId("mock-code").textContent=state.code;byId("code").value="";byId("verify").disabled=false;byId("link").disabled=false;
+ visible("email-panel",true);visible("code-panel",true);status("Simulated email created. Choose a code or a link; both share one challenge.","warn");expire();state.interval=setInterval(expire,1000);}
+function finish(method){if(state.consumed){status("Already used. This release challenge cannot be replayed.","warn");return;}
+ if(!state.code){status("No active challenge. Generate a new simulated email.","warn");return;}
+ if(Date.now()>=state.expires){expire();return;}
+ state.consumed=true;clearClock();byId("verify").disabled=true;byId("link").disabled=true;byId("send").disabled=true;
+ status("Demo owner identity verified by "+method+". Challenge consumed once. RELEASE NOT SIGNED; DELL NOT DEPLOYED.","good");}
+byId("send").addEventListener("click",generate);
+byId("restart").addEventListener("click",()=>{clearClock();Object.assign(state,{code:null,expires:0,consumed:false,interval:null,attempts:0});
+ visible("email-panel",false);visible("code-panel",false);byId("send").disabled=false;status("Demo reset. No release approved.","warn");});
+byId("link").addEventListener("click",()=>finish("mock email link"));
+byId("verify").addEventListener("click",()=>{const value=byId("code").value.trim();state.attempts++;
+ if(state.attempts>5){state.code=null;clearClock();byId("verify").disabled=true;byId("link").disabled=true;status("Demo challenge blocked after excessive attempts.","warn");return;}
+ if(value!==state.code || !/^[0-9]{6}$/.test(value)){status("Incorrect demo code. Attempts: "+state.attempts+"/5","warn");return;}finish("mock one-time code");});
+</script></body></html>
