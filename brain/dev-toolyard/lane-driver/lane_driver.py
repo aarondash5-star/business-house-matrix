@@ -177,7 +177,6 @@ class Ledger:
             self.db.execute(
                 "UPDATE tasks SET state='reserved',lease=?,version=version+1,updated=? WHERE task_id=?",
                 (lease, int(time.time()), task_id))
-            )
             self._event(row, "dispatch_reserved", {"lease": lease, "stage": stage["id"]}, version + 1)
             return {"task_id": task_id, "lease": lease, "deduplicated": False}
         return self._tx(apply)
