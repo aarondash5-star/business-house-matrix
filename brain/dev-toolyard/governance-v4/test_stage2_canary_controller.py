@@ -5,6 +5,18 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+# The Stage 2 one-shot unit suite is designed for a pinned, isolated Dell
+# release workcell. Git source alone deliberately does not contain the
+# installed adapter/guard aliases or the private QA standard. Never silently
+# substitute a different executable adapter in repository-wide pytest.
+import importlib.util
+if importlib.util.find_spec("adapter_guard_v4") is None or importlib.util.find_spec("yard_auto_adapter_v1") is None:
+    try:
+        import pytest
+    except ImportError:
+        raise RuntimeError("Run these tests only with the pinned V4 installed-workcell fixtures")
+    pytest.skip("requires actual installed Stage 2 V4 workcell fixtures; separate verified Dell QA receipt", allow_module_level=True)
+
 import v4_stage2_canary_controller as c
 
 
