@@ -61,6 +61,15 @@ class OwnerPortalSecurityTests(unittest.TestCase):
         self.assertIn("This is a UI review only",self.html)
         self.assertNotIn("/matrix-v4-owner-approval",self.js)
 
+    def test_derived_public_matches_exact_owner_fingerprint_before_display(self):
+        self.assertIn("EXPECTED_OWNER_PUBLIC_SHA256",self.js)
+        self.assertIn("1eee3d266eb1d362b9c7f36d0301b831a8a527828682505ff286d2738606eec1",self.js)
+        self.assertIn('crypto.subtle.digest("SHA-256",bytes)',self.js)
+        self.assertIn('actual===EXPECTED_OWNER_PUBLIC_SHA256&&actual===claimedSha',self.js)
+        self.assertIn('KEY MISMATCH:',self.js)
+        self.assertIn('verifiedPublic=null;el("result").hidden=true;',self.js)
+        self.assertNotIn("release_authorized:true",self.js)
+
     def test_email_fixture_not_live_and_both_methods(self):
         for part in ("{{ .Token }}", "{{ .TokenHash }}", "{{ .RedirectTo }}",
                      "DO NOT DEPLOY", "click"):
