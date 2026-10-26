@@ -1,0 +1,26 @@
+name: Matrix V4 owner portal static checks
+on:
+  push:
+    branches: [feat/v4-rebased-signer-otp-runner-20261027]
+    paths:
+      - 'brain/dev-toolyard/governance-v4/owner_release_portal/**'
+      - 'brain/dev-toolyard/governance-v4/test_owner_release_portal.py'
+      - 'docs/fixtures/MATRIX_V4_OWNER_EMAIL_TEMPLATE_REVIEW_ONLY.html'
+      - '.github/workflows/matrix-v4-portal-check.yml'
+  pull_request:
+    paths:
+      - 'brain/dev-toolyard/governance-v4/owner_release_portal/**'
+      - 'brain/dev-toolyard/governance-v4/test_owner_release_portal.py'
+      - 'docs/fixtures/MATRIX_V4_OWNER_EMAIL_TEMPLATE_REVIEW_ONLY.html'
+      - '.github/workflows/matrix-v4-portal-check.yml'
+permissions: {contents: read}
+jobs:
+  syntax-and-safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse owner portal JavaScript
+        run: node --check brain/dev-toolyard/governance-v4/owner_release_portal/confirm/app.js
+      - name: Assert no authentication secrets or remote host actions
+        run: python3 -m unittest discover -s brain/dev-toolyard/governance-v4 -p test_owner_release_portal.py -v
