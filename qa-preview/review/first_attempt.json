@@ -1,0 +1,19 @@
+{
+  "pilot": "LANE1-MULTIFILE-CLEAN-20261028",
+  "generation_count": 1,
+  "retry_count": 0,
+  "at_utc": "2026-10-28T02:52:57.624109+00:00",
+  "file_sha256": {
+    "site/features/hud.js": "a6f0aae85ced274e98e2e87eb6e4fae9dde9263e2ead97353f8063f332db00d8",
+    "site/features/feedback.js": "758d50c17b8dce918a21ae76eb608fc02a9b787461268fc847a87cb1bc375990",
+    "site/features/theme.css": "84ab3ffa64ec6b564369d5b622c43e0ab358ea6556641e19262d114f32c0953e"
+  },
+  "syntax_passed": true,
+  "first_output_qa_passed": true,
+  "owner_approved": false,
+  "qa_passed": 36,
+  "qa_total": 36,
+  "brand_gate_passed": true,
+  "brand_gate_count": 8,
+  "brand_gate_total": 8
+}

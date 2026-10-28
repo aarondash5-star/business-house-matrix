@@ -1,2 +1,0 @@
-import {verify,json} from "../lib/session.js";
-export default function handler(req,res){if(req.method!=="GET")return json(res,405,{error:"method_not_allowed"});return verify(req)?json(res,200,{authenticated:true}):json(res,401,{authenticated:false});}

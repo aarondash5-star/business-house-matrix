@@ -1,0 +1,18 @@
+{
+  "version": "lane1-multifile-08065013-20261028",
+  "source_commit": "080650132517e1706edb7d7cbbf1da60207820b0",
+  "status": "owner_review_required",
+  "quality": {
+    "browser": "36/36",
+    "style": "8/8",
+    "first_generation": true,
+    "retries": 0
+  },
+  "constraints": {
+    "art_lanes_frozen": true,
+    "owner_approved": false,
+    "production_merge": false
+  },
+  "third_party_dependency": "three@0.186.1 via pinned jsDelivr CDN",
+  "about": "Synthetic QA mini-scene, not the full game or approved character art"
+}

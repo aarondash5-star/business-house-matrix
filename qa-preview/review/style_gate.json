@@ -1,0 +1,16 @@
+{
+  "gate": "ART_DIRECTION_STYLE_NONREGRESSION",
+  "pass": true,
+  "checks": {
+    "component_only_no_body_selector": true,
+    "component_only_no_global_button_selector": true,
+    "approved_font_preserved": true,
+    "reduced_motion": true,
+    "focus_visible": true,
+    "three_game_feedback_states": true,
+    "no_external_imports": true,
+    "no_layout_breakage": true
+  },
+  "passed": 8,
+  "total": 8
+}

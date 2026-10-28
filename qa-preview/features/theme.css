@@ -1,0 +1,100 @@
+.game {
+  --gold: #d4af37;
+  --wine: #5e1224;
+  --card-bg: #1a0a0f;
+  --text: #f5e6c8;
+  --ready: #d4af37;
+  --dodge: #4caf50;
+  --hit: #e53935;
+  --over: #8b0000;
+  font-family: Georgia, 'Times New Roman', serif;
+  color: var(--text);
+}
+
+.encounter-card {
+  background: var(--card-bg);
+  border: 2px solid var(--ready);
+  border-radius: 12px;
+  padding: 16px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.game[data-outcome="ready"] .encounter-card {
+  border-color: var(--ready);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+}
+
+.game[data-outcome="dodge"] .encounter-card {
+  border-color: var(--dodge);
+  box-shadow: 0 0 12px rgba(76, 175, 80, 0.3);
+}
+
+.game[data-outcome="hit"] .encounter-card {
+  border-color: var(--hit);
+  box-shadow: 0 0 12px rgba(229, 57, 53, 0.3);
+}
+
+.game[data-outcome="game-over"] .encounter-card {
+  border-color: var(--over);
+  box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+  opacity: 0.9;
+}
+
+#game-message {
+  margin-top: 12px;
+  font-size: 1rem;
+  line-height: 1.5;
+  min-height: 2.5em;
+  text-align: center;
+}
+
+#go-next {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 12px 24px;
+  min-height: 44px;
+  min-width: 44px;
+  background: var(--wine);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+#go-next:hover:not(:disabled) {
+  background: #7a1a30;
+  transform: translateY(-1px);
+}
+
+#go-next:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#go-next:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+@media (max-width: 390px) {
+  .encounter-card {
+    padding: 12px;
+  }
+  #go-next {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .encounter-card,
+  #go-next {
+    transition: none;
+  }
+  #go-next:hover:not(:disabled) {
+    transform: none;
+  }
+}
+

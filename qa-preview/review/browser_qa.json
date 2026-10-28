@@ -1,0 +1,173 @@
+{
+  "pilot": "LANE1-MULTIFILE-CLEAN-20261028",
+  "independent": true,
+  "checks": [
+    {
+      "name": "desktop_http_200",
+      "passed": true
+    },
+    {
+      "name": "desktop_loaded",
+      "passed": true
+    },
+    {
+      "name": "desktop_webgl",
+      "passed": true
+    },
+    {
+      "name": "desktop_approved_serif_font_preserved",
+      "passed": true,
+      "font": "Georgia, \"Times New Roman\", serif"
+    },
+    {
+      "name": "desktop_approved_background_preserved",
+      "passed": true
+    },
+    {
+      "name": "desktop_responsive",
+      "passed": true,
+      "bounds": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "name": "desktop_all_display_elements",
+      "passed": true
+    },
+    {
+      "name": "desktop_initial_exact_hud",
+      "passed": true
+    },
+    {
+      "name": "desktop_button_touch_target",
+      "passed": true
+    },
+    {
+      "name": "desktop_initial_status",
+      "passed": true
+    },
+    {
+      "name": "desktop_dodge_updates_engine",
+      "passed": true
+    },
+    {
+      "name": "desktop_dodge_visual_state",
+      "passed": true,
+      "initialBorder": "rgb(212, 175, 55)",
+      "dodgeBorder": "rgb(76, 175, 80)"
+    },
+    {
+      "name": "desktop_dodge_accessible_feedback",
+      "passed": true,
+      "message": "Nice dodge! You slipped past the hazard and kept the rhythm going."
+    },
+    {
+      "name": "desktop_hit_reduces_hearts",
+      "passed": true
+    },
+    {
+      "name": "desktop_hit_visual_feedback",
+      "passed": true,
+      "hitBorder": "rgb(229, 57, 53)"
+    },
+    {
+      "name": "desktop_hit_message",
+      "passed": true
+    },
+    {
+      "name": "desktop_terminal_state",
+      "passed": true
+    },
+    {
+      "name": "desktop_terminal_feedback",
+      "passed": true
+    },
+    {
+      "name": "desktop_reset_all_states",
+      "passed": true
+    },
+    {
+      "name": "desktop_nonblank_screenshot",
+      "passed": true,
+      "variance": 40.8,
+      "colorBins": 215
+    },
+    {
+      "name": "mobile_http_200",
+      "passed": true
+    },
+    {
+      "name": "mobile_loaded",
+      "passed": true
+    },
+    {
+      "name": "mobile_webgl",
+      "passed": true
+    },
+    {
+      "name": "mobile_approved_serif_font_preserved",
+      "passed": true,
+      "font": "Georgia, \"Times New Roman\", serif"
+    },
+    {
+      "name": "mobile_approved_background_preserved",
+      "passed": true
+    },
+    {
+      "name": "mobile_responsive",
+      "passed": true,
+      "bounds": {
+        "width": 390,
+        "scroll": 390
+      }
+    },
+    {
+      "name": "mobile_all_display_elements",
+      "passed": true
+    },
+    {
+      "name": "mobile_initial_exact_hud",
+      "passed": true
+    },
+    {
+      "name": "mobile_button_touch_target",
+      "passed": true
+    },
+    {
+      "name": "mobile_initial_status",
+      "passed": true
+    },
+    {
+      "name": "mobile_touch_dodge",
+      "passed": true
+    },
+    {
+      "name": "mobile_touch_hit",
+      "passed": true
+    },
+    {
+      "name": "mobile_touch_reset",
+      "passed": true
+    },
+    {
+      "name": "mobile_css_accessible",
+      "passed": true
+    },
+    {
+      "name": "mobile_nonblank_screenshot",
+      "passed": true,
+      "variance": 42.1,
+      "colorBins": 413
+    },
+    {
+      "name": "no_browser_errors",
+      "passed": true,
+      "errors": []
+    }
+  ],
+  "pass_count": 36,
+  "total": 36,
+  "passed": true,
+  "errors": []
+}
