@@ -1,0 +1,72 @@
+.sprint-feature-panel {
+  position: absolute;
+  top: 185px;
+  left: 16px;
+  width: 145px;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: linear-gradient(160deg, #2a0f18 0%, #1a0a10 100%);
+  border: 1px solid #b8860b;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55), inset 0 0 12px rgba(184, 134, 11, 0.12);
+  color: #f5e6c8;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 11px;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  pointer-events: none;
+  user-select: none;
+  z-index: 40;
+}
+.sprint-feature-panel .sprint-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffd700;
+  letter-spacing: 0.5px;
+}
+.sprint-feature-panel .sprint-tier {
+  font-size: 10px;
+  font-weight: 600;
+  color: #c9a0ff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.sprint-feature-panel .sprint-dodges,
+.sprint-feature-panel .sprint-hits {
+  font-size: 9px;
+  color: #d4b896;
+  letter-spacing: 0.5px;
+}
+.sprint-feature-panel[data-tier="zen"] {
+  border-color: #e6c200;
+  box-shadow: 0 4px 18px rgba(230, 194, 0, 0.35), inset 0 0 16px rgba(230, 194, 0, 0.18);
+}
+.sprint-feature-panel[data-tier="zen"] .sprint-tier {
+  color: #ffe066;
+}
+@media (max-width: 560px) {
+  .sprint-feature-panel {
+    top: 170px;
+    left: 8px;
+    width: 120px;
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+  .sprint-feature-panel .sprint-value {
+    font-size: 13px;
+  }
+  .sprint-feature-panel .sprint-tier {
+    font-size: 9px;
+  }
+  .sprint-feature-panel .sprint-dodges,
+  .sprint-feature-panel .sprint-hits {
+    font-size: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sprint-feature-panel {
+    transition: none;
+  }
+}

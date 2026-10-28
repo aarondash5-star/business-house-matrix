@@ -1,0 +1,117 @@
+{
+  "all": true,
+  "checks": [
+    {
+      "id": "momentum",
+      "viewport": "mobile",
+      "ok": true,
+      "http": 200,
+      "before": {
+        "state": {
+          "value": 0,
+          "tier": "CALM",
+          "dodges": 0,
+          "hits": 0,
+          "processedWave": 0
+        },
+        "ready": true,
+        "overflow": false,
+        "render": true
+      },
+      "after": {
+        "value": 1,
+        "tier": "FOCUS",
+        "dodges": 1,
+        "hits": 0,
+        "processedWave": 1
+      },
+      "errors": []
+    },
+    {
+      "id": "aunty-pressure",
+      "viewport": "mobile",
+      "ok": true,
+      "http": 200,
+      "before": {
+        "state": {
+          "value": 0,
+          "tier": "CLEAR",
+          "dodges": 0,
+          "hits": 0,
+          "processedWave": 0
+        },
+        "ready": true,
+        "overflow": false,
+        "render": true
+      },
+      "after": {
+        "value": 1,
+        "tier": "WATCHED",
+        "dodges": 1,
+        "hits": 0,
+        "processedWave": 1
+      },
+      "errors": []
+    },
+    {
+      "id": "momentum",
+      "viewport": "desktop",
+      "ok": true,
+      "http": 200,
+      "before": {
+        "state": {
+          "value": 0,
+          "tier": "CALM",
+          "dodges": 0,
+          "hits": 0,
+          "processedWave": 0
+        },
+        "ready": true,
+        "overflow": false,
+        "render": true
+      },
+      "after": {
+        "value": 1,
+        "tier": "FOCUS",
+        "dodges": 1,
+        "hits": 0,
+        "processedWave": 1
+      },
+      "errors": []
+    },
+    {
+      "id": "aunty-pressure",
+      "viewport": "desktop",
+      "ok": true,
+      "http": 200,
+      "before": {
+        "state": {
+          "value": 0,
+          "tier": "CLEAR",
+          "dodges": 0,
+          "hits": 0,
+          "processedWave": 0
+        },
+        "ready": true,
+        "overflow": false,
+        "render": true
+      },
+      "after": {
+        "value": 1,
+        "tier": "WATCHED",
+        "dodges": 1,
+        "hits": 0,
+        "processedWave": 1
+      },
+      "errors": []
+    },
+    {
+      "id": "dashboard",
+      "viewport": "mobile",
+      "ok": true,
+      "http": 200,
+      "cards": 6,
+      "overflow": false
+    }
+  ]
+}

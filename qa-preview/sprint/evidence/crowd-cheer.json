@@ -1,0 +1,14 @@
+{
+  "id": "crowd-cheer",
+  "title": "Wedding Crowd Cheer",
+  "theme": "coral and gold: positive celebration",
+  "status": "LOCAL_PASS",
+  "external_status": "UNVERIFIED",
+  "externally_verified": false,
+  "unit": "21/21",
+  "browser": "33/33",
+  "style": "8/8",
+  "commit": "00b721ed778e04ad65a80a2b4cccc04e88211f35",
+  "playable": true,
+  "owner_approved": false
+}

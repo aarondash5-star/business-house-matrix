@@ -1,0 +1,14 @@
+{
+  "id": "wedding-reputation",
+  "title": "Wedding Reputation",
+  "theme": "royal gold and plum: stylish reputation",
+  "status": "LOCAL_PASS",
+  "external_status": "UNVERIFIED",
+  "externally_verified": false,
+  "unit": "21/21",
+  "browser": "33/33",
+  "style": "8/8",
+  "commit": "30cddfeee9c3b31092171c28a7632b2c377d1dda",
+  "playable": true,
+  "owner_approved": false
+}

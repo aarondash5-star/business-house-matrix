@@ -1,0 +1,14 @@
+{
+  "id": "escape-confidence",
+  "title": "Escape Confidence",
+  "theme": "indigo and turquoise: confident movement",
+  "status": "LOCAL_PASS",
+  "external_status": "UNVERIFIED",
+  "externally_verified": false,
+  "unit": "22/22",
+  "browser": "33/33",
+  "style": "8/8",
+  "commit": "67a5e0f4cf511e9783dab35d4944e1da1873ff4d",
+  "playable": true,
+  "owner_approved": false
+}
