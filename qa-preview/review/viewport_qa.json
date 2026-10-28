@@ -1,0 +1,78 @@
+{
+  "pilot": "LANE1-FINAL-LIVE-STREAK-20261028",
+  "pass": true,
+  "checks": [
+    {
+      "label": "small",
+      "viewport": [
+        320,
+        700
+      ],
+      "pass": true,
+      "initial": {
+        "overflow": false,
+        "nonOverlap": true,
+        "panelVisible": true,
+        "gameReady": true,
+        "touchSize": true
+      },
+      "state": {
+        "streak": 1,
+        "best": 1,
+        "bonus": 25,
+        "rank": "SPARK",
+        "lastOutcome": "dodge",
+        "processedWave": 1
+      },
+      "errors": []
+    },
+    {
+      "label": "portrait",
+      "viewport": [
+        360,
+        740
+      ],
+      "pass": true,
+      "initial": {
+        "overflow": false,
+        "nonOverlap": true,
+        "panelVisible": true,
+        "gameReady": true,
+        "touchSize": true
+      },
+      "state": {
+        "streak": 1,
+        "best": 1,
+        "bonus": 25,
+        "rank": "SPARK",
+        "lastOutcome": "dodge",
+        "processedWave": 1
+      },
+      "errors": []
+    },
+    {
+      "label": "landscape",
+      "viewport": [
+        844,
+        390
+      ],
+      "pass": true,
+      "initial": {
+        "overflow": false,
+        "nonOverlap": true,
+        "panelVisible": true,
+        "gameReady": true,
+        "touchSize": true
+      },
+      "state": {
+        "streak": 1,
+        "best": 1,
+        "bonus": 25,
+        "rank": "SPARK",
+        "lastOutcome": "dodge",
+        "processedWave": 1
+      },
+      "errors": []
+    }
+  ]
+}

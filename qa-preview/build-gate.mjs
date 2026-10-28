@@ -1,23 +1,33 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import path from 'node:path';
-import process from 'node:process';
 const root=path.resolve(process.cwd(),'qa-preview');
-function load(file){return JSON.parse(fs.readFileSync(path.join(root,file),'utf8'))}
-const manifest=load('checksums.json');
-for(const [f,expected] of Object.entries(manifest.files)){
- if(!/^[a-zA-Z0-9_./-]+$/.test(f)||f.includes('..'))throw Error('invalid_manifest_path');
- const full=path.join(root,f);
- if(!fs.statSync(full).isFile())throw Error('missing_asset:'+f);
- const got=crypto.createHash('sha256').update(fs.readFileSync(full)).digest('hex');
- if(got!==expected)throw Error('tampered_or_unchecked:'+f);
+const json=file=>JSON.parse(fs.readFileSync(path.join(root,file),'utf8'));
+const manifest=json('checksums.json');
+if(manifest.format!==2||manifest.version!=='lane1-streak-a32f184-20261028')throw Error('invalid_expected_preview_version');
+for(const [rel,hash] of Object.entries(manifest.files)){
+ if(!/^[a-zA-Z0-9_./-]+$/.test(rel)||rel.includes('..'))throw Error('invalid_asset_path');
+ const actual=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,rel))).digest('hex');
+ if(actual!==hash)throw Error('tampered_or_unchecked:'+rel);
 }
-const b=load('review/browser_qa.json'),s=load('review/style_gate.json'),a=load('review/first_attempt.json'),p=load('review/predeploy_test.json'),r=load('review/release.json');
-if(!(b.passed===true && b.pass_count===36 && b.total===36 && Array.isArray(b.checks)&&b.checks.length===36))throw Error('browser_gate_failed');
-if(!(s.pass===true && s.passed===8 && s.total===8))throw Error('brand_gate_failed');
-if(!(a.first_output_qa_passed===true && a.generation_count===1 && a.retry_count===0))throw Error('first_generation_gate_failed');
-if(!(p.pass===true && Array.isArray(p.checks) && p.checks.length===4 && p.checks.every(x=>x.pass)))throw Error('cloud_preview_preflight_failed');
-if(!(r.constraints?.art_lanes_frozen && !r.constraints?.owner_approved && !r.constraints?.production_merge))throw Error('owner_freeze_or_scope_failed');
-if(!fs.readFileSync(path.join(root,'scene.js'),'utf8').includes('three@0.186.1'))throw Error('unapproved_dependency');
-if(fs.existsSync(path.join(root,'vendor')))throw Error('unexpected_worker_artifacts');
-console.log('SHAADI_PREVIEW_QUALITY_GATE_PASS',Object.keys(manifest.files).length,'files',b.total,'browser',s.total,'style');
+const files=fs.readdirSync(root,{recursive:true,withFileTypes:true});
+const extra=files.filter(x=>x.isFile()).length-2;
+if(extra!==Object.keys(manifest.files).length)throw Error('unverified_file_count:'+extra);
+const browser=json('review/browser_qa.json');
+const unit=json('review/streak_unit.json');
+const legacy=json('review/style_gate.json');
+const style=json('review/streak_style_gate.json');
+const viewport=json('review/viewport_qa.json');
+const first=json('review/first_attempt.json');
+const live=json('review/predeploy_test.json');
+const receipt=json('review/release.json');
+if(browser.passed!==true||browser.pass_count!==52||browser.total!==52)throw Error('browser_QA_failed');
+if(unit.passed!==true||unit.pass_count!==16||unit.total!==16)throw Error('streak_unit_failed');
+if(legacy.pass!==true||legacy.passed!==8||legacy.total!==8)throw Error('legacy_visual_quality_failed');
+if(style.pass!==true||style.passed!==9||style.total!==9)throw Error('streak_art_direction_failed');
+if(viewport.pass!==true||viewport.checks?.length!==3||!viewport.checks.every(x=>x.pass))throw Error('phone_viewports_failed');
+if(first.first_output_qa_passed!==true||first.generation_count!==1||first.retry_count!==0)throw Error('first_generation_failed');
+if(live.pass!==true||live.checks?.length!==4||!live.checks.every(x=>x.pass))throw Error('cdn_smoke_failed');
+if(receipt.version!=='lane1-streak-a32f184-20261028'||receipt.art_lanes_frozen!==true||receipt.owner_approved!==false||receipt.production_merge!==false)throw Error('owner_scope_failed');
+if(!fs.readFileSync(path.join(root,'scene.js'),'utf8').includes('three@0.186.1'))throw Error('dependency_version_failed');
+console.log('SHAADI_STREAK_PREVIEW_GATE_PASS',Object.keys(manifest.files).length,'files',52,'browser',16,'unit',17,'style',3,'mobile');

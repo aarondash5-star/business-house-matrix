@@ -1,6 +1,8 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js';
 import {createHudPresenter} from './features/hud.js';
 import {createFeedbackPresenter} from './features/feedback.js';
+import {createStreakEngine} from './features/streak.js';
+import {createStreakPresenter} from './features/streak-ui.js';
 const canvas=document.querySelector('#stage'), game=document.querySelector('#game');
 const scene=new THREE.Scene();
 const camera=new THREE.OrthographicCamera(-5.4,5.4,3.4,-3.4,.1,100);
@@ -59,19 +61,23 @@ const warningDot=new THREE.Mesh(new THREE.CircleGeometry(.08,24),mat('#5b334b'))
 warning.position.set(0,-.7,11);
 const hudPresenter=createHudPresenter({root:document});
 const feedbackPresenter=createFeedbackPresenter({root:document});
+const streakPresenter=createStreakPresenter({root:document});
+const streakEngine=createStreakEngine({onState:(state)=>{streakPresenter.render(state);window.__streakState={...state};}});
+window.__streakReady=true;
 function paintEncounter(state){
  if(!state||typeof state!=='object')return;
  const safe=Number.isInteger(state.hazard)&&state.hazard>=0&&state.hazard<=2?state.hazard:1;
  warning.position.x=positions[safe];warning.visible=!state.gameOver;
  hudPresenter.render(state);
  feedbackPresenter.render(state);
+ streakEngine.apply(state);
  window.__encounterState={...state};
 }
 
 const names=['LEFT','CENTER','RIGHT'],positions=[-2.05,0,2.05];
 function update(){document.querySelector('#lane-text').textContent=names[lane];document.querySelector('#moves-count').textContent=moves+' MOVES';document.querySelector('#game-message').textContent=moves?'Nice dodge. The aunty is still looking for you.':'Use ← and → or swipe to dodge the Aunty.';window.__pilotState={ready:true,lane,moves,renderReady:!!renderer,controlsReady:window.__pilotState?.controlsReady===true,ownerApproved:false,production:false};if(encounterEngine)paintEncounter(encounterEngine.snapshot());}
 function move(step){if(!Number.isFinite(step))return;const next=Math.max(0,Math.min(2,lane+Math.sign(step)));if(next!==lane){lane=next;moves++;if(encounterEngine)encounterEngine.choose(lane);update();}}
-function reset(){lane=1;moves=0;if(encounterEngine)encounterEngine.reset();update();}
+function reset(){lane=1;moves=0;if(encounterEngine)encounterEngine.reset();streakEngine.reset();update();}
 function paint(){if(!renderer)return;const target=positions[lane];player.position.x+=(target-player.position.x)*.16;player.position.y=Math.sin(frame*.035)*.04;shadow.position.x+=(target-shadow.position.x)*.16;frame++;renderer.render(scene,camera);requestAnimationFrame(paint);}
 function resize(){if(!renderer)return;const b=game.getBoundingClientRect();renderer.setSize(Math.max(240,b.width),Math.max(240,b.height),false);const aspect=b.width/b.height;camera.left=-3.4*aspect;camera.right=3.4*aspect;camera.updateProjectionMatrix();}
 window.addEventListener('resize',resize);

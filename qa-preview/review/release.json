@@ -1,18 +1,15 @@
 {
-  "version": "lane1-multifile-08065013-20261028",
-  "source_commit": "080650132517e1706edb7d7cbbf1da60207820b0",
-  "status": "owner_review_required",
-  "quality": {
-    "browser": "36/36",
-    "style": "8/8",
-    "first_generation": true,
-    "retries": 0
-  },
-  "constraints": {
-    "art_lanes_frozen": true,
-    "owner_approved": false,
-    "production_merge": false
-  },
-  "third_party_dependency": "three@0.186.1 via pinned jsDelivr CDN",
-  "about": "Synthetic QA mini-scene, not the full game or approved character art"
+  "version": "lane1-streak-a32f184-20261028",
+  "local_commit": "a32f184c24c4e51794c42532f65d9fc37f4bc608",
+  "owner_approved": false,
+  "production_merge": false,
+  "art_lanes_frozen": true,
+  "generation_count": 1,
+  "retries": 0,
+  "browser_tests": 52,
+  "engine_tests": 16,
+  "brand_tests": 8,
+  "streak_style_tests": 9,
+  "extra_viewport_tests": 3,
+  "game": "isolated synthetic QA scene, not final character art"
 }

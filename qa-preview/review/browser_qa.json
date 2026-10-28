@@ -1,5 +1,5 @@
 {
-  "pilot": "LANE1-MULTIFILE-CLEAN-20261028",
+  "pilot": "LANE1-FINAL-LIVE-STREAK-20261028",
   "independent": true,
   "checks": [
     {
@@ -48,6 +48,22 @@
       "passed": true
     },
     {
+      "name": "desktop_streak_module_loaded",
+      "passed": true
+    },
+    {
+      "name": "desktop_streak_panel_visible",
+      "passed": true
+    },
+    {
+      "name": "desktop_streak_initial_hud",
+      "passed": true
+    },
+    {
+      "name": "desktop_streak_accessible",
+      "passed": true
+    },
+    {
       "name": "desktop_dodge_updates_engine",
       "passed": true
     },
@@ -88,10 +104,40 @@
       "passed": true
     },
     {
+      "name": "desktop_combo_three_dodges",
+      "passed": true,
+      "state": {
+        "streak": 3,
+        "best": 3,
+        "bonus": 150,
+        "rank": "LEGEND",
+        "lastOutcome": "dodge",
+        "processedWave": 3
+      }
+    },
+    {
+      "name": "desktop_combo_legend_visual",
+      "passed": true,
+      "initialColor": "rgb(107, 58, 42)",
+      "legendColor": "rgb(242, 193, 78)"
+    },
+    {
+      "name": "desktop_combo_text_matches",
+      "passed": true
+    },
+    {
+      "name": "desktop_combo_hit_resets_streak",
+      "passed": true
+    },
+    {
+      "name": "desktop_combo_restart_clears_record",
+      "passed": true
+    },
+    {
       "name": "desktop_nonblank_screenshot",
       "passed": true,
-      "variance": 40.8,
-      "colorBins": 215
+      "variance": 40.6,
+      "colorBins": 220
     },
     {
       "name": "mobile_http_200",
@@ -139,6 +185,22 @@
       "passed": true
     },
     {
+      "name": "mobile_streak_module_loaded",
+      "passed": true
+    },
+    {
+      "name": "mobile_streak_panel_visible",
+      "passed": true
+    },
+    {
+      "name": "mobile_streak_initial_hud",
+      "passed": true
+    },
+    {
+      "name": "mobile_streak_accessible",
+      "passed": true
+    },
+    {
       "name": "mobile_touch_dodge",
       "passed": true
     },
@@ -155,10 +217,22 @@
       "passed": true
     },
     {
+      "name": "mobile_two_dodge_streak",
+      "passed": true
+    },
+    {
+      "name": "mobile_streak_visual_tier",
+      "passed": true
+    },
+    {
+      "name": "mobile_streak_reset",
+      "passed": true
+    },
+    {
       "name": "mobile_nonblank_screenshot",
       "passed": true,
-      "variance": 42.1,
-      "colorBins": 413
+      "variance": 41.8,
+      "colorBins": 430
     },
     {
       "name": "no_browser_errors",
@@ -166,8 +240,8 @@
       "errors": []
     }
   ],
-  "pass_count": 36,
-  "total": 36,
+  "pass_count": 52,
+  "total": 52,
   "passed": true,
   "errors": []
 }

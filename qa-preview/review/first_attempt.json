@@ -1,19 +1,23 @@
 {
-  "pilot": "LANE1-MULTIFILE-CLEAN-20261028",
+  "pilot": "LANE1-FINAL-LIVE-STREAK-20261028",
   "generation_count": 1,
   "retry_count": 0,
-  "at_utc": "2026-10-28T02:52:57.624109+00:00",
+  "at_utc": "2026-10-28T04:03:57.317500+00:00",
   "file_sha256": {
-    "site/features/hud.js": "a6f0aae85ced274e98e2e87eb6e4fae9dde9263e2ead97353f8063f332db00d8",
-    "site/features/feedback.js": "758d50c17b8dce918a21ae76eb608fc02a9b787461268fc847a87cb1bc375990",
-    "site/features/theme.css": "84ab3ffa64ec6b564369d5b622c43e0ab358ea6556641e19262d114f32c0953e"
+    "site/features/streak.js": "b7747ae88b6b1cbcd62655f0a47279fb0ec6019669f24b1bd58938b179e500d2",
+    "site/features/streak-ui.js": "d4adbb2adb10367cd7565c4f72e768b915e5e51bc381e32920eb085928461913",
+    "site/features/streak.css": "d0334c6594a8251e41e537c8d69cb7721d567ad41f138582736c6af5faea28ff"
   },
   "syntax_passed": true,
   "first_output_qa_passed": true,
   "owner_approved": false,
-  "qa_passed": 36,
-  "qa_total": 36,
+  "qa_passed": 52,
+  "qa_total": 52,
   "brand_gate_passed": true,
   "brand_gate_count": 8,
-  "brand_gate_total": 8
+  "brand_gate_total": 8,
+  "streak_unit_count": 16,
+  "streak_unit_total": 16,
+  "streak_style_count": 9,
+  "streak_style_total": 9
 }

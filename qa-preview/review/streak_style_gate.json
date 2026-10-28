@@ -1,0 +1,17 @@
+{
+  "gate": "STREAK_VISUAL_NONREGRESSION",
+  "pass": true,
+  "passed": 9,
+  "total": 9,
+  "checks": {
+    "scoped_no_global_body_html": true,
+    "no_global_button": true,
+    "no_external_imports_urls": true,
+    "panel_in_style": true,
+    "legend_visual_state": true,
+    "fire_visual_state": true,
+    "mobile_media_query": true,
+    "reduced_motion": true,
+    "safe_no_hidden_panel": true
+  }
+}

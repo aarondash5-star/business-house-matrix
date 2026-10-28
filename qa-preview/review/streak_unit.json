@@ -1,0 +1,72 @@
+{
+  "pilot": "LANE1-FINAL-LIVE-STREAK-20261028",
+  "passed": true,
+  "pass_count": 16,
+  "total": 16,
+  "checks": [
+    {
+      "name": "initial_exact_shape",
+      "passed": true
+    },
+    {
+      "name": "initial_notification",
+      "passed": true
+    },
+    {
+      "name": "defensive_snapshot",
+      "passed": true
+    },
+    {
+      "name": "reject_initial_wave_0",
+      "passed": true
+    },
+    {
+      "name": "first_dodge",
+      "passed": true
+    },
+    {
+      "name": "ignore_duplicate_wave",
+      "passed": true
+    },
+    {
+      "name": "second_dodge",
+      "passed": true
+    },
+    {
+      "name": "third_dodge_legend",
+      "passed": true
+    },
+    {
+      "name": "reject_skipped_wave",
+      "passed": true
+    },
+    {
+      "name": "hit_breaks_streak_preserves_record",
+      "passed": true
+    },
+    {
+      "name": "dodge_after_hit",
+      "passed": true
+    },
+    {
+      "name": "reject_invalid_inputs",
+      "passed": true
+    },
+    {
+      "name": "callback_defensive",
+      "passed": true
+    },
+    {
+      "name": "fresh_engine_is_independent",
+      "passed": true
+    },
+    {
+      "name": "reset_complete",
+      "passed": true
+    },
+    {
+      "name": "reset_replay_behavior",
+      "passed": true
+    }
+  ]
+}
