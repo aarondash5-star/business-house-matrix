@@ -1,0 +1,33 @@
+{
+  "checks": [
+    {
+      "key": "mobile",
+      "pass": true,
+      "version": 0,
+      "viewport": [
+        390,
+        844
+      ],
+      "errors": []
+    },
+    {
+      "key": "mobile_interaction",
+      "pass": true
+    },
+    {
+      "key": "desktop",
+      "pass": true,
+      "version": 0,
+      "viewport": [
+        1280,
+        820
+      ],
+      "errors": []
+    },
+    {
+      "key": "desktop_interaction",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

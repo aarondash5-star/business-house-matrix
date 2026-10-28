@@ -1,0 +1,23 @@
+{
+  "files": {
+    "_headers": "396d0366f69f26e5283903a64087b3650a6047cc42365cc982964f8903c12b0b",
+    "encounter.js": "c8eabfff174837bf93fc7b26a58de3c52fe93f187167c4757c2712f6cb8d2a46",
+    "features/feedback.js": "758d50c17b8dce918a21ae76eb608fc02a9b787461268fc847a87cb1bc375990",
+    "features/hud.js": "a6f0aae85ced274e98e2e87eb6e4fae9dde9263e2ead97353f8063f332db00d8",
+    "features/theme.css": "84ab3ffa64ec6b564369d5b622c43e0ab358ea6556641e19262d114f32c0953e",
+    "index.html": "cac613b7d1c862cafa8a9fdce3c6fe9dc7e77978eecff08ec6501b1f7206e305",
+    "logic.js": "4c7b789b27fb5e97353748d03d1eaf2603b10e8d53b903e8cb2ee98016d99c4c",
+    "review/browser_qa.json": "173fa43e3b00f48180abb9b33db58009a511c98fbe9c28251413ddb972e70ca5",
+    "review/desktop.webp": "024b559d9f33b986f2cce984697c5283d3440c950bc8535e9d640e98189934d0",
+    "review/first_attempt.json": "7798af9efafe3b6f27e6b9e0672d5ad81a0f99b1f5b43ccbfc80f7b98436c577",
+    "review/index.html": "05077067a3b102e5524eca95778442d36a71a8070130f550e1eaad3975f97869",
+    "review/mobile.webp": "7f16b0dc45a0bb3cb3b61ae7fc83b595a7b083a50d65484fdf8a175301c4f3c4",
+    "review/predeploy_test.json": "f5392f0d08f4db8a4760ef334a01f5719e3b73e9dab3ce3fb91942038ab8a5a7",
+    "review/release.json": "7327b56ecc01ec550b12c6e59cf86165f280f4ea933e372799149d7b4d2f2e56",
+    "review/style_gate.json": "f87d47fe4d05ed9d8bc2f2cc738f89a2fa7d486bbdbd3a10777b3d93d2f68289",
+    "scene.js": "599e521581315d8fe0e2383297078ea6586d9ba9c8e2f0452697283163f6b3f4",
+    "style.css": "aa37a1875529ea0d8a77fab1877582d170f860b1c8b57daf512bd27a4da383ab"
+  },
+  "format": 1,
+  "purpose": "shaadi QA-only Cloudflare Pages previews"
+}
