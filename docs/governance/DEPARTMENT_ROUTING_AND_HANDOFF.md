@@ -32,6 +32,12 @@ The **connected Generic Linux SSH bridge plugin is the standing owner-approved t
 
 **2026-10-23 Andaz verified example:** controller received `andaz_static dev_proposal` as task `faa9d42b-01d3-4df6-b571-86479cc199b9`, and downstream Brain queue entry `1280be9b-8465-4a78-bcc4-e92542979e7c` was observed queued. The controller's executable `dev_general_build` route admitted only three enrolled internal `matrix_dev` manifests, **not Andaz**; no Andaz coding job was launched by this action. Owner-approved static build remains staged for a properly enrolled real execution path. Keep v6, QA and permissions intact.
 
+## Cross-department third-party AI task assignment — owner-approved 2026-10-30
+
+Before a departmental Brain assigns work to *any* hosted/third-party AI API or model, apply the [owner-approved Third-Party AI API Task Assignment SOP V1](THIRD_PARTY_AI_API_TASK_ASSIGNMENT_SOP_V1.md), [provider/budget/independent-QA policy](THIRD_PARTY_AI_API_PROVIDER_BUDGET_QA_POLICY_V1.md), and [machine task-packet schema](../../brain/governance/api-task-assignment-v1.schema.json). These rules cover all **nine departments**, their specialist sub-Brains and authorized existing workers; they do not replace the central owner-approved task envelope or change this runbook's delegation authority. Required sequence: internal/public open-source reuse research → deduplication → data/license/permission checks → minimal RAG-grounded packet → budget reservation and eligible model routing → bounded execution → independent QA → source integration receipt → true usage accounting. **Maximum two diagnosed repair attempts; paid fallback disabled without separate owner budget authority.**
+
+The approval only **pins documentation**. It does not activate any provider, invoke an API, change credentials, dispatch tasks, enroll new models, permit inter-tenant disclosure, change host-only execution constraints, spend money, publish, merge product code or deploy. Existing approved department execution and connected providers remain subject to their unchanged prior policies. An individual department may claim live enforcement only after a separately approved, independently verified ingestion and negative-gate test, with signed/traceable receipt.
+
 ## Standard dispatch handoff
 
 Task envelopes conform to `brain/governance/task-envelope-v1.schema.json`, including:
