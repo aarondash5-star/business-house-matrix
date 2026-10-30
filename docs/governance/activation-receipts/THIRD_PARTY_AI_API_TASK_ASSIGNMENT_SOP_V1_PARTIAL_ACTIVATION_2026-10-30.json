@@ -1,0 +1,78 @@
+{
+  "record_type": "cross_department_policy_activation_receipt",
+  "policy_id": "DLT-BHM-API-ASSIGNMENT-SOP-001",
+  "version": "1.0.0",
+  "owner_activation_authority": "Explicit owner instruction on 2026-10-30: Activate it and confirm to me",
+  "scope_documented": [
+    "concept",
+    "design",
+    "development",
+    "qa_qc",
+    "marketing",
+    "sales",
+    "accounts",
+    "support",
+    "evolution"
+  ],
+  "status": "PARTIAL_LIVE_ENFORCEMENT_DELL_DEVELOPMENT_VERIFIED",
+  "canonical_policy_receipt": "docs/governance/approval-receipts/THIRD_PARTY_AI_API_TASK_ASSIGNMENT_SOP_V1_2026-10-30.json",
+  "runtime_enforced": {
+    "development": {
+      "host": "dell-linux",
+      "surface": "pre-existing Matrix Dev API router",
+      "status": "VERIFIED_ACTIVE",
+      "requires_task_packet_for_external_calls": true,
+      "requires_owner_project_approval": true,
+      "public_data_only": true,
+      "zero_paid_budget": true,
+      "exact_model_allowlist": true,
+      "dedupe_ledger": true,
+      "automatic_external_replay": "blocked_until_diagnosed",
+      "independent_tests": {
+        "passed": 18,
+        "total": 18
+      },
+      "live_negative_test": "PACKETLESS_EXTERNAL_CALL_DENIED_BEFORE_QUOTA_RESERVATION",
+      "local_model_routing": "AVAILABLE",
+      "existing_vendor_policy_sha256": "15fb6b223c72907fb07405efe93fae0f5a71e9c37eb5fbb013c113b1acb67350",
+      "activated_router_sha256": "1845821b95bff6df18e8802538b4697fc4023ad7c24104193fc93e4b5d24e629",
+      "pre_activation_router_sha256": "dd342002d40b5b1b488ab71266189a88c99f2bf876012b1587326bc00263429d",
+      "guard_sha256": "682ef913e983a25be8ebc26ed28d4384b76e12f83075b27919945603cca1b713"
+    }
+  },
+  "pending_runtime_enforcement": [
+    "concept",
+    "design",
+    "qa_qc",
+    "marketing",
+    "sales",
+    "accounts",
+    "support",
+    "evolution"
+  ],
+  "blockers": {
+    "mac_mad": "connected Mac MAD plugin session terminated; no live read/write or ingestion confirmation possible",
+    "other_department_routers": "not independently connected/identified as compliant runtime ingestion points",
+    "central_dispatcher": "existing 13 scoped actions are not a universal nine-department API gateway; no generalization authorized or demonstrated"
+  },
+  "security_boundaries": {
+    "new_provider_activation": false,
+    "provider_credentials_changed": false,
+    "paid_spend": 0,
+    "external_inference_requests_for_this_activation": 0,
+    "git_product_code_merged": false,
+    "production_deployed": false,
+    "services_restarted": false,
+    "publish_performed": false
+  },
+  "qa": {
+    "performed": "Local deterministic unit/negative suite; no network/API inference",
+    "tests_passed": 18,
+    "tests_total": 18,
+    "release_certified": false,
+    "scope_certified": "Dell Development route only"
+  },
+  "status_limitations": "Owner approval sets policy applicability across nine departments, not proof of automatic runtime ingestion or enforcement on Mac/unconnected departmental Brains.",
+  "next_gate": "Restore authorized Mac MAD connection, independently inspect other departmental routers, instrument controlled SOP checks per runtime, run negative tests, and record separate per-department receipts before claiming 9/9 active.",
+  "time_note": "2026-10-30 (local India date)"
+}
