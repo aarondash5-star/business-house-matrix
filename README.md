@@ -14,6 +14,8 @@ The Super Brain confirms material decisions and scope with the owner, delegates 
 - [Nine-department routing, delegation and handover](docs/governance/DEPARTMENT_ROUTING_AND_HANDOFF.md)
 - [Reusable Super Brain governance skill](skills/matrix-super-brain-governance/SKILL.md)
 - [Machine-readable approved task envelope](brain/governance/task-envelope-v1.schema.json)
+- [**Owner-approved cross-department third-party AI task assignment SOP V1**](docs/governance/THIRD_PARTY_AI_API_TASK_ASSIGNMENT_SOP_V1.md) — mandatory policy for all nine Brains; **documentation only, not activated**.
+- [Provider/budget/independent-QA safeguards](docs/governance/THIRD_PARTY_AI_API_PROVIDER_BUDGET_QA_POLICY_V1.md) · [Machine-readable API task packet V1](brain/governance/api-task-assignment-v1.schema.json) · [Owner approval receipt](docs/governance/approval-receipts/THIRD_PARTY_AI_API_TASK_ASSIGNMENT_SOP_V1_2026-10-30.json).
 
 ## Approved architecture
 
