@@ -1,0 +1,101 @@
+{
+  "receipt_id": "DLT-BHM-API-ASSIGNMENT-V1-OWNER-APPROVAL-2026-10-30",
+  "schema": "governance-approval-receipt-v1",
+  "decision_date": "2026-10-30",
+  "version": "1.0.0",
+  "status": "OWNER_APPROVED_POLICY_PINNED_DOCUMENTATION_ONLY",
+  "project": "Business House AI Matrix",
+  "repository": "aarondash5-star/business-house-matrix",
+  "branch": "main",
+  "public_repositories_warning": "Public documentation and generic schemas only; no customer, secret, private tenant, credential or runtime data",
+  "owner_approval": {
+    "source": "User's explicit ChatGPT instruction on 2026-10-30",
+    "scope": [
+      "concept",
+      "design",
+      "development",
+      "qa_qc",
+      "marketing",
+      "sales",
+      "accounts",
+      "support",
+      "evolution"
+    ],
+    "authorization": "Produce and pin versioned handbook, task packet schema, provider/budget/QA policy, and approval receipt",
+    "explicit_prohibitions": [
+      "do_not_activate_api_dispatch",
+      "do_not_spend_money",
+      "do_not_deploy"
+    ],
+    "authority_boundary": "Current Super Brain charter, existing project and host restrictions, no new provider licensing, credentials or permissions",
+    "documentation_publication_allowed": true,
+    "paid_provider_authorization": false,
+    "execution_dispatch_authorization": false
+  },
+  "content_pins": [
+    {
+      "path": "docs/governance/THIRD_PARTY_AI_API_TASK_ASSIGNMENT_SOP_V1.md",
+      "sha256": "2d392f9ca2d773c996546825ad96e14c0bff247d44c4ef4942af5d6d3100179b",
+      "git_blob_sha1": "6493bbb6d4fe834bfec8b17deadeead81ccebd7c",
+      "bytes": 18397
+    },
+    {
+      "path": "docs/governance/THIRD_PARTY_AI_API_PROVIDER_BUDGET_QA_POLICY_V1.md",
+      "sha256": "91813feb593c9692f736d3742f5475308bcdd94aa5f19c423219113432d419c0",
+      "git_blob_sha1": "49c363033ecccf3d44300cdf6e87ff8c7aaf47cc",
+      "bytes": 9593
+    },
+    {
+      "path": "brain/governance/api-task-assignment-v1.schema.json",
+      "sha256": "6425758a3d4e2b9b541d554f7e1f109cf6eb3292af19e3fd35cc4199afa533f8",
+      "git_blob_sha1": "f432b84269a9b762389ffe90cd381ebfbfaa1034",
+      "bytes": 12418
+    },
+    {
+      "path": "README.md",
+      "sha256": "b75b9fabb39353ac209ae6cd077fa513335c730b6ffd70c4d5af979e91665ba9",
+      "git_blob_sha1": "968c0247e806cdb5ccf2ebf2220bc4d48400a2e7",
+      "bytes": 6344
+    },
+    {
+      "path": "docs/governance/DEPARTMENT_ROUTING_AND_HANDOFF.md",
+      "sha256": "7b53cdbbc52981cf7c2b6362b89e7ac9bd1276129be6b97751dd2b528110f037",
+      "git_blob_sha1": "e873a26acd7a1af2ec397ddd5f01dddafaced870",
+      "bytes": 11748
+    }
+  ],
+  "git_commits": {
+    "handbook": "65a2b142571672701decf7d2befa270d4ca188c2",
+    "provider_budget_qa": "16b4e0c630337344a4648d57c2adbf9065b1ab16",
+    "task_schema": "d90ef515fdf57c4ab184f060e453267d61b197a1",
+    "root_readme_pin": "65eac2efad1b4c1c01fe56c2d78d889c868d990d",
+    "department_handoff_pin": "d315a9f412e1d05d046a67047866abc269def26a"
+  },
+  "validation": {
+    "git_readback_verified": true,
+    "document_files_present": true,
+    "schema_json_parse_pass": true,
+    "schema_has_bounded_max_two_attempts": true,
+    "schema_does_not_authorize_publishing": true,
+    "sha256_reference_test": "abc sha256 PASS",
+    "independent_runtime_qa": "NOT_AUTHORIZED_NOT_RUN",
+    "runtime_ingestion_across_departments": "NOT_PERFORMED"
+  },
+  "execution_effects": {
+    "api_requests_inference": 0,
+    "paid_spend_authorized": 0,
+    "new_models_enabled": 0,
+    "secrets_changed": false,
+    "existing_provider_config_modified": false,
+    "scheduled_tasks_created": false,
+    "production_or_beta_deployed": false,
+    "live_department_policy_ingestion": "not_performed",
+    "git_changes": "documentation and schema files only"
+  },
+  "next_gate": "Separately authorize and independently verify departmental policy ingestion / provider benchmark before claiming live enforcement or dispatch",
+  "signature": {
+    "type": "owner-explicit-chat-instruction",
+    "cryptographically_signed": false,
+    "note": "This immutable Git document records the reported owner decision; it is not a cryptographic signature or runtime execution proof."
+  }
+}
