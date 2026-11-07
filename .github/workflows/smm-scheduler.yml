@@ -4,6 +4,8 @@ on:
   schedule:
     - cron: "*/15 * * * *"
   push:
+    branches:
+      - main
     paths:
       - "smm-scheduler/**"
       - ".github/workflows/smm-scheduler.yml"
@@ -14,6 +16,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   validate-and-tick:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     defaults:
