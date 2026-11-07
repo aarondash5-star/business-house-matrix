@@ -1,0 +1,1 @@
+# FanSMM provider adapters.
