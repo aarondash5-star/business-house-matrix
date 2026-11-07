@@ -28,3 +28,14 @@ An empty job list is an inert live deployment.
 
 ## Additional adapters
 New providers can implement the same call(action, params) interface; schedule semantics stay unchanged.
+
+## Aarondash GitHub credential handoff
+
+1. Open https://github.com/aarondash5-star/business-house-matrix/settings/secrets/actions
+2. Add a new repository secret named `FANSMM_API_KEY` (paste the key only in GitHub).
+3. Open https://github.com/aarondash5-star/business-house-matrix/actions/workflows/smm-scheduler-certify.yml
+4. Run the workflow manually on the default branch.
+
+The certification flow runs synthetic tests, verifies that the empty queue executes without orders, then invokes the FanSMM `services` and `balance` endpoints. It displays only a pass/fail status and service count, never the key or the account balance.
+
+The recurring scheduler workflow is `.github/workflows/smm-scheduler.yml`. It has no enabled jobs by default. Do not store secrets in configuration files, issues, or workflow dispatch inputs.
