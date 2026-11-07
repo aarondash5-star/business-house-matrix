@@ -39,3 +39,15 @@ New providers can implement the same call(action, params) interface; schedule se
 The certification flow runs synthetic tests, verifies that the empty queue executes without orders, then invokes the FanSMM `services` and `balance` endpoints. It displays only a pass/fail status and service count, never the key or the account balance.
 
 The recurring scheduler workflow is `.github/workflows/smm-scheduler.yml`. It has no enabled jobs by default. Do not store secrets in configuration files, issues, or workflow dispatch inputs.
+
+## Production read-only monitoring (enabled)
+
+The default job queue now includes:
+- `fansmm-services`: retrieve the current catalogue once every 1440 minutes (24 hours).
+- `fansmm-balance`: verify account balance once every 60 minutes.
+
+The GitHub scheduler wakes up every 15 minutes, uses its own due-time state, and records only success/failure metadata, never prices, key, or account balances.
+
+For an existing order, manually open the **SMM Scheduler V1 - Certification** GitHub Actions workflow, select **Run workflow**, and optionally supply a numeric `order_id`. This invokes only `status`, without creating or modifying an order.
+
+**Not enabled:** any `add` requests or purchased follower, view, comment, or like orders. The scheduler does not try to disguise inauthentic engagement as organic.
