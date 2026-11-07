@@ -1,1 +1,14 @@
-{"jobs": {}}
+{
+  "jobs": {
+    "fansmm-balance": {
+      "last_run_at": "2026-11-07T06:15:47Z",
+      "next_run_at": "2026-11-07T07:15:47Z",
+      "result": "success"
+    },
+    "fansmm-services": {
+      "last_run_at": "2026-11-07T06:15:47Z",
+      "next_run_at": "2026-11-08T06:15:47Z",
+      "result": "success"
+    }
+  }
+}
