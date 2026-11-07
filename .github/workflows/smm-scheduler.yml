@@ -1,0 +1,48 @@
+name: SMM Scheduler V1 - Read Only
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+  push:
+    paths:
+      - "smm-scheduler/**"
+      - ".github/workflows/smm-scheduler.yml"
+permissions:
+  contents: write
+concurrency:
+  group: smm-scheduler-v1
+  cancel-in-progress: false
+jobs:
+  validate-and-tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: smm-scheduler
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Python runtime
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run pure unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Read-only schedule tick
+        env:
+          FANSMM_API_KEY: ${{ secrets.FANSMM_API_KEY }}
+        run: python scheduler.py --execute-read-only
+      - name: Commit state changes only
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd ..
+          if git diff --quiet -- smm-scheduler/state.json; then
+            echo "No persisted changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add smm-scheduler/state.json
+          git commit -m "chore(smm): persist read-only job state"
+          git push
