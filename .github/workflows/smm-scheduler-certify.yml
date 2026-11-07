@@ -30,8 +30,8 @@ jobs:
           python-version: '3.12'
       - name: Synthetic unit and integration tests
         run: python -m unittest discover -s tests -v
-      - name: Inert scheduler smoke
-        run: python scheduler.py --execute-read-only
+      - name: Scheduler configuration preview (no external API calls)
+        run: python scheduler.py
       - name: Read-only FanSMM credential / API smoke
         if: github.event_name == 'workflow_dispatch'
         env:
