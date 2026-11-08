@@ -36,7 +36,7 @@ jobs:
         working-directory: .
         shell: bash
         env:
-          SOURCE_TOKEN: ${{ secrets.DELULUTECH_SOURCE_READ_TOKEN }}
+          SOURCE_TOKEN: ${{ secrets.DELULU_PRIVATE_TOKEN }}
         run: |
           set -euo pipefail
           set +x
@@ -69,7 +69,7 @@ jobs:
           repository: aarondash5-star/delulutech
           ref: 4bff39c2acb868fad212d82c42ef4bd252041bea
           path: wpmanager-source
-          token: ${{ secrets.DELULUTECH_SOURCE_READ_TOKEN }}
+          token: ${{ secrets.DELULU_PRIVATE_TOKEN }}
           persist-credentials: false
       - name: Node 22 pinned tests
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
@@ -134,7 +134,7 @@ jobs:
       - name: Validate private source-read permission
         working-directory: .
         env:
-          SOURCE_TOKEN: ${{ secrets.DELULUTECH_SOURCE_READ_TOKEN }}
+          SOURCE_TOKEN: ${{ secrets.DELULU_PRIVATE_TOKEN }}
         run: |
           set -euo pipefail
           set +x
@@ -150,7 +150,7 @@ jobs:
           repository: aarondash5-star/delulutech
           ref: 4bff39c2acb868fad212d82c42ef4bd252041bea
           path: wpmanager-source
-          token: ${{ secrets.DELULUTECH_SOURCE_READ_TOKEN }}
+          token: ${{ secrets.DELULU_PRIVATE_TOKEN }}
           persist-credentials: false
       - name: Node 22
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
