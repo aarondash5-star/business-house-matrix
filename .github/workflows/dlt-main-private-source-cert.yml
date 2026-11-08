@@ -1,0 +1,185 @@
+name: Private WP Manager source certification on public main-account runner
+# Public repository, private source. Only explicit owner-controlled branch push.
+# No pull_request_target trigger; pull requests only create skipped jobs, never secret access.
+# Owner-authorized source-read credential verification rerun 2026-11-08.
+on:
+  push:
+    branches: [ci/dlt-wpmanager-public-runner-20261108]
+    paths:
+      - '.github/workflows/dlt-main-private-source-cert.yml'
+  # A PR event exposes no source credentials: every job is additionally guarded
+  # with github.event_name == 'push' and the exact owner-controlled branch.
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/dlt-main-private-source-cert.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: main-account-private-wpmanager-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  wpmanager-production:
+    name: Pinned WP Manager production QA - private checkout
+    environment: DELULUTECH_SOURCE_READ_TOKEN
+    if: github.repository == 'aarondash5-star/business-house-matrix' && github.ref == 'refs/heads/ci/dlt-wpmanager-public-runner-20261108' && github.actor == 'aarondash5-star' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    defaults:
+      run:
+        shell: bash
+        working-directory: wpmanager-source/create-projects/wp-manager/authenticated-mcp
+    steps:
+      - name: Verify source-read token (do not print credential or source content)
+        working-directory: .
+        shell: bash
+        env:
+          SOURCE_TOKEN: ${{ secrets.DELULU_PRIVATE_TOKEN }}
+        run: |
+          set -euo pipefail
+          set +x
+          if [[ -z "$SOURCE_TOKEN" ]]; then
+            echo "::error::MISSING_SOURCE_READ_SECRET; set DELULUTECH_SOURCE_READ_TOKEN on this public repository."
+            exit 1
+          fi
+          # Diagnostics output booleans only; never print token, user identity or source bytes.
+          identity="$(GH_TOKEN="$SOURCE_TOKEN" gh api user --jq '.login' 2>/dev/null || true)"
+          if [[ "$identity" == "aarondash5-star" ]]; then
+            echo "TOKEN_ACCOUNT_SOURCE_OWNER=true"
+          elif [[ -n "$identity" ]]; then
+            echo "TOKEN_ACCOUNT_SOURCE_OWNER=false"
+          else
+            echo "TOKEN_ACCOUNT_IDENTITY_UNVERIFIED=true"
+          fi
+          if GH_TOKEN="$SOURCE_TOKEN" gh api repos/aarondash5-star/delulutech --jq '.id' >/dev/null 2>&1; then
+            echo "SOURCE_REPOSITORY_READ=true"
+          else
+            echo "SOURCE_REPOSITORY_READ=false"
+          fi
+          if ! GH_TOKEN="$SOURCE_TOKEN" gh api repos/aarondash5-star/delulutech/commits/4bff39c2acb868fad212d82c42ef4bd252041bea --jq '.sha' >/dev/null 2>&1; then
+            echo "::error::SOURCE_READ_DENIED; token must be authorized to read private aarondash5-star/delulutech."
+            exit 1
+          fi
+          echo 'PRIVATE_SOURCE_TOKEN=VERIFIED_READ' >> "$GITHUB_STEP_SUMMARY"
+      - name: Checkout exact private source revision; never persist token
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: aarondash5-star/delulutech
+          ref: 4bff39c2acb868fad212d82c42ef4bd252041bea
+          path: wpmanager-source
+          token: ${{ secrets.DELULU_PRIVATE_TOKEN }}
+          persist-credentials: false
+      - name: Node 22 pinned tests
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22'
+          # Intentionally no public-repository cache of private WP Manager dependencies.
+      - name: Verify exact checked-out source SHA
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "4bff39c2acb868fad212d82c42ef4bd252041bea"
+          echo 'PINNED_SOURCE_SHA=4bff39c2acb868fad212d82c42ef4bd252041bea' >> "$GITHUB_STEP_SUMMARY"
+      - name: Run full source production validation privately, summary only
+        run: |
+          set -euo pipefail
+          run_private() {
+            local id="$1"; shift
+            local logfile="$RUNNER_TEMP/dlt-${id}-${GITHUB_RUN_ID}.log"
+            if "$@" > "$logfile" 2>&1; then
+              echo "${id}=PASS" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "${id}=FAIL" >> "$GITHUB_STEP_SUMMARY"
+              echo "::error::${id} FAILED (private details intentionally suppressed in public logs)"
+              exit 1
+            fi
+          }
+          run_private deps npm ci --ignore-scripts --no-audit --no-fund
+          run_private provider-deps npm install --no-save --ignore-scripts --no-audit --no-fund esbuild@0.25.12 @cloudflare/workers-oauth-provider@1.2.4
+          run_private php-lint php -l ../wordpress-connector/dlt-wp-manager.php
+          run_private connector-build node cloudflare/native-auth/build-connector.mjs
+          run_private npm-test npm test
+          run_private wpmanager-regression node --test cloudflare/native-platform/*.test.mjs cloudflare/native-auth/connector-bundle.test.mjs cloudflare/native-auth/username-pin.test.mjs cloudflare/native-auth/browser-origin.test.mjs cloudflare/native-auth/qa-pairing-portal.test.mjs cloudflare/native-auth/portal-routing.test.mjs cloudflare/native-auth/qa-certification.test.mjs cloudflare/native-auth/qa-oauth-test.test.mjs cloudflare/native-auth/wp-manager-ui.test.mjs cloudflare/native-auth/wp-write-scope.test.mjs cloudflare/native-auth/dashboard.test.mjs
+          mkdir -p cloudflare/dist
+          run_private resource-worker-build ./node_modules/.bin/esbuild cloudflare/native-auth/resource-server.mjs --bundle --platform=browser --format=esm --target=es2022 --external:node:* --external:cloudflare:* --minify --outfile=cloudflare/dist/wp-manager-v2-mcp-worker.mjs
+          run_private auth-worker-build ./node_modules/.bin/esbuild cloudflare/native-auth/auth-server.mjs --bundle --platform=browser --format=esm --target=es2022 --external:node:* --external:cloudflare:* --minify --outfile=cloudflare/dist/wp-manager-auth-worker.mjs
+          run_private mcp-syntax node --check cloudflare/dist/wp-manager-v2-mcp-worker.mjs
+          run_private auth-syntax node --check cloudflare/dist/wp-manager-auth-worker.mjs
+          if grep -Ein 'supabase[.]co|SUPABASE_DB_URL|SUPABASE_SERVICE_ROLE|functions/v1/dlt-wp-manager' cloudflare/dist/wp-manager-{auth,v2-mcp}-worker.mjs >/dev/null; then
+            echo "::error::Forbidden legacy Supabase dependency in candidate bundle"
+            exit 1
+          fi
+          echo 'PUBLIC_ARTIFACT_UPLOAD=false' >> "$GITHUB_STEP_SUMMARY"
+          echo 'PRODUCTION_DEPLOYMENT=false' >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove temporary source and test output
+        if: always()
+        working-directory: .
+        shell: bash
+        run: |
+          rm -rf wpmanager-source
+          find "$RUNNER_TEMP" -maxdepth 1 -type f -name 'dlt-*-*.log' -delete
+
+  wpmanager-oauth-consent:
+    name: Pinned WP Manager OAuth consent and isolation - private checkout
+    environment: DELULUTECH_SOURCE_READ_TOKEN
+    if: github.repository == 'aarondash5-star/business-house-matrix' && github.ref == 'refs/heads/ci/dlt-wpmanager-public-runner-20261108' && github.actor == 'aarondash5-star' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    defaults:
+      run:
+        shell: bash
+        working-directory: wpmanager-source/create-projects/wp-manager/authenticated-mcp
+    steps:
+      - name: Validate private source-read permission
+        working-directory: .
+        env:
+          SOURCE_TOKEN: ${{ secrets.DELULU_PRIVATE_TOKEN }}
+        run: |
+          set -euo pipefail
+          set +x
+          if [[ -z "$SOURCE_TOKEN" ]]; then
+            echo "::error::MISSING_SOURCE_READ_SECRET"; exit 1
+          fi
+          if ! GH_TOKEN="$SOURCE_TOKEN" gh api repos/aarondash5-star/delulutech/commits/4bff39c2acb868fad212d82c42ef4bd252041bea --jq '.sha' >/dev/null 2>&1; then
+            echo "::error::SOURCE_READ_DENIED"; exit 1
+          fi
+      - name: Private source checkout, no token persistence
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: aarondash5-star/delulutech
+          ref: 4bff39c2acb868fad212d82c42ef4bd252041bea
+          path: wpmanager-source
+          token: ${{ secrets.DELULU_PRIVATE_TOKEN }}
+          persist-credentials: false
+      - name: Node 22
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22'
+          # Intentionally no public-repository cache of private WP Manager dependencies.
+      - name: Test OAuth consent/access controls, no public test output
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "4bff39c2acb868fad212d82c42ef4bd252041bea"
+          run_private() {
+            local id="$1"; shift
+            if "$@" > "$RUNNER_TEMP/dlt-${id}-${GITHUB_RUN_ID}.log" 2>&1; then
+              echo "${id}=PASS" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "${id}=FAIL" >> "$GITHUB_STEP_SUMMARY"
+              echo "::error::${id} FAILED (details suppressed in public logs)"
+              exit 1
+            fi
+          }
+          run_private deps npm ci --ignore-scripts --no-audit --no-fund
+          run_private provider-deps npm install --no-save --ignore-scripts --no-audit --no-fund esbuild@0.25.12 @cloudflare/workers-oauth-provider@1.2.4
+          run_private oauth-consent-boundaries node --test cloudflare/native-auth/browser-origin.test.mjs cloudflare/native-auth/qa-oauth-test.test.mjs cloudflare/native-auth/username-pin.test.mjs cloudflare/native-auth/wp-write-scope.test.mjs cloudflare/native-auth/qa-pairing-portal.test.mjs
+          echo 'OAUTH_COVERAGE=SCOPED_SUBSET_NOT_ORIGINAL_CONSENT_CI_PARITY' >> "$GITHUB_STEP_SUMMARY"
+          echo 'PUBLIC_ARTIFACT_UPLOAD=false' >> "$GITHUB_STEP_SUMMARY"
+          echo 'PRODUCTION_DEPLOYMENT=false' >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove temporary source and test output
+        if: always()
+        working-directory: .
+        run: |
+          rm -rf wpmanager-source
+          find "$RUNNER_TEMP" -maxdepth 1 -type f -name 'dlt-*-*.log' -delete

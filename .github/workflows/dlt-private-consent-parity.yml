@@ -1,0 +1,184 @@
+name: WP Manager original OAuth Consent QA parity - public safe CI
+on:
+  push:
+    branches: [ci/dlt-wpmanager-public-runner-20261108]
+    paths: [.github/workflows/dlt-private-consent-parity.yml]
+permissions:
+  contents: read
+concurrency:
+  group: dlt-original-consent-parity-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  consent-assets-and-tests:
+    if: github.repository == 'aarondash5-star/business-house-matrix' && github.ref == 'refs/heads/ci/dlt-wpmanager-public-runner-20261108' && github.actor == 'aarondash5-star' && github.event_name == 'push'
+    name: Exact original consent asset and local smoke checks
+    runs-on: ubuntu-latest
+    environment: DELULUTECH_SOURCE_READ_TOKEN
+    timeout-minutes: 12
+    defaults:
+      run:
+        shell: bash
+        working-directory: private-source/create-projects/wp-manager/authenticated-mcp
+    steps:
+      - name: Verify private source is permitted
+        working-directory: .
+        env:
+          SOURCE_TOKEN: ${{ secrets.DELULU_PRIVATE_TOKEN }}
+        run: |
+          set -euo pipefail
+          set +x
+          test -n "$SOURCE_TOKEN"
+          GH_TOKEN="$SOURCE_TOKEN" gh api repos/aarondash5-star/delulutech/commits/4bff39c2acb868fad212d82c42ef4bd252041bea --jq '.sha' >/dev/null
+      - name: Checkout exact private candidate without persisting credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: aarondash5-star/delulutech
+          ref: 4bff39c2acb868fad212d82c42ef4bd252041bea
+          token: ${{ secrets.DELULU_PRIVATE_TOKEN }}
+          persist-credentials: false
+          path: private-source
+      - name: Node 22
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22'
+      - name: Reproduce original consent asset and workerd-local smoke tests
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = '4bff39c2acb868fad212d82c42ef4bd252041bea'
+          run_private() {
+            local step="$1"; shift
+            local logfile="$RUNNER_TEMP/dlt-consent-${step}-${GITHUB_RUN_ID}.log"
+            if "$@" > "$logfile" 2>&1; then
+              echo "${step}=PASS" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "${step}=FAIL" >> "$GITHUB_STEP_SUMMARY"
+              echo "::error::${step} failed; private test detail withheld from public logs"
+              exit 1
+            fi
+          }
+          run_private consent-ci-deps npm ci --ignore-scripts --no-audit --no-fund
+          run_private consent-js-syntax node --check public/consent.mjs
+          run_private original-npm-test npm test
+          run_private connector-php-lint php -l ../wordpress-connector/dlt-wp-manager.php
+          run_private native-cloudflare-d1-vault node --test cloudflare/native-platform/*.test.mjs
+          run_private native-build-deps npm install --no-save --ignore-scripts --no-audit --no-fund esbuild@0.25.12 wrangler@4.47.0
+          run_private embed-consent-assets node cloudflare/build-assets.mjs
+          mkdir -p cloudflare/dist
+          run_private native-worker-bundle ./node_modules/.bin/esbuild cloudflare/worker-native.mjs --bundle --platform=browser --format=esm --target=es2022 --external:node:* --minify --outfile=cloudflare/dist/wp-manager-worker.mjs
+          run_private native-worker-syntax node --check cloudflare/dist/wp-manager-worker.mjs
+          run_private public-smoke-syntax node --check cloudflare/smoke-public.mjs
+          run_private local-workerd-native-smoke node cloudflare/smoke-native.mjs
+          echo 'ORIGINAL_JOB_CONSENT_ASSETS_AND_TESTS=PASS' >> "$GITHUB_STEP_SUMMARY"
+          echo 'ARTIFACT_UPLOAD_AND_BASE64_OUTPUT=EXCLUDED_PUBLIC_REPO' >> "$GITHUB_STEP_SUMMARY"
+          echo 'PRODUCTION_DEPLOYMENT=false' >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove private source and test logs
+        if: always()
+        working-directory: .
+        run: |
+          rm -rf private-source
+          find "$RUNNER_TEMP" -maxdepth 1 -type f -name 'dlt-consent-*' -delete
+
+  legacy-preview-test-baseline:
+    if: github.repository == 'aarondash5-star/business-house-matrix' && github.ref == 'refs/heads/ci/dlt-wpmanager-public-runner-20261108' && github.actor == 'aarondash5-star' && github.event_name == 'push'
+    name: Exact original independent ChatGPT preview regression
+    runs-on: ubuntu-latest
+    environment: DELULUTECH_SOURCE_READ_TOKEN
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+        working-directory: private-source/create-projects/wp-manager/chatgpt-app
+    steps:
+      - name: Checkout pinned private source without persisting credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: aarondash5-star/delulutech
+          ref: 4bff39c2acb868fad212d82c42ef4bd252041bea
+          token: ${{ secrets.DELULU_PRIVATE_TOKEN }}
+          persist-credentials: false
+          path: private-source
+      - name: Node 22
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22'
+      - name: Run isolated legacy onboarding tests
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = '4bff39c2acb868fad212d82c42ef4bd252041bea'
+          if npm ci --ignore-scripts --no-audit --no-fund > "$RUNNER_TEMP/legacy-ci.log" 2>&1; then
+            echo 'LEGACY_LOCKED_INSTALL=PASS' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '::error::Legacy lockfile install failed; private logs suppressed'; exit 1
+          fi
+          if npm test > "$RUNNER_TEMP/legacy-test.log" 2>&1; then
+            echo 'ORIGINAL_JOB_LEGACY_PREVIEW=PASS' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '::error::Legacy preview regression failed; private logs suppressed'; exit 1
+          fi
+          echo 'PRODUCTION_DEPLOYMENT=false' >> "$GITHUB_STEP_SUMMARY"
+      - name: Delete private checkout and preview logs
+        if: always()
+        working-directory: .
+        run: |
+          rm -rf private-source
+          rm -f "$RUNNER_TEMP/legacy-ci.log" "$RUNNER_TEMP/legacy-test.log"
+
+  native-cloudflare-oauth-v2-build:
+    if: github.repository == 'aarondash5-star/business-house-matrix' && github.ref == 'refs/heads/ci/dlt-wpmanager-public-runner-20261108' && github.actor == 'aarondash5-star' && github.event_name == 'push'
+    name: Exact original OAuth v2 synthetic bundle regression
+    runs-on: ubuntu-latest
+    environment: DELULUTECH_SOURCE_READ_TOKEN
+    timeout-minutes: 12
+    defaults:
+      run:
+        shell: bash
+        working-directory: private-source/create-projects/wp-manager/authenticated-mcp
+    steps:
+      - name: Checkout pinned private source without persisting credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: aarondash5-star/delulutech
+          ref: 4bff39c2acb868fad212d82c42ef4bd252041bea
+          token: ${{ secrets.DELULU_PRIVATE_TOKEN }}
+          persist-credentials: false
+          path: private-source
+      - name: Node 22
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22'
+      - name: Build and test exact original Cloudflare OAuth v2 contract
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = '4bff39c2acb868fad212d82c42ef4bd252041bea'
+          run_private() {
+            local step="$1"; shift
+            if "$@" > "$RUNNER_TEMP/dlt-oauth-${step}-${GITHUB_RUN_ID}.log" 2>&1; then
+              echo "${step}=PASS" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "${step}=FAIL" >> "$GITHUB_STEP_SUMMARY"
+              echo "::error::${step} failed; private details suppressed"
+              exit 1
+            fi
+          }
+          run_private oauth-deps npm ci --ignore-scripts --no-audit --no-fund
+          run_private oauth-build-deps npm install --no-save --ignore-scripts --no-audit --no-fund esbuild@0.25.12 @cloudflare/workers-oauth-provider@1.2.4
+          mkdir -p cloudflare/dist
+          run_private auth-worker-bundle ./node_modules/.bin/esbuild cloudflare/native-auth/auth-server.mjs --bundle --platform=browser --format=esm --target=es2022 --external:node:* --external:cloudflare:* --minify --outfile=cloudflare/dist/wp-manager-auth-worker.mjs
+          run_private resource-worker-bundle ./node_modules/.bin/esbuild cloudflare/native-auth/resource-server.mjs --bundle --platform=browser --format=esm --target=es2022 --external:node:* --external:cloudflare:* --minify --outfile=cloudflare/dist/wp-manager-v2-mcp-worker.mjs
+          run_private auth-worker-syntax node --check cloudflare/dist/wp-manager-auth-worker.mjs
+          run_private resource-worker-syntax node --check cloudflare/dist/wp-manager-v2-mcp-worker.mjs
+          if grep -Ein 'supabase[.]co|SUPABASE_DB_URL|SUPABASE_SERVICE_ROLE|wbetiprkbdkaagoylohy|functions/v1/dlt-wp-manager' cloudflare/dist/wp-manager-auth-worker.mjs cloudflare/dist/wp-manager-v2-mcp-worker.mjs > "$RUNNER_TEMP/dlt-legacy-dependency-check.log"; then
+            echo '::error::Forbidden legacy Supabase dependency in native OAuth v2 bundles'
+            exit 1
+          fi
+          run_private original-native-oauth-security node --test cloudflare/native-auth/username-pin.test.mjs cloudflare/native-auth/browser-origin.test.mjs cloudflare/native-auth/qa-pairing-portal.test.mjs cloudflare/native-auth/qa-certification.test.mjs cloudflare/native-auth/qa-oauth-test.test.mjs
+          echo 'ORIGINAL_JOB_NATIVE_CLOUDFLARE_OAUTH_V2=PASS' >> "$GITHUB_STEP_SUMMARY"
+          echo 'PUBLIC_BUNDLE_BASE64_OR_ARTIFACT_UPLOAD=false' >> "$GITHUB_STEP_SUMMARY"
+          echo 'PRODUCTION_DEPLOYMENT=false' >> "$GITHUB_STEP_SUMMARY"
+      - name: Delete private checkout and test logs
+        if: always()
+        working-directory: .
+        run: |
+          rm -rf private-source
+          find "$RUNNER_TEMP" -maxdepth 1 -type f -name 'dlt-oauth-*' -delete
+          rm -f "$RUNNER_TEMP/dlt-legacy-dependency-check.log"

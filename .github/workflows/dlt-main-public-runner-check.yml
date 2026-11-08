@@ -1,0 +1,80 @@
+name: DeluluTech public-runner CI capability check (main account)
+on:
+  push:
+    branches: [ci/dlt-wpmanager-public-runner-20261108]
+    paths: [.github/workflows/dlt-main-public-runner-check.yml]
+  pull_request:
+    branches: [main]
+    paths: [.github/workflows/dlt-main-public-runner-check.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-safe-runner-check:
+    name: Public runner / upstream deps / synthetic OAuth check
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout public CI host (no source secrets)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js 22
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22'
+      - name: Confirm main-account public runner identity
+        shell: bash
+        env:
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          test "$GH_REPO" = "aarondash5-star/business-house-matrix"
+          echo "PUBLIC_RUNNER_ON_MAIN_ACCOUNT=PASS" >> "$GITHUB_STEP_SUMMARY"
+          echo "PRIVATE_WP_MANAGER_SOURCE_COPIED=false" >> "$GITHUB_STEP_SUMMARY"
+      - name: Check source-repository isolation with default token
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          set +x
+          if GH_TOKEN="$GH_TOKEN" gh api repos/aarondash5-star/delulutech --jq '.id' >/dev/null 2>&1; then
+            echo "PRIVATE_SOURCE_DEFAULT_TOKEN_READ=true" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "PRIVATE_SOURCE_DEFAULT_TOKEN_READ=false" >> "$GITHUB_STEP_SUMMARY"
+            echo "::notice::Private source is isolated; full WP Manager tests need separately authorized read-only source checkout."
+          fi
+      - name: Smoke test maintained open source OAuth packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/dlt-public-upstream-qa"
+          cd "$RUNNER_TEMP/dlt-public-upstream-qa"
+          npm init --yes --silent >/dev/null
+          npm install --ignore-scripts --no-audit --no-fund --save-exact jose@6.1.0 @cloudflare/workers-oauth-provider@1.2.4 esbuild@0.25.12
+          npm audit --omit=dev --audit-level=high
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { randomBytes, createHash, generateKeyPairSync } from 'node:crypto';
+          import { SignJWT, jwtVerify, exportJWK, createRemoteJWKSet } from 'jose';
+          const verifier = randomBytes(32).toString('base64url');
+          const challenge = createHash('sha256').update(verifier).digest('base64url');
+          assert.equal(challenge, createHash('sha256').update(verifier).digest('base64url'));
+          assert.notEqual(challenge, createHash('sha256').update('wrong-verifier').digest('base64url'));
+          const { publicKey, privateKey }=generateKeyPairSync('rsa',{modulusLength:2048});
+          const signed=await new SignJWT({sub:'synthetic_subject_only'})
+             .setProtectedHeader({alg:'RS256',kid:'test-kid'})
+             .setIssuer('https://synthetic-idp.invalid/')
+             .setAudience('synthetic-allowed-resource')
+             .setIssuedAt().setExpirationTime('2m').sign(privateKey);
+          const jwk=await exportJWK(publicKey);jwk.kid='test-kid';jwk.alg='RS256';jwk.use='sig';
+          const keyset=createRemoteJWKSet(new URL('https://synthetic-idp.invalid/jwks'),{[Symbol.for('noop')]:true});
+          const {jwtVerify: verify}=await import('jose');
+          await verify(signed,publicKey,{issuer:'https://synthetic-idp.invalid/',audience:'synthetic-allowed-resource'});
+          await assert.rejects(()=>verify(signed,publicKey,{issuer:'https://synthetic-idp.invalid/',audience:'synthetic-denied-resource'}));
+          console.log('SYNTHETIC_PKCE_AND_OIDC=PASS');
+          JS
+          echo "SYNTHETIC_PKCE_OIDC=PASS" >> "$GITHUB_STEP_SUMMARY"
+          echo "LIVE_GOOGLE_META_CALLS=false" >> "$GITHUB_STEP_SUMMARY"
+          echo "ORIGINAL_WP_MANAGER_PRODUCTION_SUITE=NOT_RUN" >> "$GITHUB_STEP_SUMMARY"
