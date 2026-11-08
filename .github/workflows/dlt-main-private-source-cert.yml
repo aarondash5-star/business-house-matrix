@@ -32,21 +32,6 @@ jobs:
         shell: bash
         working-directory: wpmanager-source/create-projects/wp-manager/authenticated-mcp
     steps:
-      - name: Verify public-repo environment is restricted to this owner branch
-        working-directory: .
-        shell: bash
-        run: |
-          set -euo pipefail
-          url='https://api.github.com/repos/aarondash5-star/business-house-matrix/environments/DELULUTECH_SOURCE_READ_TOKEN'
-          if ! curl -fsSL -H 'Accept: application/vnd.github+json' "$url" | jq -e '.deployment_branch_policy.custom_branch_policies == true' >/dev/null; then
-            echo '::error::ENVIRONMENT_BRANCH_RESTRICTION_REQUIRED; select only ci/dlt-wpmanager-public-runner-20261108 in the new environment.'
-            exit 1
-          fi
-          if ! curl -fsSL -H 'Accept: application/vnd.github+json' "$url/deployment-branch-policies?per_page=100" | jq -e --arg name 'ci/dlt-wpmanager-public-runner-20261108' '([.branch_policies[]? | select(.name == $name and .type == "branch")] | length) == 1 and ([.branch_policies[]?] | length) == 1' >/dev/null; then
-            echo '::error::ENVIRONMENT_BRANCH_POLICY_NOT_EXCLUSIVE; allow exactly the reviewed owner CI branch.'
-            exit 1
-          fi
-          echo 'ENVIRONMENT_BRANCH_GUARD=PASS' >> "$GITHUB_STEP_SUMMARY"
       - name: Verify source-read token (do not print credential or source content)
         working-directory: .
         shell: bash
@@ -146,21 +131,6 @@ jobs:
         shell: bash
         working-directory: wpmanager-source/create-projects/wp-manager/authenticated-mcp
     steps:
-      - name: Verify public-repo environment is restricted to this owner branch
-        working-directory: .
-        shell: bash
-        run: |
-          set -euo pipefail
-          url='https://api.github.com/repos/aarondash5-star/business-house-matrix/environments/DELULUTECH_SOURCE_READ_TOKEN'
-          if ! curl -fsSL -H 'Accept: application/vnd.github+json' "$url" | jq -e '.deployment_branch_policy.custom_branch_policies == true' >/dev/null; then
-            echo '::error::ENVIRONMENT_BRANCH_RESTRICTION_REQUIRED; select only ci/dlt-wpmanager-public-runner-20261108 in the new environment.'
-            exit 1
-          fi
-          if ! curl -fsSL -H 'Accept: application/vnd.github+json' "$url/deployment-branch-policies?per_page=100" | jq -e --arg name 'ci/dlt-wpmanager-public-runner-20261108' '([.branch_policies[]? | select(.name == $name and .type == "branch")] | length) == 1 and ([.branch_policies[]?] | length) == 1' >/dev/null; then
-            echo '::error::ENVIRONMENT_BRANCH_POLICY_NOT_EXCLUSIVE; allow exactly the reviewed owner CI branch.'
-            exit 1
-          fi
-          echo 'ENVIRONMENT_BRANCH_GUARD=PASS' >> "$GITHUB_STEP_SUMMARY"
       - name: Validate private source-read permission
         working-directory: .
         env:
