@@ -1,6 +1,6 @@
 name: Private WP Manager source certification on public main-account runner
 # Public repository, private source. Only explicit owner-controlled branch push.
-# No pull_request or pull_request_target trigger; no untrusted PR inputs.
+# No pull_request_target trigger; pull requests only create skipped jobs, never secret access.
 on:
   push:
     branches: [ci/dlt-wpmanager-public-runner-20261108]
