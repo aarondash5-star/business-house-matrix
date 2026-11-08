@@ -43,6 +43,20 @@ jobs:
             echo "::error::MISSING_SOURCE_READ_SECRET; set DELULUTECH_SOURCE_READ_TOKEN on this public repository."
             exit 1
           fi
+          # Diagnostics output booleans only; never print token, user identity or source bytes.
+          identity="$(GH_TOKEN="$SOURCE_TOKEN" gh api user --jq '.login' 2>/dev/null || true)"
+          if [[ "$identity" == "aarondash5-star" ]]; then
+            echo "TOKEN_ACCOUNT_SOURCE_OWNER=true"
+          elif [[ -n "$identity" ]]; then
+            echo "TOKEN_ACCOUNT_SOURCE_OWNER=false"
+          else
+            echo "TOKEN_ACCOUNT_IDENTITY_UNVERIFIED=true"
+          fi
+          if GH_TOKEN="$SOURCE_TOKEN" gh api repos/aarondash5-star/delulutech --jq '.id' >/dev/null 2>&1; then
+            echo "SOURCE_REPOSITORY_READ=true"
+          else
+            echo "SOURCE_REPOSITORY_READ=false"
+          fi
           if ! GH_TOKEN="$SOURCE_TOKEN" gh api repos/aarondash5-star/delulutech/commits/4bff39c2acb868fad212d82c42ef4bd252041bea --jq '.sha' >/dev/null 2>&1; then
             echo "::error::SOURCE_READ_DENIED; token must be authorized to read private aarondash5-star/delulutech."
             exit 1
