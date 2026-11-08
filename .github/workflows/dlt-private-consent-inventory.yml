@@ -1,0 +1,28 @@
+name: WP Manager original consent workflow inventory (source private)
+on:
+  push:
+    branches: [ci/dlt-wpmanager-public-runner-20261108]
+    paths: [.github/workflows/dlt-private-consent-inventory.yml]
+permissions:
+  contents: read
+jobs:
+  source-workflow-index:
+    name: Original private QA workflow filenames - read only
+    if: github.repository == 'aarondash5-star/business-house-matrix' && github.ref == 'refs/heads/ci/dlt-wpmanager-public-runner-20261108' && github.actor == 'aarondash5-star' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: DELULUTECH_SOURCE_READ_TOKEN
+    timeout-minutes: 3
+    steps:
+      - name: Locate original private OAuth Consent QA workflow (filenames only)
+        env:
+          SOURCE_TOKEN: ${{ secrets.DELULU_PRIVATE_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +x
+          test -n "$SOURCE_TOKEN"
+          gh_path='repos/aarondash5-star/delulutech/git/trees/4bff39c2acb868fad212d82c42ef4bd252041bea?recursive=1'
+          paths="$(GH_TOKEN="$SOURCE_TOKEN" gh api "$gh_path" --jq '.tree[].path')"
+          printf '%s\n' "$paths" | awk '/^\.github\/workflows\// {print}' | sort
+          echo 'SOURCE_WORKFLOW_FILENAME_INVENTORY=PASS' >> "$GITHUB_STEP_SUMMARY"
+          echo 'NO_PRIVATE_SOURCE_CONTENT_PUBLISHED=true' >> "$GITHUB_STEP_SUMMARY"
