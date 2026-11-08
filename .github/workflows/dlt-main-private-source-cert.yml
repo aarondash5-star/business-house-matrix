@@ -22,7 +22,8 @@ concurrency:
 jobs:
   wpmanager-production:
     name: Pinned WP Manager production QA - private checkout
-    if: github.repository == 'aarondash5-star/business-house-matrix' && github.ref == 'refs/heads/ci/dlt-wpmanager-public-runner-20261108' && github.actor == 'aarondash5-star' && github.event_name == 'push'
+    environment: wpmanager-ci-private-source
+    if: github.repository == 'aarondash5-star/business-house-matrix' && github.ref == 'refs/heads/ci/dlt-wpmanager-public-runner-20261108' && github.actor == 'aarondash5-star' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 18
     defaults:
@@ -107,7 +108,8 @@ jobs:
 
   wpmanager-oauth-consent:
     name: Pinned WP Manager OAuth consent and isolation - private checkout
-    if: github.repository == 'aarondash5-star/business-house-matrix' && github.ref == 'refs/heads/ci/dlt-wpmanager-public-runner-20261108' && github.actor == 'aarondash5-star' && github.event_name == 'push'
+    environment: wpmanager-ci-private-source
+    if: github.repository == 'aarondash5-star/business-house-matrix' && github.ref == 'refs/heads/ci/dlt-wpmanager-public-runner-20261108' && github.actor == 'aarondash5-star' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 14
     defaults:
