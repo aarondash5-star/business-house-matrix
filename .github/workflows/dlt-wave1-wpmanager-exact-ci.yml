@@ -1,0 +1,91 @@
+name: Wave 1 WP Manager pinned private-source release QA (public safe runner)
+# Independent owner-only public runner; no private source or artifacts published.
+on:
+  push:
+    branches: [ci/dlt-wpmanager-public-runner-20261108]
+    paths: [.github/workflows/dlt-wave1-wpmanager-exact-ci.yml]
+permissions:
+  contents: read
+concurrency:
+  group: wave1-wpmanager-pinned-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  qa:
+    name: Private exact-SHA WP Manager full release QA, no publish
+    if: github.repository == 'aarondash5-star/business-house-matrix' && github.ref == 'refs/heads/ci/dlt-wpmanager-public-runner-20261108' && github.actor == 'aarondash5-star' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: DELULUTECH_SOURCE_READ_TOKEN
+    timeout-minutes: 24
+    defaults:
+      run:
+        shell: bash
+        working-directory: private-source/cloudflare
+    steps:
+      - name: Verify private repository read permission without disclosing token
+        working-directory: .
+        env:
+          SOURCE_TOKEN: ${{ secrets.DELULU_PRIVATE_TOKEN }}
+        run: |
+          set -euo pipefail
+          set +x
+          test -n "$SOURCE_TOKEN" || { echo "::error::MISSING_PRIVATE_READ_TOKEN"; exit 1; }
+          GH_TOKEN="$SOURCE_TOKEN" gh api repos/aarondash5-star/wt-manager-production/commits/cdf0d01eb67740edf2ffad6d3a29e83156910783 --jq '.sha' >/dev/null 2>&1 || {
+            echo "::error::WP_MANAGER_PRIVATE_SOURCE_READ_DENIED"; exit 1;
+          }
+          echo 'PRIVATE_SOURCE_READ_AUTHORIZED=PASS' >> "$GITHUB_STEP_SUMMARY"
+      - name: Checkout exact private WP Manager release source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: aarondash5-star/wt-manager-production
+          ref: cdf0d01eb67740edf2ffad6d3a29e83156910783
+          path: private-source
+          token: ${{ secrets.DELULU_PRIVATE_TOKEN }}
+          persist-credentials: false
+      - name: Node 22, no public source/dependency cache
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22'
+      - name: Exact source and toolchain baseline
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = 'cdf0d01eb67740edf2ffad6d3a29e83156910783'
+          echo 'PINNED_WPM_SHA=cdf0d01eb67740edf2ffad6d3a29e83156910783' >> "$GITHUB_STEP_SUMMARY"
+          echo "NODE=$(node --version)" >> "$GITHUB_STEP_SUMMARY"
+          echo 'DEPLOYMENT=false' >> "$GITHUB_STEP_SUMMARY"
+      - name: Full private source release checks, sanitized results only
+        run: |
+          set -euo pipefail
+          set +x
+          run_private() {
+            local label="$1"; shift
+            local logfile="$RUNNER_TEMP/dlt-wave1-"$label"-"$GITHUB_RUN_ID".log"
+            if "$@" > "$logfile" 2>&1; then
+              echo "$label=PASS" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "$label=FAIL" >> "$GITHUB_STEP_SUMMARY"
+              echo "::error::$label failed; raw private logs withheld"
+              exit 1
+            fi
+          }
+          run_private locked-dependencies npm ci --ignore-scripts --no-audit --no-fund
+          run_private oauth-provider npm install --no-save --ignore-scripts --no-audit --no-fund @cloudflare/workers-oauth-provider@1.2.4
+          run_private php-connector-syntax php -l ../wordpress-connector/dlt-wp-manager.php
+          run_private lint npm run lint
+          run_private connector-freshness npm run check:tools
+          run_private all-wpmanager-tests npm test
+          run_private stage-worker-build npm run build:stage
+          run_private stage-mcp-syntax node --check dist/wp-manager-v2-mcp-worker.stage.mjs
+          run_private stage-auth-syntax node --check dist/wp-manager-auth-worker.stage.mjs
+          if grep -Ei 'auth[.]prod[.]wpmanager[.]delulutech[.]in|mcp[.]prod[.]wpmanager[.]delulutech[.]in' dist/*.stage.mjs >/dev/null; then
+            echo '::error::PRODUCTION_ORIGIN_IN_STAGE_BUNDLE'
+            exit 1
+          fi
+          echo 'STAGE_PRODUCTION_ORIGIN_ABSENCE=PASS' >> "$GITHUB_STEP_SUMMARY"
+          echo 'PUBLIC_SOURCE_LOGGING_OR_ARTIFACT_UPLOAD=false' >> "$GITHUB_STEP_SUMMARY"
+          echo 'PRODUCTION_DEPLOYMENT=false' >> "$GITHUB_STEP_SUMMARY"
+      - name: Erase temporary private checkout and logs
+        if: always()
+        working-directory: .
+        run: |
+          rm -rf private-source
+          find "$RUNNER_TEMP" -maxdepth 1 -type f -name 'dlt-wave1-*' -delete
